@@ -220,6 +220,7 @@
       "</div>" +
       '<div id="pred-list"></div>';
     var input = $("team-search");
+    var searchTimer = null;
     var syncClearBtn = function () {
       var btn = $("search-clear");
       if (input.value && !btn) {
@@ -236,7 +237,14 @@
     input.addEventListener("input", function () {
       state.search = input.value;
       syncClearBtn();
-      renderPredictionList();
+      // debounce: re-render only after the user pauses typing (220ms),
+      // so fast typing doesn't rebuild all cards on every keystroke
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        searchTimer = null;
+        // skip if the query changed again while waiting
+        if (state.search === input.value) renderPredictionList();
+      }, 220);
     });
     var cb = $("search-clear");
     if (cb) cb.addEventListener("click", clearSearch);
