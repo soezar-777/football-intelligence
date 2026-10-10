@@ -117,13 +117,24 @@
   function predictionCardHTML(p) {
     var t = state.t;
     var html = "";
+    // "probably playing now" badge: free API has no real-time live feed,
+    // so estimate from kickoff time (0-105 min ago, still marked TIMED)
+    var liveBadge = "";
+    try {
+      var minsAgo = (Date.now() - new Date(p.kickoff).getTime()) / 60000;
+      if ((p.status === "TIMED" || p.status === "SCHEDULED") &&
+          minsAgo >= 0 && minsAgo <= 105) {
+        liveBadge = ' <span class="live-badge">\uD83D\uDD34 ' +
+          esc(t.likely_live || "") + "</span>";
+      }
+    } catch (e) { /* ignore bad dates */ }
     var m = p.markets || {}, ou = m.ou || {}, btts = m.btts || {};
     var picks = p.picks || {};
     html += '<div class="card">';
     html += '<div class="card-head"><span class="comp">' + esc(p.competition) +
       '</span><span class="kickoff">' + fmtKickoff(p.kickoff) + "</span></div>";
     html += '<div class="teams">' + esc(p.home_team.name) + " vs " +
-      esc(p.away_team.name) + "</div>";
+      esc(p.away_team.name) + liveBadge + "</div>";
     html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
       p.xg.away + "</div>";
 
