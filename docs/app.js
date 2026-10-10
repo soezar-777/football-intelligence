@@ -7,6 +7,7 @@
     tab: "predictions",
     t: {},
     predictions: null,
+    search: "",
     verification: null,
     performance: null,
   };
@@ -100,81 +101,148 @@
   }
 
   /* ------------------------------------------------- predictions tab */
+  /* ------------------------------------------------- predictions tab */
+  function filteredPredictions() {
+    var d = state.predictions;
+    var list = (d && d.predictions) || [];
+    var q = (state.search || "").trim().toLowerCase();
+    if (!q) return list;
+    return list.filter(function (p) {
+      var h = ((p.home_team && p.home_team.name) || "").toLowerCase();
+      var a = ((p.away_team && p.away_team.name) || "").toLowerCase();
+      return h.indexOf(q) !== -1 || a.indexOf(q) !== -1;
+    });
+  }
+
+  function predictionCardHTML(p) {
+    var t = state.t;
+    var html = "";
+    var m = p.markets || {}, ou = m.ou || {}, btts = m.btts || {};
+    var picks = p.picks || {};
+    html += '<div class="card">';
+    html += '<div class="card-head"><span class="comp">' + esc(p.competition) +
+      '</span><span class="kickoff">' + fmtKickoff(p.kickoff) + "</span></div>";
+    html += '<div class="teams">' + esc(p.home_team.name) + " vs " +
+      esc(p.away_team.name) + "</div>";
+    html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
+      p.xg.away + "</div>";
+
+    var x12 = m["1x2"] || {};
+    html += sectionTitle(t.market_1x2);
+    html += probRow(t.home, x12.home, picks["1x2"] && picks["1x2"].selection === "home");
+    html += probRow(t.draw, x12.draw, picks["1x2"] && picks["1x2"].selection === "draw");
+    html += probRow(t.away, x12.away, picks["1x2"] && picks["1x2"].selection === "away");
+    html += "</div>";
+
+    if (ou["2.5"]) {
+      html += sectionTitle(t.market_ou25);
+      html += probRow(t.over + " 2.5", ou["2.5"].over,
+        picks.ou25 && picks.ou25.selection === "over");
+      html += probRow(t.under + " 2.5", ou["2.5"].under,
+        picks.ou25 && picks.ou25.selection === "under");
+      html += "</div>";
+    }
+    html += sectionTitle(t.market_btts);
+    html += probRow(t.yes, btts.yes, picks.btts && picks.btts.selection === "yes");
+    html += probRow(t.no, btts.no, picks.btts && picks.btts.selection === "no");
+    html += "</div>";
+
+    if (m.correct_scores && m.correct_scores.length) {
+      html += sectionTitle(t.market_cs) + '<div class="chips">';
+      m.correct_scores.forEach(function (s) {
+        html += '<span class="chip">' + esc(s.score) + " · " + pct(s.prob) + "</span>";
+      });
+      html += "</div></div>";
+    }
+
+    if (m.ah) {
+      html += sectionTitle(t.market_ah);
+      Object.keys(m.ah).forEach(function (line) {
+        var a = m.ah[line];
+        html += probRow(line + " " + t.cover, a.cover, false);
+      });
+      html += "</div>";
+    }
+
+    html += '<div class="market"><div class="market-title">' + esc(t.picks_title) + "</div>";
+    html += '<div class="picks">';
+    var anyPick = false;
+    [["1x2", t.market_1x2], ["ou25", t.market_ou25], ["btts", t.market_btts],
+     ["ah", t.market_ah], ["correct_score", t.market_cs]].forEach(function (pair) {
+      var pk = picks[pair[0]];
+      if (pk) {
+        anyPick = true;
+        var label = pk.selection || (pk.line + " " + pk.side);
+        html += '<span class="pick-badge">✓ ' + esc(label) + " " + pct(pk.prob) + "</span>";
+      }
+    });
+    if (!anyPick) html += '<span class="pick-none">' + esc(t.no_pick) + "</span>";
+    html += "</div></div>";
+
+    html += "</div>";
+    return html;
+  }
+
+  function renderPredictionList() {
+    var t = state.t, d = state.predictions;
+    var holder = $("pred-list");
+    if (!holder || !d) return;
+    var list = filteredPredictions();
+    var html = '<div class="meta-line">' + esc(t.updated) + ": " +
+      fmtKickoff(d.generated_at) + " \u00b7 " + list.length + " / " + d.count + " \u26bd</div>";
+    if (!list.length) {
+      html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+    }
+    list.forEach(function (p) { html += predictionCardHTML(p); });
+    holder.innerHTML = html;
+  }
+
+  function clearSearch() {
+    state.search = "";
+    var input = $("team-search");
+    if (input) { input.value = ""; input.focus(); }
+    var btn = $("search-clear");
+    if (btn) btn.remove();
+    renderPredictionList();
+  }
+
   function renderPredictions(el) {
     var t = state.t, d = state.predictions;
     if (!d || !d.predictions || !d.predictions.length) {
       el.innerHTML = '<div class="empty">' + esc(t.no_data) + "</div>";
       return;
     }
-    var html = '<div class="meta-line">' + esc(t.updated) + ": " +
-      fmtKickoff(d.generated_at) + " · " + d.count + " ⚽</div>";
-    d.predictions.forEach(function (p) {
-      var m = p.markets || {}, ou = m.ou || {}, btts = m.btts || {};
-      var picks = p.picks || {};
-      html += '<div class="card">';
-      html += '<div class="card-head"><span class="comp">' + esc(p.competition) +
-        '</span><span class="kickoff">' + fmtKickoff(p.kickoff) + "</span></div>";
-      html += '<div class="teams">' + esc(p.home_team.name) + " vs " +
-        esc(p.away_team.name) + "</div>";
-      html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
-        p.xg.away + "</div>";
-
-      var x12 = m["1x2"] || {};
-      html += sectionTitle(t.market_1x2);
-      html += probRow(t.home, x12.home, picks["1x2"] && picks["1x2"].selection === "home");
-      html += probRow(t.draw, x12.draw, picks["1x2"] && picks["1x2"].selection === "draw");
-      html += probRow(t.away, x12.away, picks["1x2"] && picks["1x2"].selection === "away");
-      html += "</div>";
-
-      if (ou["2.5"]) {
-        html += sectionTitle(t.market_ou25);
-        html += probRow(t.over + " 2.5", ou["2.5"].over,
-          picks.ou25 && picks.ou25.selection === "over");
-        html += probRow(t.under + " 2.5", ou["2.5"].under,
-          picks.ou25 && picks.ou25.selection === "under");
-        html += "</div>";
+    el.innerHTML =
+      '<div class="search-wrap">' +
+        '<input id="team-search" type="search" autocomplete="off" placeholder="' +
+          esc(t.search_placeholder || "") + '" value="' + esc(state.search || "") + '">' +
+        (state.search ? '<button id="search-clear" aria-label="clear">\u2715</button>' : "") +
+      "</div>" +
+      '<div id="pred-list"></div>';
+    var input = $("team-search");
+    var syncClearBtn = function () {
+      var btn = $("search-clear");
+      if (input.value && !btn) {
+        var b = document.createElement("button");
+        b.id = "search-clear";
+        b.setAttribute("aria-label", "clear");
+        b.textContent = "\u2715";
+        b.addEventListener("click", clearSearch);
+        input.parentNode.appendChild(b);
+      } else if (!input.value && btn) {
+        btn.remove();
       }
-      html += sectionTitle(t.market_btts);
-      html += probRow(t.yes, btts.yes, picks.btts && picks.btts.selection === "yes");
-      html += probRow(t.no, btts.no, picks.btts && picks.btts.selection === "no");
-      html += "</div>";
-
-      if (m.correct_scores && m.correct_scores.length) {
-        html += sectionTitle(t.market_cs) + '<div class="chips">';
-        m.correct_scores.forEach(function (s) {
-          html += '<span class="chip">' + esc(s.score) + " · " + pct(s.prob) + "</span>";
-        });
-        html += "</div></div>";
-      }
-
-      if (m.ah) {
-        html += sectionTitle(t.market_ah);
-        Object.keys(m.ah).forEach(function (line) {
-          var a = m.ah[line];
-          html += probRow(line + " " + t.cover, a.cover, false);
-        });
-        html += "</div>";
-      }
-
-      html += '<div class="market"><div class="market-title">' + esc(t.picks_title) + "</div>";
-      html += '<div class="picks">';
-      var anyPick = false;
-      [["1x2", t.market_1x2], ["ou25", t.market_ou25], ["btts", t.market_btts],
-       ["ah", t.market_ah], ["correct_score", t.market_cs]].forEach(function (pair) {
-        var pk = picks[pair[0]];
-        if (pk) {
-          anyPick = true;
-          var label = pk.selection || (pk.line + " " + pk.side);
-          html += '<span class="pick-badge">✓ ' + esc(label) + " " + pct(pk.prob) + "</span>";
-        }
-      });
-      if (!anyPick) html += '<span class="pick-none">' + esc(t.no_pick) + "</span>";
-      html += "</div></div>";
-
-      html += "</div>";
+    };
+    input.addEventListener("input", function () {
+      state.search = input.value;
+      syncClearBtn();
+      renderPredictionList();
     });
-    el.innerHTML = html;
+    var cb = $("search-clear");
+    if (cb) cb.addEventListener("click", clearSearch);
+    renderPredictionList();
   }
+
 
   /* ------------------------------------------------ verification tab */
   function gradeIcon(g) {
