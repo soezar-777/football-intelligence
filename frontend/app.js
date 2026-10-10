@@ -11,8 +11,13 @@
     performance: null,
   };
 
+  /* Predictions are published per competition (predictions_<CODE>.json) so each
+     file stays small; the loader below merges them into one list. */
+  var COMPETITIONS = ["PL", "BL1", "SA", "PD", "FL1", "DED", "PPL", "CL", "ELC", "BSA"];
+
   var DATA_PATHS = {
-    predictions: ["data/predictions.json", "../data/samples/predictions.json"],
+    predictionFiles: COMPETITIONS.map(function (c) { return "data/predictions_" + c + ".json"; }),
+    predictionsSample: ["../data/samples/predictions.json"],
     verification: ["data/verification.json", "../data/samples/verification.json"],
     performance: ["data/performance.json", "../data/samples/performance.json"],
   };
@@ -30,6 +35,36 @@
       });
     });
     return chain;
+  }
+
+  function loadPredictions() {
+    return Promise.all(DATA_PATHS.predictionFiles.map(function (p) {
+      return fetch(p, { cache: "no-store" }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).catch(function () { return null; });
+    })).then(function (parts) {
+      var merged = [], generated = null, version = null;
+      parts.forEach(function (part) {
+        if (part && part.predictions && part.predictions.length) {
+          merged = merged.concat(part.predictions);
+          if (!generated || (part.generated_at && part.generated_at > generated)) {
+            generated = part.generated_at;
+          }
+          version = version || part.model_version;
+        }
+      });
+      if (!merged.length) return loadJSON(DATA_PATHS.predictionsSample);
+      merged.sort(function (a, b) {
+        var ka = a.kickoff || "", kb = b.kickoff || "";
+        return ka < kb ? -1 : (ka > kb ? 1 : 0);
+      });
+      return {
+        model_version: version,
+        generated_at: generated,
+        count: merged.length,
+        predictions: merged,
+      };
+    });
   }
 
   function pct(p) {
@@ -282,7 +317,7 @@
   loadJSON(["i18n/" + state.lang + ".json"]).then(function (t) {
     state.t = t || {};
     return Promise.all([
-      loadJSON(DATA_PATHS.predictions),
+      loadPredictions(),
       loadJSON(DATA_PATHS.verification),
       loadJSON(DATA_PATHS.performance),
     ]);

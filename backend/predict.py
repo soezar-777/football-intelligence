@@ -143,6 +143,25 @@ def main(argv: list[str] | None = None) -> int:
                     encoding="utf-8")
     print(f"[predict] wrote {path.name}: {out['count']} predictions "
           f"({out['skipped']} skipped)", flush=True)
+    # Per-competition files: keeps each published file small enough for
+    # hosts/APIs with per-request size limits (e.g. GitHub push tooling).
+    by_comp: dict[str, list] = {}
+    for p in out["predictions"]:
+        by_comp.setdefault(p.get("competition", "UNK"), []).append(p)
+    for code, plist in sorted(by_comp.items()):
+        sub = {
+            "model_version": out["model_version"],
+            "generated_at": out["generated_at"],
+            "competition": code,
+            "count": len(plist),
+            "predictions": plist,
+        }
+        spath = config.DATA_DIR / f"predictions_{code}.json"
+        # Minified: these files are published through size-limited push
+        # tooling, so every byte counts.
+        spath.write_text(json.dumps(sub, ensure_ascii=False, separators=(",", ":")) + "\n",
+                         encoding="utf-8")
+    print(f"[predict] wrote {len(by_comp)} per-competition files", flush=True)
     return 0
 
 
