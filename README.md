@@ -9,7 +9,7 @@
 ## ဗိသုကာ (Architecture)
 
 ```
-+------------------+   GitHub Actions (06:00 & 18:00 Yangon)   +------------------+
++------------------+   scheduler (06:00 & 18:00 Yangon)        +------------------+
 | football-data.org+------------------------------------------->+  GitHub Pages    |
 | (free API tier)  |   fetch -> predict -> verify -> performance |  static dashboard|
 +------------------+                                            |  (Burmese / EN)  |
@@ -18,17 +18,15 @@
 
 - **Backend:** Python (stdlib + `requests` only) — `backend/`
 - **Frontend:** static HTML/CSS/JS, no framework, no build step — `frontend/`
-- **Data sync:** GitHub Actions cron, twice daily
+- **Data sync:** scheduled job, twice daily (06:00 & 18:00 Yangon) — data sync လုပ်ပြီး `frontend/data/` ကို update လုပ်တယ်
 - **Hosting:** GitHub Pages (free)
 - **Database:** none — JSON files (`data/*.json` published to `frontend/data/`)
 
 ## စတင်ရန် (Setup)
 
 1. **API key ယူရန်:** [football-data.org](https://www.football-data.org/client/register) မှာ အခမဲ့ register လုပ်ပါ (ကတ် မလို)။
-2. **Repo Secrets ထည့်ရန်:** GitHub repo → *Settings → Secrets and variables → Actions* → **New repository secret**
-   - Name: `FOOTBALL_DATA_API_KEY`, Value: key ကို ထည့်ပါ။
-3. **Pages ဖွင့်ရန်:** *Settings → Pages* → *Build and deployment* → Source: **Deploy from a branch** → Branch: `main`, folder: `/frontend` → Save.
-4. **Actions ဖွင့်ရန်:** *Actions* tab → workflows ကို enable လုပ်ပါ။ `daily-sync` ကို *Run workflow* နဲ့ စမ်းနိုင်ပါတယ်။
+2. **Pages ဖွင့်ရန်:** GitHub repo → *Settings → Pages* → *Build and deployment* → Source: **Deploy from a branch** → Branch: `main`, folder: `/frontend` → Save. ဒါဆိုရင် dashboard ကို ဖုန်းကနေ ကြည့်လို့ရပြီ။
+3. **Data sync:** Muse က 06:00 နဲ့ 18:00 (Yangon) တိုင်း data ဆွဲပြီး repo ကို အလိုအလျောက် update လုပ်ပေးတယ် — ဘာမှလုပ်စရာမလိုဘူး။
 
 > ⚠️ API key ကို ဘယ် file ထဲမှာမှ မသိမ်းပါနဲ့။ `FOOTBALL_DATA_API_KEY` env var (သို့) local dev အတွက် `/home/hatch/.config/football-intelligence/api_key` (mode 600) ကပဲ ဖတ်ပါတယ်။
 
@@ -62,8 +60,7 @@ football-intelligence/
 │   ├── i18n/my.json / en.json           # Burmese default, EN toggle
 │   └── data/            # published JSON (filled by CI)
 ├── data/samples/        # tiny samples so UI renders before first sync
-├── tests/               # pytest: model math + verification grading
-└── .github/workflows/daily-sync.yml
+└── tests/               # pytest: model math + verification grading
 ```
 
 ## Model အကျဉ်းချုပ်
