@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FOOTBALL INTELLIGENCE</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-icon">⚽</span>
+    <div>
+      <h1>FOOTBALL INTELLIGENCE</h1>
+      <p id="app-subtitle"></p>
+    </div>
+  </div>
+  <div class="lang-toggle" role="group" aria-label="language">
+    <button id="lang-my" class="active">မြန်မာ</button>
+    <button id="lang-en">EN</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="predictions" class="active" id="tabbtn-predictions"></button>
+  <button data-tab="verification" id="tabbtn-verification"></button>
+  <button data-tab="performance" id="tabbtn-performance"></button>
+</nav>
+
+<main>
+  <section id="tab-predictions" class="tab-panel active"></section>
+  <section id="tab-verification" class="tab-panel"></section>
+  <section id="tab-performance" class="tab-panel"></section>
+</main>
+
+<footer class="app-footer">
+  <span id="footer-meta"></span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
