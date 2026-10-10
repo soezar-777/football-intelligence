@@ -1,0 +1,14 @@
+# Fetched/generated data (never commit real data; samples are the exception)
+data/*.json
+!data/samples/*.json
+
+# Local secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
