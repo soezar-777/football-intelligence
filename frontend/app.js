@@ -8,6 +8,7 @@
     t: {},
     predictions: null,
     search: "",
+    teamsMy: null,
     verification: null,
     performance: null,
   };
@@ -100,18 +101,37 @@
     return '<div class="market"><div class="market-title">' + esc(text) + "</div>";
   }
 
-  /* ------------------------------------------------- predictions tab */
+  /* team name in current language: Burmese transliteration when UI is
+     Burmese and a mapping exists, otherwise the English name */
+  function teamName(name) {
+    if (state.lang === "my" && state.teamsMy && state.teamsMy[name]) {
+      return state.teamsMy[name];
+    }
+    return name;
+  }
+
+  function teamMatch(p, q) {
+    var names = [
+      ((p.home_team && p.home_team.name) || ""),
+      ((p.away_team && p.away_team.name) || "")
+    ];
+    // also match Burmese names so search works in both scripts
+    if (state.teamsMy) {
+      names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
+    }
+    for (var i = 0; i < names.length; i++) {
+      if (names[i] && names[i].toLowerCase().indexOf(q) !== -1) return true;
+    }
+    return false;
+  }
+
   /* ------------------------------------------------- predictions tab */
   function filteredPredictions() {
     var d = state.predictions;
     var list = (d && d.predictions) || [];
     var q = (state.search || "").trim().toLowerCase();
     if (!q) return list;
-    return list.filter(function (p) {
-      var h = ((p.home_team && p.home_team.name) || "").toLowerCase();
-      var a = ((p.away_team && p.away_team.name) || "").toLowerCase();
-      return h.indexOf(q) !== -1 || a.indexOf(q) !== -1;
-    });
+    return list.filter(function (p) { return teamMatch(p, q); });
   }
 
   function predictionCardHTML(p) {
@@ -133,8 +153,8 @@
     html += '<div class="card">';
     html += '<div class="card-head"><span class="comp">' + esc(p.competition) +
       '</span><span class="kickoff">' + fmtKickoff(p.kickoff) + "</span></div>";
-    html += '<div class="teams">' + esc(p.home_team.name) + " vs " +
-      esc(p.away_team.name) + liveBadge + "</div>";
+    html += '<div class="teams">' + esc(teamName(p.home_team.name)) + " vs " +
+      esc(teamName(p.away_team.name)) + liveBadge + "</div>";
     html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
       p.xg.away + "</div>";
 
@@ -292,7 +312,7 @@
       html += '<div class="card">';
       html += '<div class="card-head"><span class="comp">' + esc(g.competition) +
         '</span><span class="actual-score">' + esc(g.actual) + "</span></div>";
-      html += '<div class="teams">' + esc(g.home_team) + " vs " + esc(g.away_team) + "</div>";
+      html += '<div class="teams">' + esc(teamName(g.home_team)) + " vs " + esc(teamName(g.away_team)) + "</div>";
       html += '<div class="chips">';
       Object.keys(g.grades || {}).forEach(function (mk) {
         var gr = g.grades[mk];
@@ -407,11 +427,13 @@
       loadPredictions(),
       loadJSON(DATA_PATHS.verification),
       loadJSON(DATA_PATHS.performance),
+      loadJSON(["i18n/teams_my.json"]),
     ]);
   }).then(function (arr) {
     state.predictions = arr[0];
     state.verification = arr[1];
     state.performance = arr[2];
+    state.teamsMy = arr[3] || {};
     render();
   });
 })();
