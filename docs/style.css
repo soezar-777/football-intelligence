@@ -33,6 +33,7 @@ body {
 }
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand-icon { font-size: 30px; }
+.brand-icon img { width: 42px; height: 42px; display: block; }
 .brand h1 { margin: 0; font-size: 17px; letter-spacing: 1px; }
 .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
 .lang-toggle { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }

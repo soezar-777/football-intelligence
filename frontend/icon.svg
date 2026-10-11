@@ -1,13 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0f172a"/>
-  <circle cx="256" cy="256" r="110" fill="#ffffff" stroke="#0f172a" stroke-width="10"/>
-  <g fill="#0f172a">
-    <polygon points="256,216 294,244 279,289 233,289 218,244"/>
-    <polygon points="256,112 276,126 268,150 244,150 236,126"/>
-    <polygon points="362,196 372,220 352,232 336,214 342,192"/>
-    <polygon points="362,316 342,320 336,298 352,286 372,292"/>
-    <polygon points="150,196 140,220 160,232 176,214 170,192"/>
-    <polygon points="150,316 170,320 176,298 160,286 140,292"/>
-    <polygon points="256,400 236,386 244,362 268,362 276,386"/>
-  </g>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a5f"/><stop offset="1" stop-color="#0b1526"/></linearGradient><radialGradient id="ball" cx="0.38" cy="0.32" r="0.9"><stop offset="0" stop-color="#ffffff"/><stop offset="0.75" stop-color="#f1f5f9"/><stop offset="1" stop-color="#cbd5e1"/></radialGradient></defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="244" cy="248" r="148" fill="none" stroke="#22c55e" stroke-width="6" opacity="0.30"/>
+  <circle cx="244" cy="248" r="118" fill="url(#ball)"/>
+  <line x1="244.0" y1="214.0" x2="244.0" y2="184.0" stroke="#94a3b8" stroke-width="4"/>
+  <line x1="276.3" y1="237.5" x2="304.9" y2="228.2" stroke="#94a3b8" stroke-width="4"/>
+  <line x1="264.0" y1="275.5" x2="281.6" y2="299.8" stroke="#94a3b8" stroke-width="4"/>
+  <line x1="224.0" y1="275.5" x2="206.4" y2="299.8" stroke="#94a3b8" stroke-width="4"/>
+  <line x1="211.7" y1="237.5" x2="183.1" y2="228.2" stroke="#94a3b8" stroke-width="4"/>
+  <polygon points="244.0,214.0 276.3,237.5 264.0,275.5 224.0,275.5 211.7,237.5" fill="#0f172a"/>
+  <polygon points="244.0,158.0 268.7,176.0 259.3,205.0 228.7,205.0 219.3,176.0" fill="#0f172a"/>
+  <polygon points="329.6,220.2 320.2,249.3 289.6,249.3 280.1,220.2 304.9,202.2" fill="#0f172a"/>
+  <polygon points="296.9,320.8 266.3,320.8 256.9,291.7 281.6,273.8 306.3,291.7" fill="#0f172a"/>
+  <polygon points="191.1,320.8 181.7,291.7 206.4,273.8 231.1,291.7 221.7,320.8" fill="#0f172a"/>
+  <polygon points="158.4,220.2 183.1,202.2 207.9,220.2 198.4,249.3 167.8,249.3" fill="#0f172a"/>
+  <circle cx="244" cy="248" r="118" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <path d="M348 372 L388 332 L408 352 L446 306" fill="none" stroke="#22c55e" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="446,306 412,304 418,340" fill="#22c55e"/>
 </svg>
