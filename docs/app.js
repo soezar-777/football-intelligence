@@ -111,7 +111,13 @@
     return name;
   }
 
+  /* Accent-insensitive matching so "almeria" finds "Almería" etc. */
+  function normStr(s) {
+    return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
   function teamMatch(p, q) {
+    q = normStr(q);
     var names = [
       ((p.home_team && p.home_team.name) || ""),
       ((p.away_team && p.away_team.name) || "")
@@ -121,7 +127,7 @@
       names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
     }
     for (var i = 0; i < names.length; i++) {
-      if (names[i] && names[i].toLowerCase().indexOf(q) !== -1) return true;
+      if (names[i] && normStr(names[i]).indexOf(q) !== -1) return true;
     }
     return false;
   }
@@ -356,12 +362,13 @@
   }
 
   function verifMatch(g, q) {
+    q = normStr(q);
     var names = [(g.home_team || ""), (g.away_team || "")];
     if (state.teamsMy) {
       names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
     }
     for (var i = 0; i < names.length; i++) {
-      if (names[i] && names[i].toLowerCase().indexOf(q) !== -1) return true;
+      if (names[i] && normStr(names[i]).indexOf(q) !== -1) return true;
     }
     return false;
   }

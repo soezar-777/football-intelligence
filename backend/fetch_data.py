@@ -21,7 +21,7 @@ from datetime import date, timedelta
 import requests
 
 import config
-import fetch_apisports
+import fetch_espn
 import fetch_openliga
 
 SESSION = requests.Session()
@@ -30,9 +30,11 @@ _last_call = 0.0
 # Competitions fetched from OpenLigaDB (free, keyless) instead of
 # football-data.org, which does not include them on the free tier.
 OPENLIGA_CODES = {"BL2"}
-# Competitions fetched from API-Football (api-sports.io, free 100 req/day).
-# Skipped gracefully when no API key is configured.
-APISPORTS_CODES = {"SDV"}
+# Segunda Division: ESPN public API (fixtures) + football-data.co.uk CSV
+# (results). API-Football's free tier is season-capped (2022-2024), so it
+# cannot serve the current season; fetch_apisports stays in the repo for
+# potential future use.
+ESPN_CODES = {"SDV"}
 
 
 def _polite_wait() -> None:
@@ -151,20 +153,14 @@ def main(argv: list[str] | None = None) -> int:
                       f"[openliga]", flush=True)
                 ok += 1
                 continue
-            if code in APISPORTS_CODES:
-                api_key = fetch_apisports.load_api_key()
-                if not api_key:
-                    print(f"[fetch] {code}: no API-Football key configured, "
-                          f"skipping", flush=True)
-                    ok += 1
-                    continue
-                matches = fetch_apisports.fetch_sdv_matches(api_key)
+            if code in ESPN_CODES:
+                matches = fetch_espn.fetch_sdv_matches()
                 n = len(matches.get("matches", []))
                 finished = sum(1 for m in matches.get("matches", [])
                                if m.get("status") == "FINISHED")
                 save_json(f"matches_{code}.json", matches)
                 print(f"[fetch] {code}: {n} matches ({finished} finished) "
-                      f"[apisports]", flush=True)
+                      f"[espn+csv]", flush=True)
                 ok += 1
                 continue
             matches = fetch_matches(code, date_from, date_to)
