@@ -14,14 +14,11 @@ def _write(path: Path, obj: dict) -> None:
     path.write_text(json.dumps(obj), encoding="utf-8")
 
 
-def test_verify_grades_synthetic_fixture(tmp_path, monkeypatch):
-    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
-    monkeypatch.setattr(config, "COMPETITIONS", ["PL"])
-
-    _write(tmp_path / "predictions.json", {
-        "model_version": "poisson-v1",
-        "predictions": [{
-            "fixture_id": 9001,
+def _history(fid: int) -> dict:
+    """prediction_history.json shape: fixture_id -> prediction."""
+    return {
+        str(fid): {
+            "fixture_id": fid,
             "competition": "PL",
             "home_team": {"id": 1, "name": "Home FC"},
             "away_team": {"id": 2, "name": "Away FC"},
@@ -34,8 +31,15 @@ def test_verify_grades_synthetic_fixture(tmp_path, monkeypatch):
                 "ah": {"line": "-1.5", "side": "home_cover", "prob": 0.57},
                 "correct_score": {"selection": "2-1", "prob": 0.13},
             },
-        }],
-    })
+        },
+    }
+
+
+def test_verify_grades_synthetic_fixture(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(config, "COMPETITIONS", ["PL"])
+
+    _write(tmp_path / "prediction_history.json", _history(9001))
     _write(tmp_path / "matches_PL.json", {
         "matches": [{
             "id": 9001,
@@ -61,24 +65,16 @@ def test_verify_grades_synthetic_fixture(tmp_path, monkeypatch):
 def test_verify_push_is_void(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "DATA_DIR", tmp_path)
     monkeypatch.setattr(config, "COMPETITIONS", ["PL"])
-    _write(tmp_path / "predictions.json", {
-        "model_version": "poisson-v1",
-        "predictions": [{
-            "fixture_id": 9002,
-            "competition": "PL",
-            "home_team": {"id": 1, "name": "Home FC"},
-            "away_team": {"id": 2, "name": "Away FC"},
-            "kickoff": "2026-10-05T14:00:00Z",
-            "markets": {"1x2": {"home": 0.5, "draw": 0.3, "away": 0.2}},
-            "picks": {
-                "1x2": None,
-                "ou25": None,
-                "btts": None,
-                "ah": {"line": "-1.0", "side": "home_cover", "prob": 0.6},
-                "correct_score": None,
-            },
-        }],
-    })
+
+    hist = _history(9002)
+    hist["9002"]["picks"] = {
+        "1x2": None,
+        "ou25": None,
+        "btts": None,
+        "ah": {"line": "-1.0", "side": "home_cover", "prob": 0.6},
+        "correct_score": None,
+    }
+    _write(tmp_path / "prediction_history.json", hist)
     _write(tmp_path / "matches_PL.json", {
         "matches": [{
             "id": 9002,
@@ -90,3 +86,27 @@ def test_verify_push_is_void(tmp_path, monkeypatch):
     g = out["matches"][0]["grades"]
     assert g["ah"]["hit"] is None  # push -> void, excluded from hit-rate
     assert out["summary"]["ah"]["graded"] == 0
+
+
+def test_verify_uses_history_not_overwritten_predictions(tmp_path, monkeypatch):
+    """A finished fixture dropped from the fresh predictions.json must still
+    be graded via the append-only history."""
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(config, "COMPETITIONS", ["PL"])
+
+    _write(tmp_path / "prediction_history.json", _history(9003))
+    # fresh predictions.json no longer contains the finished fixture
+    _write(tmp_path / "predictions.json", {
+        "model_version": "poisson-v1",
+        "predictions": [],
+    })
+    _write(tmp_path / "matches_PL.json", {
+        "matches": [{
+            "id": 9003,
+            "status": "FINISHED",
+            "score": {"fullTime": {"home": 1, "away": 0}},
+        }],
+    })
+    out = verify.verify_all()
+    assert out["graded_count"] == 1
+    assert out["matches"][0]["actual"] == "1-0"

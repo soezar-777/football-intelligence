@@ -162,6 +162,39 @@ def main(argv: list[str] | None = None) -> int:
         spath.write_text(json.dumps(sub, ensure_ascii=False, separators=(",", ":")) + "\n",
                          encoding="utf-8")
     print(f"[predict] wrote {len(by_comp)} per-competition files", flush=True)
+
+    # Append-only prediction history: verify.py grades predictions against
+    # results that only arrive later, but each run overwrites predictions.json
+    # with upcoming fixtures only -- without history, finished matches could
+    # never be graded. Keyed by fixture_id; entries pruned after 90 days.
+    hist_path = config.DATA_DIR / "prediction_history.json"
+    history = {}
+    if hist_path.exists():
+        try:
+            history = json.loads(hist_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            history = {}
+    added = 0
+    for p in out["predictions"]:
+        fid = str(p.get("fixture_id"))
+        if fid and fid != "None":
+            history[fid] = p
+            added += 1
+    # prune entries older than 90 days by kickoff
+    cutoff = datetime.now(timezone.utc).timestamp() - 90 * 86400
+    pruned = 0
+    for fid in list(history.keys()):
+        try:
+            ko = datetime.fromisoformat(history[fid].get("kickoff", ""))
+            if ko.timestamp() < cutoff:
+                del history[fid]
+                pruned += 1
+        except (ValueError, TypeError):
+            pass
+    hist_path.write_text(json.dumps(history, ensure_ascii=False) + "\n",
+                         encoding="utf-8")
+    print(f"[predict] history: +{added} updated, {pruned} pruned, "
+          f"{len(history)} total", flush=True)
     return 0
 
 

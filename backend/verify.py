@@ -69,13 +69,22 @@ def _grade_ah(pick: dict | None, hg: int, ag: int) -> dict:
 
 
 def verify_all() -> dict:
-    pred_path = config.DATA_DIR / "predictions.json"
-    if not pred_path.exists():
-        print("[verify] no predictions.json yet; nothing to grade", flush=True)
+    hist_path = config.DATA_DIR / "prediction_history.json"
+    if not hist_path.exists():
+        print("[verify] no prediction_history.json yet; nothing to grade",
+              flush=True)
         return {"generated_at": datetime.now(timezone.utc).isoformat(),
                 "graded_count": 0, "matches": [], "summary": {}}
 
-    predictions = json.loads(pred_path.read_text(encoding="utf-8"))["predictions"]
+    try:
+        history = json.loads(hist_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        history = {}
+    # history is fixture_id -> prediction; tolerate a legacy list shape
+    if isinstance(history, list):
+        history = {str(p.get("fixture_id")): p for p in history
+                   if p.get("fixture_id") is not None}
+    predictions = list(history.values())
 
     # fixture_id -> (home goals, away goals) for every FINISHED match we know
     results: dict[int, tuple[int, int]] = {}

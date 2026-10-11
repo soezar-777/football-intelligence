@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <title>FOOTBALL INTELLIGENCE</title>
-<link rel="stylesheet" href="style.css?v=20261010e">
+<link rel="stylesheet" href="style.css?v=20261011a">
 </head>
 <body>
 <header class="app-header">
@@ -37,6 +44,13 @@
   <span id="footer-meta"></span>
 </footer>
 
-<script src="app.js?v=20261010e"></script>
+<script src="app.js?v=20261011a"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js").catch(function () {});
+  });
+}
+</script>
 </body>
 </html>

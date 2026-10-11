@@ -39,13 +39,12 @@ fi
 # NOTE: pushing is done by the calling agent via direct tool calls (the
 # GitHub push tooling rejects oversized single requests and nested
 # subprocess calls wait on interactive approval). Print the manifest for it.
+# DO NOT write $STATE here -- the caller moves $STATE.new into place only
+# after every push succeeds, so a failed/skipped push is retried next run.
 echo "[sync] changes detected. Files ready to push:"
 for f in $PUBLISH_FILES; do
   echo "  $f ($(wc -c < "$f") bytes)"
 done
 echo "$NEWSHA" > "$STATE.new"
-echo "[sync] new state sha: $NEWSHA (commit it after a successful push)"
-echo "[sync] done (push pending)."
-
-echo "$NEWSHA" > "$STATE"
-echo "[sync] done."
+echo "[sync] new state sha: $NEWSHA"
+echo "[sync] done (push pending; caller must: mv $STATE.new $STATE after pushing)."
