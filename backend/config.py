@@ -27,6 +27,7 @@ COMPETITIONS = [
     "CL",   # UEFA Champions League
     "ELC",  # Championship (England)
     "BSA",  # Campeonato Brasileiro Serie A (Brazil)
+    "BL2",  # 2. Bundesliga (Germany) -- via OpenLigaDB (free, keyless)
 ]
 
 # -------------------------------------------------------------- Paths ----
