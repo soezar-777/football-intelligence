@@ -1,7 +1,7 @@
 /* FOOTBALL INTELLIGENCE service worker: app shell cached for installability
    and offline opens; data JSONs are always network-first so predictions
    stay fresh. */
-var SHELL_CACHE = "fi-shell-v1";
+var SHELL_CACHE = "fi-shell-v2";
 var DATA_CACHE = "fi-data-v1";
 var SHELL = [
   "./",
