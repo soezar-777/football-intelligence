@@ -8,6 +8,7 @@
     t: {},
     predictions: null,
     search: "",
+    vsearch: "",
     teamsMy: null,
     verification: null,
     performance: null,
@@ -308,7 +309,77 @@
     });
     html += "</div></div>";
 
-    d.matches.slice().reverse().forEach(function (g) {
+    html += '<div class="search-wrap">' +
+      '<input id="verif-search" type="search" autocomplete="off" placeholder="' +
+        esc(t.search_placeholder || "") + '" value="' + esc(state.vsearch || "") + '">' +
+      (state.vsearch ? '<button id="vsearch-clear" aria-label="clear">\u2715</button>' : "") +
+      "</div>" +
+      '<div id="verif-list"></div>';
+    el.innerHTML = html;
+
+    var input = $("verif-search");
+    var vTimer = null;
+    var syncClearBtn = function () {
+      var btn = $("vsearch-clear");
+      if (input.value && !btn) {
+        var b = document.createElement("button");
+        b.id = "vsearch-clear";
+        b.setAttribute("aria-label", "clear");
+        b.textContent = "\u2715";
+        b.addEventListener("click", clearVSearch);
+        input.parentNode.appendChild(b);
+      } else if (!input.value && btn) {
+        btn.remove();
+      }
+    };
+    input.addEventListener("input", function () {
+      state.vsearch = input.value;
+      syncClearBtn();
+      if (vTimer) clearTimeout(vTimer);
+      vTimer = setTimeout(function () {
+        vTimer = null;
+        if (state.vsearch === input.value) renderVerificationList();
+      }, 220);
+    });
+    var cb = $("vsearch-clear");
+    if (cb) cb.addEventListener("click", clearVSearch);
+    renderVerificationList();
+  }
+
+  function clearVSearch() {
+    state.vsearch = "";
+    var input = $("verif-search");
+    if (input) { input.value = ""; input.focus(); }
+    var btn = $("vsearch-clear");
+    if (btn) btn.remove();
+    renderVerificationList();
+  }
+
+  function verifMatch(g, q) {
+    var names = [(g.home_team || ""), (g.away_team || "")];
+    if (state.teamsMy) {
+      names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
+    }
+    for (var i = 0; i < names.length; i++) {
+      if (names[i] && names[i].toLowerCase().indexOf(q) !== -1) return true;
+    }
+    return false;
+  }
+
+  function renderVerificationList() {
+    var t = state.t, d = state.verification;
+    var holder = $("verif-list");
+    if (!holder || !d) return;
+    var q = (state.vsearch || "").trim().toLowerCase();
+    var list = d.matches.slice().reverse();
+    if (q) {
+      list = list.filter(function (g) { return verifMatch(g, q); });
+    }
+    var html = "";
+    if (!list.length) {
+      html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+    }
+    list.forEach(function (g) {
       html += '<div class="card">';
       html += '<div class="card-head"><span class="comp">' + esc(g.competition) +
         '</span><span class="actual-score">' + esc(g.actual) + "</span></div>";
@@ -321,7 +392,7 @@
       });
       html += "</div></div>";
     });
-    el.innerHTML = html;
+    holder.innerHTML = html;
   }
 
   /* ------------------------------------------------ performance tab */
