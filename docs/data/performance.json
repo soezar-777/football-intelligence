@@ -1,61 +1,305 @@
 {
-  "generated_at": "2026-10-11T00:22:26.685533+00:00",
+  "generated_at": "2026-10-11T02:03:35.294479+00:00",
   "model_version": "poisson-v1",
-  "graded_total": 0,
+  "graded_total": 41,
   "overall": {
     "1x2": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 31,
+      "hit": 14,
+      "hit_rate": 0.4516
     },
     "ou25": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 37,
+      "hit": 17,
+      "hit_rate": 0.4595
     },
     "btts": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 31,
+      "hit": 15,
+      "hit_rate": 0.4839
     },
     "ah": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 37,
+      "hit": 30,
+      "hit_rate": 0.8108
     },
     "correct_score": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 14,
+      "hit": 1,
+      "hit_rate": 0.0714
     }
   },
-  "by_competition": {},
+  "by_competition": {
+    "BL1": {
+      "1x2": {
+        "graded": 5,
+        "hit": 1,
+        "hit_rate": 0.2
+      },
+      "ou25": {
+        "graded": 6,
+        "hit": 4,
+        "hit_rate": 0.6667
+      },
+      "btts": {
+        "graded": 6,
+        "hit": 3,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 5,
+        "hit": 4,
+        "hit_rate": 0.8
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "BSA": {
+      "1x2": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      },
+      "ou25": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      },
+      "btts": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      },
+      "ah": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "DED": {
+      "1x2": {
+        "graded": 2,
+        "hit": 0,
+        "hit_rate": 0.0
+      },
+      "ou25": {
+        "graded": 4,
+        "hit": 1,
+        "hit_rate": 0.25
+      },
+      "btts": {
+        "graded": 4,
+        "hit": 3,
+        "hit_rate": 0.75
+      },
+      "ah": {
+        "graded": 4,
+        "hit": 4,
+        "hit_rate": 1.0
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "ELC": {
+      "1x2": {
+        "graded": 8,
+        "hit": 4,
+        "hit_rate": 0.5
+      },
+      "ou25": {
+        "graded": 8,
+        "hit": 4,
+        "hit_rate": 0.5
+      },
+      "btts": {
+        "graded": 8,
+        "hit": 3,
+        "hit_rate": 0.375
+      },
+      "ah": {
+        "graded": 10,
+        "hit": 9,
+        "hit_rate": 0.9
+      },
+      "correct_score": {
+        "graded": 5,
+        "hit": 1,
+        "hit_rate": 0.2
+      }
+    },
+    "FL1": {
+      "1x2": {
+        "graded": 3,
+        "hit": 1,
+        "hit_rate": 0.3333
+      },
+      "ou25": {
+        "graded": 5,
+        "hit": 2,
+        "hit_rate": 0.4
+      },
+      "btts": {
+        "graded": 4,
+        "hit": 2,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 5,
+        "hit": 3,
+        "hit_rate": 0.6
+      },
+      "correct_score": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "PD": {
+      "1x2": {
+        "graded": 3,
+        "hit": 2,
+        "hit_rate": 0.6667
+      },
+      "ou25": {
+        "graded": 3,
+        "hit": 2,
+        "hit_rate": 0.6667
+      },
+      "btts": {
+        "graded": 2,
+        "hit": 1,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 3,
+        "hit": 3,
+        "hit_rate": 1.0
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "PL": {
+      "1x2": {
+        "graded": 4,
+        "hit": 3,
+        "hit_rate": 0.75
+      },
+      "ou25": {
+        "graded": 4,
+        "hit": 1,
+        "hit_rate": 0.25
+      },
+      "btts": {
+        "graded": 3,
+        "hit": 1,
+        "hit_rate": 0.3333
+      },
+      "ah": {
+        "graded": 5,
+        "hit": 4,
+        "hit_rate": 0.8
+      },
+      "correct_score": {
+        "graded": 4,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "PPL": {
+      "1x2": {
+        "graded": 2,
+        "hit": 2,
+        "hit_rate": 1.0
+      },
+      "ou25": {
+        "graded": 3,
+        "hit": 1,
+        "hit_rate": 0.3333
+      },
+      "btts": {
+        "graded": 2,
+        "hit": 1,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 1,
+        "hit": 1,
+        "hit_rate": 1.0
+      },
+      "correct_score": {
+        "graded": 3,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "SA": {
+      "1x2": {
+        "graded": 3,
+        "hit": 1,
+        "hit_rate": 0.3333
+      },
+      "ou25": {
+        "graded": 3,
+        "hit": 2,
+        "hit_rate": 0.6667
+      },
+      "btts": {
+        "graded": 2,
+        "hit": 1,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 3,
+        "hit": 2,
+        "hit_rate": 0.6667
+      },
+      "correct_score": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    }
+  },
   "rolling_last_30": {
     "1x2": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 23,
+      "hit": 11,
+      "hit_rate": 0.4783
     },
     "ou25": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 26,
+      "hit": 11,
+      "hit_rate": 0.4231
     },
     "btts": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 21,
+      "hit": 10,
+      "hit_rate": 0.4762
     },
     "ah": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 27,
+      "hit": 21,
+      "hit_rate": 0.7778
     },
     "correct_score": {
-      "graded": 0,
-      "hit": 0,
-      "hit_rate": null
+      "graded": 10,
+      "hit": 1,
+      "hit_rate": 0.1
     }
   },
-  "brier_1x2": null
+  "brier_1x2": 0.6578
 }
