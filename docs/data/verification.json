@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-11T09:55:46.494672+00:00",
+  "generated_at": "2026-10-11T12:23:36.505166+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 41,
+  "graded_count": 43,
   "matches": [
     {
       "fixture_id": 560593,
@@ -1437,33 +1437,103 @@
           "hit": null
         }
       }
+    },
+    {
+      "fixture_id": 555038,
+      "competition": "BSA",
+      "home_team": "São Paulo FC",
+      "away_team": "EC Vitória",
+      "kickoff": "2026-10-11T00:00:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.5593,
+        "draw": 0.2739,
+        "away": 0.1668
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558876,
+      "competition": "DED",
+      "home_team": "FC Utrecht",
+      "away_team": "Willem II Tilburg",
+      "kickoff": "2026-10-11T10:15:00Z",
+      "actual": "3-1",
+      "probs_1x2": {
+        "home": 0.4354,
+        "draw": 0.1858,
+        "away": 0.3788
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 31,
-      "hit": 14,
-      "hit_rate": 0.4516
+      "graded": 32,
+      "hit": 15,
+      "hit_rate": 0.4688
     },
     "ou25": {
-      "graded": 37,
-      "hit": 17,
-      "hit_rate": 0.4595
+      "graded": 39,
+      "hit": 18,
+      "hit_rate": 0.4615
     },
     "btts": {
-      "graded": 31,
-      "hit": 15,
-      "hit_rate": 0.4839
+      "graded": 33,
+      "hit": 16,
+      "hit_rate": 0.4848
     },
     "ah": {
-      "graded": 37,
-      "hit": 30,
-      "hit_rate": 0.8108
+      "graded": 39,
+      "hit": 31,
+      "hit_rate": 0.7949
     },
     "correct_score": {
-      "graded": 14,
+      "graded": 15,
       "hit": 1,
-      "hit_rate": 0.0714
+      "hit_rate": 0.0667
     }
   }
 }
