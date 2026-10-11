@@ -21,6 +21,7 @@ from datetime import date, timedelta
 import requests
 
 import config
+import fetch_apisports
 import fetch_openliga
 
 SESSION = requests.Session()
@@ -29,6 +30,9 @@ _last_call = 0.0
 # Competitions fetched from OpenLigaDB (free, keyless) instead of
 # football-data.org, which does not include them on the free tier.
 OPENLIGA_CODES = {"BL2"}
+# Competitions fetched from API-Football (api-sports.io, free 100 req/day).
+# Skipped gracefully when no API key is configured.
+APISPORTS_CODES = {"SDV"}
 
 
 def _polite_wait() -> None:
@@ -118,11 +122,15 @@ def main(argv: list[str] | None = None) -> int:
     except RuntimeError as exc:
         print(f"[fetch] ERROR: {exc}", flush=True)
         return 1
-    # football-data.org doesn't list OpenLigaDB-sourced competitions
+    # football-data.org doesn't list OpenLigaDB/API-Football-sourced competitions
     if "BL2" in codes and not any(c.get("code") == "BL2"
                                   for c in comps["competitions"]):
         comps["competitions"].append({"code": "BL2", "name": "2. Bundesliga",
                                       "source": "openligadb"})
+    if "SDV" in codes and not any(c.get("code") == "SDV"
+                                  for c in comps["competitions"]):
+        comps["competitions"].append({"code": "SDV", "name": "Segunda Division",
+                                      "source": "api-football"})
     save_json("competitions.json", comps)
     print(f"[fetch] competitions.json: {len(comps['competitions'])} competitions",
           flush=True)
@@ -141,6 +149,22 @@ def main(argv: list[str] | None = None) -> int:
                 save_json(f"matches_{code}.json", matches)
                 print(f"[fetch] {code}: {n} matches ({finished} finished) "
                       f"[openliga]", flush=True)
+                ok += 1
+                continue
+            if code in APISPORTS_CODES:
+                api_key = fetch_apisports.load_api_key()
+                if not api_key:
+                    print(f"[fetch] {code}: no API-Football key configured, "
+                          f"skipping", flush=True)
+                    ok += 1
+                    continue
+                matches = fetch_apisports.fetch_sdv_matches(api_key)
+                n = len(matches.get("matches", []))
+                finished = sum(1 for m in matches.get("matches", [])
+                               if m.get("status") == "FINISHED")
+                save_json(f"matches_{code}.json", matches)
+                print(f"[fetch] {code}: {n} matches ({finished} finished) "
+                      f"[apisports]", flush=True)
                 ok += 1
                 continue
             matches = fetch_matches(code, date_from, date_to)

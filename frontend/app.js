@@ -16,7 +16,7 @@
 
   /* Predictions are published per competition (predictions_<CODE>.json) so each
      file stays small; the loader below merges them into one list. */
-  var COMPETITIONS = ["PL", "BL1", "SA", "PD", "FL1", "DED", "PPL", "CL", "ELC", "BSA", "BL2"];
+  var COMPETITIONS = ["PL", "BL1", "SA", "PD", "FL1", "DED", "PPL", "CL", "ELC", "BSA", "BL2", "SDV"];
 
   var DATA_PATHS = {
     predictionFiles: COMPETITIONS.map(function (c) { return "data/predictions_" + c + ".json"; }),

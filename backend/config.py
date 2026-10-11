@@ -28,6 +28,7 @@ COMPETITIONS = [
     "ELC",  # Championship (England)
     "BSA",  # Campeonato Brasileiro Serie A (Brazil)
     "BL2",  # 2. Bundesliga (Germany) -- via OpenLigaDB (free, keyless)
+    "SDV",  # Segunda Division (Spain) -- via API-Football (free 100 req/day)
 ]
 
 # -------------------------------------------------------------- Paths ----
