@@ -149,3 +149,25 @@ table.perf th { color: var(--muted); font-weight: 600; font-size: 12px; }
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
 }
+
+/* League group headers (browse mode) */
+.league-header {
+  display: flex; align-items: center; gap: 10px;
+  background: #b91c1c; color: #fff;
+  font-weight: 700; font-size: 15px;
+  padding: 10px 14px; margin: 14px 0 8px;
+  border-radius: 10px; cursor: pointer; user-select: none;
+}
+.league-header .league-count {
+  background: rgba(255,255,255,.22);
+  font-size: 12px; font-weight: 700;
+  padding: 2px 10px; border-radius: 999px;
+}
+.league-header .league-arrow { margin-left: auto; font-size: 12px; opacity: .85; }
+
+/* Tappable team names inside cards */
+.team-link {
+  cursor: pointer; color: inherit;
+  border-bottom: 1px dotted var(--muted);
+}
+.team-link:active { opacity: .6; }

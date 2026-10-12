@@ -12,6 +12,7 @@
     teamsMy: null,
     verification: null,
     performance: null,
+    collapsedLeagues: {},
   };
 
   /* Predictions are published per competition (predictions_<CODE>.json) so each
@@ -133,6 +134,32 @@
     return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
+  function leagueDisplayName(code) {
+    var cn = COMPETITION_NAMES[code];
+    if (!cn) return code;
+    return state.lang === "my" ? cn.my : cn.en;
+  }
+
+  /* Tap a team name -> filter the list to that team */
+  function filterByTeam(name) {
+    state.search = name;
+    var input = $("team-search");
+    if (input) {
+      input.value = name;
+      if (!$("search-clear")) {
+        var b = document.createElement("button");
+        b.id = "search-clear";
+        b.setAttribute("aria-label", "clear");
+        b.textContent = "✕";
+        b.addEventListener("click", clearSearch);
+        input.parentNode.appendChild(b);
+      }
+    }
+    renderPredictionList();
+    var list = $("pred-list");
+    if (list && list.scrollIntoView) list.scrollIntoView();
+  }
+
   function teamMatch(p, q) {
     q = normStr(q);
     var names = [
@@ -181,8 +208,10 @@
     html += '<div class="card">';
     html += '<div class="card-head"><span class="comp">' + esc(p.competition) +
       '</span><span class="kickoff">' + fmtKickoff(p.kickoff) + "</span></div>";
-    html += '<div class="teams">' + esc(teamName(p.home_team.name)) + " vs " +
-      esc(teamName(p.away_team.name)) + liveBadge + "</div>";
+    html += '<div class="teams"><span class="team-link" data-team="' +
+      esc(p.home_team.name) + '">' + esc(teamName(p.home_team.name)) + "</span> vs " +
+      '<span class="team-link" data-team="' + esc(p.away_team.name) + '">' +
+      esc(teamName(p.away_team.name)) + "</span>" + liveBadge + "</div>";
     html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
       p.xg.away + "</div>";
 
@@ -251,8 +280,29 @@
       fmtKickoff(d.generated_at) + " \u00b7 " + list.length + " / " + d.count + " \u26bd</div>";
     if (!list.length) {
       html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+    } else if (state.search) {
+      // flat list while searching
+      list.forEach(function (p) { html += predictionCardHTML(p); });
+    } else {
+      // browse mode: group by league with collapsible headers
+      var groups = {}, order = [];
+      list.forEach(function (p) {
+        var c = p.competition || "?";
+        if (!groups[c]) { groups[c] = []; order.push(c); }
+        groups[c].push(p);
+      });
+      order.forEach(function (c) {
+        var collapsed = !!state.collapsedLeagues[c];
+        html += '<div class="league-header' + (collapsed ? " collapsed" : "") +
+          '" data-league="' + esc(c) + '">' +
+          '<span class="league-name">' + esc(leagueDisplayName(c)) + "</span>" +
+          '<span class="league-count">' + groups[c].length + "</span>" +
+          '<span class="league-arrow">' + (collapsed ? "▶" : "▼") + "</span></div>";
+        if (!collapsed) {
+          groups[c].forEach(function (p) { html += predictionCardHTML(p); });
+        }
+      });
     }
-    list.forEach(function (p) { html += predictionCardHTML(p); });
     holder.innerHTML = html;
   }
 
@@ -307,6 +357,27 @@
     });
     var cb = $("search-clear");
     if (cb) cb.addEventListener("click", clearSearch);
+    // delegated taps: league headers collapse/expand, team names filter
+    // (bound once per container to avoid stacking on re-render)
+    if (!el.dataset.bound) {
+      el.dataset.bound = "1";
+      el.addEventListener("click", function (ev) {
+        var t = ev.target;
+        while (t && t !== el) {
+          if (t.classList && t.classList.contains("team-link") && t.dataset.team) {
+            filterByTeam(t.dataset.team);
+            return;
+          }
+          if (t.classList && t.classList.contains("league-header") && t.dataset.league) {
+            var c = t.dataset.league;
+            state.collapsedLeagues[c] = !state.collapsedLeagues[c];
+            renderPredictionList();
+            return;
+          }
+          t = t.parentNode;
+        }
+      });
+    }
     renderPredictionList();
   }
 
