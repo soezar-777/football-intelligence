@@ -18,6 +18,23 @@
      file stays small; the loader below merges them into one list. */
   var COMPETITIONS = ["PL", "BL1", "SA", "PD", "FL1", "DED", "PPL", "CL", "ELC", "BSA", "BL2", "SDV", "ALV"];
 
+  /* League names for search (code + English + Burmese) */
+  var COMPETITION_NAMES = {
+    "PL":  { en: "Premier League",       my: "ပရီးမီးယားလိဂ်" },
+    "BL1": { en: "Bundesliga",           my: "ဘွန်ဒက်စ်လီဂါ" },
+    "SA":  { en: "Serie A",              my: "စီးရီးအေ" },
+    "PD":  { en: "La Liga",              my: "လာလီဂါ" },
+    "FL1": { en: "Ligue 1",              my: "လီဂူး ၁" },
+    "DED": { en: "Eredivisie",           my: "အီရီဒီဗီစီ" },
+    "PPL": { en: "Primeira Liga",        my: "ပရိုင်းမီရာလိဂ်" },
+    "CL":  { en: "Champions League",     my: "ချန်ပီယံလိဂ်" },
+    "ELC": { en: "Championship",         my: "ချန်ပီယံရှစ်" },
+    "BSA": { en: "Brasileirao Serie A",  my: "ဘရာဇီးလ်စီးရီးအေ" },
+    "BL2": { en: "2. Bundesliga",        my: "ဘွန်ဒက်စ်လီဂါ ၂" },
+    "SDV": { en: "Segunda Division",     my: "စီကွန်ဒါ" },
+    "ALV": { en: "Allsvenskan",          my: "ဆွီဒင်လိဂ်" }
+  };
+
   var DATA_PATHS = {
     predictionFiles: COMPETITIONS.map(function (c) { return "data/predictions_" + c + ".json"; }),
     predictionsSample: ["../data/samples/predictions.json"],
@@ -126,6 +143,10 @@
     if (state.teamsMy) {
       names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
     }
+    // also match league: code, English name, Burmese name
+    var cn = COMPETITION_NAMES[p.competition];
+    if (cn) names.push(p.competition, cn.en, cn.my);
+    else if (p.competition) names.push(p.competition);
     for (var i = 0; i < names.length; i++) {
       if (names[i] && normStr(names[i]).indexOf(q) !== -1) return true;
     }
@@ -367,6 +388,9 @@
     if (state.teamsMy) {
       names.push(state.teamsMy[names[0]] || "", state.teamsMy[names[1]] || "");
     }
+    var cn = COMPETITION_NAMES[g.competition];
+    if (cn) names.push(g.competition, cn.en, cn.my);
+    else if (g.competition) names.push(g.competition);
     for (var i = 0; i < names.length; i++) {
       if (names[i] && normStr(names[i]).indexOf(q) !== -1) return true;
     }
