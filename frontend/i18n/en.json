@@ -31,5 +31,8 @@
   "yes": "Yes",
   "search_placeholder": "Search team / league…",
   "no_result": "No matches found",
-  "likely_live": "Probably playing"
+  "likely_live": "Probably playing",
+  "today": "Today",
+  "back": "Back",
+  "matches": "matches"
 }

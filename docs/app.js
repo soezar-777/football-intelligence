@@ -12,7 +12,7 @@
     teamsMy: null,
     verification: null,
     performance: null,
-    collapsedLeagues: {},
+    drillLeague: null,
   };
 
   /* Predictions are published per competition (predictions_<CODE>.json) so each
@@ -138,6 +138,16 @@
     var cn = COMPETITION_NAMES[code];
     if (!cn) return code;
     return state.lang === "my" ? cn.my : cn.en;
+  }
+
+  /* "Today" follows the digest convention: UTC calendar date of kickoff.
+     (Evening matches in Myanmar are still grouped under the same UTC day,
+     e.g. 01:30 MMT Oct 13 counts as Oct 12's matches.) */
+  function todayKeyUTC() {
+    return new Date().toISOString().slice(0, 10);
+  }
+  function kickoffDayUTC(iso) {
+    return (iso || "").slice(0, 10);
   }
 
   /* Tap a team name -> filter the list to that team */
@@ -275,32 +285,52 @@
     var t = state.t, d = state.predictions;
     var holder = $("pred-list");
     if (!holder || !d) return;
-    var list = filteredPredictions();
-    var html = '<div class="meta-line">' + esc(t.updated) + ": " +
-      fmtKickoff(d.generated_at) + " \u00b7 " + list.length + " / " + d.count + " \u26bd</div>";
-    if (!list.length) {
-      html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
-    } else if (state.search) {
-      // flat list while searching
+    var html = "";
+    if (state.search) {
+      // search mode: flat list across all predictions
+      var list = filteredPredictions();
+      html += '<div class="meta-line">' + esc(t.updated) + ": " +
+        fmtKickoff(d.generated_at) + " \u00b7 " + list.length + " / " + d.count + " \u26bd</div>";
+      if (!list.length) {
+        html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+      }
       list.forEach(function (p) { html += predictionCardHTML(p); });
+    } else if (state.drillLeague) {
+      // drill-down: this league's matches today, with back button
+      var tk = todayKeyUTC();
+      var dlist = d.predictions.filter(function (p) {
+        return p.competition === state.drillLeague && kickoffDayUTC(p.kickoff) === tk;
+      });
+      html += '<div class="drill-head"><span class="back-btn" data-back="1">\u2190 ' +
+        esc(t.back || "Back") + '</span><span class="drill-title">' +
+        esc(leagueDisplayName(state.drillLeague)) + " \u00b7 " + dlist.length +
+        " " + esc(t.matches || "") + "</span></div>";
+      if (!dlist.length) {
+        html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+      }
+      dlist.forEach(function (p) { html += predictionCardHTML(p); });
     } else {
-      // browse mode: group by league with collapsible headers
+      // home: only leagues playing today, grouped with headers
+      var tk2 = todayKeyUTC();
+      var today = d.predictions.filter(function (p) {
+        return kickoffDayUTC(p.kickoff) === tk2;
+      });
+      html += '<div class="meta-line">' + esc(t.today || "Today") + ": " +
+        today.length + " " + esc(t.matches || "") + " \u26bd</div>";
+      if (!today.length) {
+        html += '<div class="empty">' + esc(t.no_result || t.no_data) + "</div>";
+      }
       var groups = {}, order = [];
-      list.forEach(function (p) {
+      today.forEach(function (p) {
         var c = p.competition || "?";
         if (!groups[c]) { groups[c] = []; order.push(c); }
         groups[c].push(p);
       });
       order.forEach(function (c) {
-        var collapsed = !!state.collapsedLeagues[c];
-        html += '<div class="league-header' + (collapsed ? " collapsed" : "") +
-          '" data-league="' + esc(c) + '">' +
+        html += '<div class="league-header" data-league="' + esc(c) + '">' +
           '<span class="league-name">' + esc(leagueDisplayName(c)) + "</span>" +
           '<span class="league-count">' + groups[c].length + "</span>" +
-          '<span class="league-arrow">' + (collapsed ? "▶" : "▼") + "</span></div>";
-        if (!collapsed) {
-          groups[c].forEach(function (p) { html += predictionCardHTML(p); });
-        }
+          '<span class="league-arrow">\u203a</span></div>';
       });
     }
     holder.innerHTML = html;
@@ -357,7 +387,8 @@
     });
     var cb = $("search-clear");
     if (cb) cb.addEventListener("click", clearSearch);
-    // delegated taps: league headers collapse/expand, team names filter
+    // delegated taps: league headers drill in, back button goes home,
+    // team names filter
     // (bound once per container to avoid stacking on re-render)
     if (!el.dataset.bound) {
       el.dataset.bound = "1";
@@ -368,10 +399,15 @@
             filterByTeam(t.dataset.team);
             return;
           }
-          if (t.classList && t.classList.contains("league-header") && t.dataset.league) {
-            var c = t.dataset.league;
-            state.collapsedLeagues[c] = !state.collapsedLeagues[c];
+          if (t.classList && t.classList.contains("back-btn")) {
+            state.drillLeague = null;
             renderPredictionList();
+            return;
+          }
+          if (t.classList && t.classList.contains("league-header") && t.dataset.league) {
+            state.drillLeague = t.dataset.league;
+            renderPredictionList();
+            if (el.scrollIntoView) el.scrollIntoView();
             return;
           }
           t = t.parentNode;

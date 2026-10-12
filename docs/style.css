@@ -171,3 +171,17 @@ table.perf th { color: var(--muted); font-weight: 600; font-size: 12px; }
   border-bottom: 1px dotted var(--muted);
 }
 .team-link:active { opacity: .6; }
+
+/* Drill-down view: back button + league title */
+.drill-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 4px; margin: 6px 0 4px;
+}
+.back-btn {
+  cursor: pointer; font-weight: 700; font-size: 14px;
+  background: #1e293b; color: #fff;
+  padding: 8px 14px; border-radius: 999px; user-select: none;
+  white-space: nowrap;
+}
+.back-btn:active { opacity: .6; }
+.drill-title { font-weight: 700; font-size: 16px; }
