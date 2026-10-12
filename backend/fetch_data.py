@@ -21,6 +21,7 @@ from datetime import date, timedelta
 import requests
 
 import config
+import fetch_allsvenskan
 import fetch_espn
 import fetch_openliga
 
@@ -34,7 +35,8 @@ OPENLIGA_CODES = {"BL2"}
 # (results). API-Football's free tier is season-capped (2022-2024), so it
 # cannot serve the current season; fetch_apisports stays in the repo for
 # potential future use.
-ESPN_CODES = {"SDV"}
+# Allsvenskan: same pattern via fetch_allsvenskan (ESPN swe.1 + SWE.csv).
+ESPN_CODES = {"SDV", "ALV"}
 
 
 def _polite_wait() -> None:
@@ -133,6 +135,10 @@ def main(argv: list[str] | None = None) -> int:
                                   for c in comps["competitions"]):
         comps["competitions"].append({"code": "SDV", "name": "Segunda Division",
                                       "source": "api-football"})
+    if "ALV" in codes and not any(c.get("code") == "ALV"
+                                  for c in comps["competitions"]):
+        comps["competitions"].append({"code": "ALV", "name": "Allsvenskan",
+                                      "source": "espn"})
     save_json("competitions.json", comps)
     print(f"[fetch] competitions.json: {len(comps['competitions'])} competitions",
           flush=True)
@@ -154,7 +160,12 @@ def main(argv: list[str] | None = None) -> int:
                 ok += 1
                 continue
             if code in ESPN_CODES:
-                matches = fetch_espn.fetch_sdv_matches()
+                if code == "SDV":
+                    matches = fetch_espn.fetch_sdv_matches()
+                elif code == "ALV":
+                    matches = fetch_allsvenskan.fetch_alv_matches()
+                else:
+                    raise RuntimeError(f"[fetch] no ESPN handler for {code}")
                 n = len(matches.get("matches", []))
                 finished = sum(1 for m in matches.get("matches", [])
                                if m.get("status") == "FINISHED")
