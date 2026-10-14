@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-13T12:23:06.178144+00:00",
+  "generated_at": "2026-10-14T00:23:04.120666+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 83,
+  "graded_count": 91,
   "matches": [
     {
       "fixture_id": 560593,
@@ -2844,7 +2844,7 @@
       "home_team": "Chapecoense AF",
       "away_team": "CA Paranaense",
       "kickoff": "2026-10-12T22:30:00Z",
-      "actual": "1-3",
+      "actual": "1-4",
       "probs_1x2": {
         "home": 0.157,
         "draw": 0.1554,
@@ -2907,33 +2907,313 @@
           "hit": false
         }
       }
+    },
+    {
+      "fixture_id": 561869,
+      "competition": "ELC",
+      "home_team": "Wolverhampton Wanderers FC",
+      "away_team": "Bolton Wanderers FC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "1-3",
+      "probs_1x2": {
+        "home": 0.684,
+        "draw": 0.1618,
+        "away": 0.1542
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561870,
+      "competition": "ELC",
+      "home_team": "Wrexham AFC",
+      "away_team": "West Bromwich Albion FC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.3822,
+        "draw": 0.2899,
+        "away": 0.3279
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 561871,
+      "competition": "ELC",
+      "home_team": "Millwall FC",
+      "away_team": "Swansea City AFC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.3856,
+        "draw": 0.2214,
+        "away": 0.393
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561872,
+      "competition": "ELC",
+      "home_team": "Cardiff City FC",
+      "away_team": "Watford FC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "5-1",
+      "probs_1x2": {
+        "home": 0.5974,
+        "draw": 0.264,
+        "away": 0.1386
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 561873,
+      "competition": "ELC",
+      "home_team": "Burnley FC",
+      "away_team": "Charlton Athletic FC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "2-2",
+      "probs_1x2": {
+        "home": 0.5023,
+        "draw": 0.2349,
+        "away": 0.2628
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561874,
+      "competition": "ELC",
+      "home_team": "Bristol City FC",
+      "away_team": "Blackburn Rovers FC",
+      "kickoff": "2026-10-13T18:45:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.3267,
+        "draw": 0.3052,
+        "away": 0.3681
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": "no",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "0-1",
+          "hit": true
+        }
+      }
+    },
+    {
+      "fixture_id": 561875,
+      "competition": "ELC",
+      "home_team": "Birmingham City FC",
+      "away_team": "Preston North End FC",
+      "kickoff": "2026-10-13T19:00:00Z",
+      "actual": "4-0",
+      "probs_1x2": {
+        "home": 0.4777,
+        "draw": 0.2276,
+        "away": 0.2947
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561876,
+      "competition": "ELC",
+      "home_team": "Stoke City FC",
+      "away_team": "Middlesbrough FC",
+      "kickoff": "2026-10-13T19:00:00Z",
+      "actual": "2-3",
+      "probs_1x2": {
+        "home": 0.5413,
+        "draw": 0.2486,
+        "away": 0.2101
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 60,
-      "hit": 32,
-      "hit_rate": 0.5333
+      "graded": 65,
+      "hit": 34,
+      "hit_rate": 0.5231
     },
     "ou25": {
-      "graded": 71,
-      "hit": 39,
-      "hit_rate": 0.5493
+      "graded": 78,
+      "hit": 43,
+      "hit_rate": 0.5513
     },
     "btts": {
-      "graded": 59,
-      "hit": 33,
-      "hit_rate": 0.5593
+      "graded": 66,
+      "hit": 36,
+      "hit_rate": 0.5455
     },
     "ah": {
-      "graded": 77,
-      "hit": 59,
-      "hit_rate": 0.7662
+      "graded": 85,
+      "hit": 64,
+      "hit_rate": 0.7529
     },
     "correct_score": {
-      "graded": 33,
-      "hit": 3,
-      "hit_rate": 0.0909
+      "graded": 37,
+      "hit": 4,
+      "hit_rate": 0.1081
     }
   }
 }
