@@ -590,6 +590,7 @@
     $("tabbtn-predictions").textContent = t.tab_predictions || "";
     $("tabbtn-verification").textContent = t.tab_verification || "";
     $("tabbtn-performance").textContent = t.tab_performance || "";
+    var pb = $("tabbtn-pro"); if (pb) pb.textContent = t.tab_pro || "";
     $("lang-my").classList.toggle("active", state.lang === "my");
     $("lang-en").classList.toggle("active", state.lang === "en");
   }
