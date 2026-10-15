@@ -125,6 +125,8 @@
                 <label class="block text-xs text-slate-300 mb-1" data-i18n="api_key_label">Google AI Studio (Gemini) API Key</label>
                 <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-900 text-white rounded-lg p-2.5 text-xs border border-slate-700 focus:outline-none focus:border-amber-400 font-mono">
                 <p class="text-[10px] text-slate-400 mt-1" data-i18n="api_key_help">သင့် Key ကို ဖုန်းထဲတွင်သာ လုံခြုံစွာ သိမ်းဆည်းထားမည် ဖြစ်ပါသည်။</p>
+                <button onclick="testApiKey()" class="mt-2 w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 rounded-lg text-xs transition duration-200" data-i18n="test_btn">🔍 Key စမ်းသပ်မည်</button>
+                <p id="apiTestResult" class="text-[11px] text-center min-h-[16px] mt-1"></p>
             </div>
 
             <div class="flex gap-2 pt-2">
@@ -172,7 +174,13 @@
                 api_key_label: "Google AI Studio (Gemini) API Key",
                 api_key_help: "သင့် Key ကို ဖုန်းထဲတွင်သာ လုံခြုံစွာ သိမ်းဆည်းထားမည် ဖြစ်ပါသည်။",
                 save_btn: "သိမ်းဆည်းမည်",
-                close_btn: "ပိတ်မည်"
+                close_btn: "ပိတ်မည်",
+                test_btn: "🔍 Key စမ်းသပ်မည်",
+                testing_text: "စစ်ဆေးနေပါသည်...",
+                key_valid: "✅ Key အလုပ်လုပ်ပါသည်!",
+                key_invalid: "❌ Key မမှန်ပါ",
+                key_empty: "Key အရင်ထည့်ပါ",
+                key_network: "❌ ကွန်ယက်အမှား"
             },
             en: {
                 app_title: "Football Intelligence AI Pro",
@@ -206,7 +214,13 @@
                 api_key_label: "Google AI Studio (Gemini) API Key",
                 api_key_help: "Your key is stored safely only in your device local storage.",
                 save_btn: "Save Settings",
-                close_btn: "Close"
+                close_btn: "Close",
+                test_btn: "🔍 Test Key",
+                testing_text: "Testing...",
+                key_valid: "✅ Key is valid!",
+                key_invalid: "❌ Invalid key",
+                key_empty: "Enter a key first",
+                key_network: "❌ Network error"
             }
         };
 
@@ -430,6 +444,31 @@
                         <span class="text-emerald-400 font-semibold">နိုင်ခြေ 65%</span>
                     </div>
                 `;
+            }
+        }
+
+        async function testApiKey() {
+            const key = document.getElementById('geminiApiKeyInput').value.trim();
+            const resultEl = document.getElementById('apiTestResult');
+            const t = translations[currentLang];
+            const okCls = "text-[11px] text-center min-h-[16px] mt-1 text-emerald-400 font-bold";
+            const badCls = "text-[11px] text-center min-h-[16px] mt-1 text-red-400 font-bold";
+            if (!key) { resultEl.innerText = t.key_empty; resultEl.className = badCls; return; }
+            resultEl.innerText = t.testing_text; resultEl.className = "text-[11px] text-center min-h-[16px] mt-1 text-slate-400";
+            try {
+                const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models?key=" + encodeURIComponent(key));
+                const data = await res.json();
+                if (res.ok && data.models && data.models.length) {
+                    const hasFlash = data.models.some(m => (m.name || "").indexOf("gemini-2.5-flash") !== -1);
+                    resultEl.innerText = t.key_valid + (hasFlash ? " (2.5-flash ✓)" : "");
+                    resultEl.className = okCls;
+                } else {
+                    resultEl.innerText = t.key_invalid + (data.error && data.error.message ? ": " + data.error.message : "");
+                    resultEl.className = badCls;
+                }
+            } catch (e) {
+                resultEl.innerText = t.key_network;
+                resultEl.className = badCls;
             }
         }
 
