@@ -173,71 +173,62 @@
     </div>
 
     <script>
-        // Pre-loaded database from User's Fixture Sheet (14.10.2026)
+        // Pre-loaded database from User's Fixture Sheet (15.10.2026)
         const fixtureDatabase = {
-            "UEFA ချန်ပီယံလိဂ်": [
-                { home: "ဖီရင်စီ", away: "ကိုမို", time: "11:15", upper: "away", body: "1+90", goal: "3-60", hxg: 1.1, hxga: 1.5, axg: 1.7, axga: 1.1, turf: false, low: false },
-                { home: "LASK လင်ဇာ", away: "လီဗာပူး", time: "11:15", upper: "away", body: "1-90", goal: "3-50", hxg: 1.0, hxga: 1.8, axg: 2.3, axga: 0.9, turf: false, low: false },
-                { home: "ရိုးမား", away: "ရီးရဲလ် မက်ဒရစ်", time: "01:30", upper: "away", body: "1+80", goal: "3-80", hxg: 1.7, hxga: 1.3, axg: 1.9, axga: 1.4, turf: false, low: false },
-                { home: "အက်စတွန် ဗီလာ", away: "ဖီနာဘာချီ", time: "01:30", upper: "home", body: "1+10", goal: "3-20", hxg: 2.2, hxga: 1.0, axg: 1.2, axga: 1.6, turf: false, low: false },
-                { home: "ရှက်တာဒိုးနက်", away: "AEK အေသင်", time: "01:30", upper: "home", body: "=-10", goal: "3+80", hxg: 1.4, hxga: 1.2, axg: 1.2, axga: 1.3, turf: false, low: true },
-                { home: "ဘိုဒို ဂလင့်", away: "ဒေါ့မွန်", time: "01:30", upper: "away", body: "=-70", goal: "3-", hxg: 1.6, hxga: 1.1, axg: 1.7, axga: 1.4, turf: true, low: false },
-                { home: "မန်စီးတီး", away: "ပီအက်စ်ဂျီ (PSG)", time: "01:30", upper: "home", body: "=-90", goal: "3-70", hxg: 1.9, hxga: 1.5, axg: 2.0, axga: 1.3, turf: false, low: false },
-                { home: "ဘက်တစ်", away: "ပေါ်တို", time: "01:30", upper: "home", body: "=-90", goal: "3+30", hxg: 1.6, hxga: 1.2, axg: 1.5, axga: 1.2, turf: false, low: false },
-                { home: "ဆလိုဗန်", away: "စတုဂတ်", time: "01:30", upper: "away", body: "2+40", goal: "4+70", hxg: 0.8, hxga: 2.1, axg: 2.1, axga: 1.0, turf: false, low: true }
+            "UEFA ယူရိုပါလိဂ်": [
+                { home: "လိုက်ပ်ဇစ်", away: "ပဲလေ", time: "11:15", upper: "home", body: "=-50", goal: "3=", hxg: 1.8, hxga: 1.2, axg: 1.3, axga: 1.5, turf: false, low: false },
+                { home: "တွန်ရင့်ဆီ", away: "ဆန်းဒါးလင်း", time: "11:15", upper: "away", body: "1-", goal: "3-20", hxg: 1.1, hxga: 1.6, axg: 1.7, axga: 1.1, turf: false, low: false },
+                { home: "ရက်ဘူးဆဲလ်ဘတ်", away: "AC", time: "11:15", upper: "away", body: "=-", goal: "3-20", hxg: 1.4, hxga: 1.4, axg: 1.5, axga: 1.3, turf: false, low: false },
+                { home: "ပူချီယမ်ဆန်", away: "ဆို့ဖီအက်", time: "11:15", upper: "away", body: "=-10", goal: "3-30", hxg: 1.2, hxga: 1.3, axg: 1.3, axga: 1.2, turf: false, low: true },
+                { home: "လက်ပေရဲန်", away: "လေဗာကူဆင်", time: "11:15", upper: "away", body: "1-10", goal: "3+60", hxg: 1.0, hxga: 1.9, axg: 2.1, axga: 0.9, turf: false, low: false },
+                { home: "ဆယ်ဗီခာ", away: "ဟာရူပီဆီဗာ", time: "11:15", upper: "home", body: "2+60", goal: "3-70", hxg: 2.2, hxga: 0.9, axg: 0.8, axga: 2.1, turf: false, low: false },
+                { home: "စပေါတာပရာဟာ", away: "လင်းလက်ထရန့်", time: "11:15", upper: "home", body: "2+80", goal: "3-70", hxg: 2.1, hxga: 1.0, axg: 0.9, axga: 2.0, turf: false, low: false },
+                { home: "စယ်ဂျီ", away: "ဒိုမိုမိုးလူးယား", time: "11:15", upper: "away", body: "=-30", goal: "3-90", hxg: 1.3, hxga: 1.4, axg: 1.5, axga: 1.2, turf: false, low: false },
+                { home: "ဘုန်းမောက်", away: "စတမ်းဂရုစ်", time: "1:30", upper: "home", body: "2-30", goal: "3-", hxg: 2.2, hxga: 0.9, axg: 0.8, axga: 2.0, turf: false, low: false },
+                { home: "ဆယ်တာဗီဂို", away: "ဂျူဗင်တပ်", time: "1:30", upper: "away", body: "=-80", goal: "2+50", hxg: 1.2, hxga: 1.3, axg: 1.5, axga: 1.1, turf: false, low: true },
+                { home: "ဟော်ဖန်ဟိမ်း", away: "ဘက်ရှီတပ်", time: "1:30", upper: "home", body: "=-", goal: "3-40", hxg: 1.6, hxga: 1.4, axg: 1.4, axga: 1.5, turf: false, low: false },
+                { home: "မာဆေး", away: "ဆလိုဗီယာကိဗ်", time: "1:30", upper: "home", body: "=-50", goal: "3+50", hxg: 1.7, hxga: 1.2, axg: 1.2, axga: 1.6, turf: false, low: false },
+                { home: "ရှင်းနစ်", away: "OFI", time: "1:30", upper: "home", body: "2=", goal: "3-", hxg: 2.0, hxga: 0.9, axg: 0.8, axga: 2.0, turf: false, low: false },
+                { home: "ဘင်ဖီကာ", away: "ဆဲလ်တစ်", time: "1:30", upper: "home", body: "2+20", goal: "3-", hxg: 2.2, hxga: 1.1, axg: 1.1, axga: 2.1, turf: false, low: false },
+                { home: "နိုင်းဂျစ်", away: "လပ်စက်ဆီဗီယာ", time: "1:30", upper: "home", body: "1+80", goal: "3+40", hxg: 1.8, hxga: 1.1, axg: 1.1, axga: 1.6, turf: false, low: false },
+                { home: "ဒိုင်နမိုဇာဂရက်", away: "အန်ဒါလက်", time: "1:30", upper: "home", body: "=-", goal: "3+30", hxg: 1.5, hxga: 1.3, axg: 1.4, axga: 1.4, turf: false, low: false },
+                { home: "ဖီရင်ဗာရိုစီ", away: "V ပေါ်တို", time: "1:30", upper: "home", body: "1+90", goal: "3+10", hxg: 1.7, hxga: 1.2, axg: 1.2, axga: 1.6, turf: false, low: false },
+                { home: "ဘီလ်ဘာအို", away: "အာဂျာရတ်", time: "1:30", upper: "home", body: "1-70", goal: "3=", hxg: 1.8, hxga: 1.0, axg: 1.2, axga: 1.6, turf: false, low: false }
             ],
-            "အင်္ဂလန် ချန်ပီယံရှစ်": [
-                { home: "နော့ဝစ်ခ်ျ", away: "ဆောက်သမ်ပတန်", time: "01:15", upper: "home", body: "=-30", goal: "3-50", hxg: 1.5, hxga: 1.3, axg: 1.5, axga: 1.3, turf: false, low: false },
-                { home: "ပို့စ်မောက်", away: "ရှက်ဖီး Utd", time: "01:15", upper: "home", body: "=-50", goal: "2-", hxg: 1.3, hxga: 1.1, axg: 1.2, axga: 1.2, turf: false, low: true },
-                { home: "QPR", away: "ဒါဘီ", time: "01:15", upper: "home", body: "1+10", goal: "3+70", hxg: 1.5, hxga: 1.1, axg: 1.0, axga: 1.4, turf: false, low: false },
-                { home: "လင်ကွန်းစီးတီး", away: "ဝက်ဟမ်း", time: "01:30", upper: "away", body: "1+30", goal: "3+50", hxg: 0.9, hxga: 1.7, axg: 1.8, axga: 1.0, turf: false, low: false }
-            ],
-            "ဂျပန် YBC ဖလား": [
-                { home: "ယိုကိုဟားမား", away: "ရက်ဒ်ဝိုင်းမွန်", time: "4:00 ညနေ", upper: "away", body: "1+70", goal: "3+10", hxg: 1.2, hxga: 1.6, axg: 1.7, axga: 1.1, turf: false, low: false },
-                { home: "ဂိုင်နာရီ", away: "အိုဆာကာ", time: "4:30 ညနေ", upper: "away", body: "1-90", goal: "3+30", hxg: 1.0, hxga: 1.7, axg: 1.8, axga: 1.0, turf: false, low: false },
-                { home: "အီဝါတာ", away: "ကာဝါဆာကီ", time: "4:30 ညနေ", upper: "away", body: "1+20", goal: "3+20", hxg: 1.2, hxga: 1.6, axg: 1.8, axga: 1.2, turf: false, low: false },
-                { home: "မီတို", away: "တိုကျို", time: "4:30 ညနေ", upper: "away", body: "1-40", goal: "3+40", hxg: 1.1, hxga: 1.5, axg: 1.6, axga: 1.0, turf: false, low: false },
-                { home: "နာဂိုရာ", away: "အိုကာရာမာ", time: "4:30 ညနေ", upper: "home", body: "=-30", goal: "3+80", hxg: 1.5, hxga: 1.0, axg: 1.1, axga: 1.3, turf: false, low: true },
-                { home: "ဆာဂန်", away: "ဖူကူအိုကာ", time: "4:30 ညနေ", upper: "away", body: "=-60", goal: "2-90", hxg: 1.1, hxga: 1.2, axg: 1.3, axga: 1.0, turf: false, low: true },
-                { home: "မာချီဒါ", away: "ဆိုင်မာရူး", time: "4:30 ညနေ", upper: "home", body: "1+70", goal: "3+90", hxg: 1.7, hxga: 0.9, axg: 1.0, axga: 1.5, turf: false, low: false }
-            ],
-            "AFC ချန်ပီယံလိဂ်": [
-                { home: "ဗီဆယ် ကိုဘေး", away: "ဟွန်ဒိုင်း မော်တာ", time: "4:30 ညနေ", upper: "home", body: "1=", goal: "3+50", hxg: 1.8, hxga: 1.1, axg: 1.2, axga: 1.4, turf: false, low: false }
+            "UEFA ကွန်းဖရန့်လိဂ်": [
+                { home: "ကရာဒိုဗာ", away: "ဂီတာဖေး", time: "11:15", upper: "away", body: "=-40", goal: "2+20", hxg: 1.1, hxga: 1.3, axg: 1.3, axga: 1.1, turf: false, low: true },
+                { home: "CSKA ဆိုဖီယာ", away: "မိုနာကို", time: "11:15", upper: "away", body: "1-40", goal: "3-30", hxg: 1.0, hxga: 1.8, axg: 1.9, axga: 1.0, turf: false, low: false },
+                { home: "အီဂနိုတီးယာ", away: "မက်ဂျီလန်", time: "11:15", upper: "away", body: "1-20", goal: "3-70", hxg: 1.1, hxga: 1.7, axg: 1.8, axga: 1.1, turf: false, low: false },
+                { home: "ဟာတ်ဒ်ဗေလစ်", away: "အေဂျက်", time: "11:15", upper: "away", body: "1=", goal: "3+10", hxg: 1.2, hxga: 1.6, axg: 1.8, axga: 1.1, turf: false, low: false },
+                { home: "KAA ဂျန့်", away: "အာပတ်", time: "11:15", upper: "home", body: "1+20", goal: "3+60", hxg: 1.7, hxga: 1.1, axg: 1.1, axga: 1.5, turf: false, low: false },
+                { home: "KUPS", away: "ထရာဇွန်စပွန်း", time: "11:15", upper: "away", body: "1-40", goal: "3-40", hxg: 1.1, hxga: 1.7, axg: 1.8, axga: 1.1, turf: true, low: false },
+                { home: "လူဂါနို", away: "ဗေကဲဒါ", time: "11:15", upper: "home", body: "=-40", goal: "3+20", hxg: 1.5, hxga: 1.2, axg: 1.2, axga: 1.4, turf: false, low: false },
+                { home: "မက်ဂျယ်ဘီ", away: "အင်တာဂလပ်", time: "11:15", upper: "home", body: "1-", goal: "3+10", hxg: 1.7, hxga: 1.1, axg: 1.1, axga: 1.6, turf: false, low: false },
+                { home: "ရီဂါ", away: "အယ်မာတ်", time: "11:15", upper: "home", body: "1+80", goal: "2-", hxg: 1.6, hxga: 1.1, axg: 1.0, axga: 1.5, turf: false, low: true },
+                { home: "အတ္တလန်တာ", away: "ပါဒိုဗာ FC", time: "1:30", upper: "home", body: "2+90", goal: "3-30", hxg: 2.3, hxga: 0.9, axg: 0.8, axga: 2.2, turf: false, low: false },
+                { home: "ကိုပင်ဟေဂင်", away: "ဘရုဂါ", time: "1:30", upper: "home", body: "=-40", goal: "2-70", hxg: 1.4, hxga: 1.2, axg: 1.3, axga: 1.3, turf: false, low: true },
+                { home: "ဟတ်", away: "နော့ဂျီလန်", time: "1:30", upper: "away", body: "=-50", goal: "3+10", hxg: 1.3, hxga: 1.5, axg: 1.6, axga: 1.3, turf: false, low: false },
+                { home: "ဖရိုင်းဘတ်", away: "ဂျာတလိုနိုရက်", time: "1:30", upper: "home", body: "2+20", goal: "3-", hxg: 2.1, hxga: 1.0, axg: 0.9, axga: 2.0, turf: false, low: false },
+                { home: "ထရူဒင်စီ", away: "အီဘရာရီယာ", time: "1:30", upper: "home", body: "2+30", goal: "3-", hxg: 2.1, hxga: 1.0, axg: 0.9, axga: 2.0, turf: false, low: false }
             ],
             "ရုရှား ဖလား": [
-                { home: "ဆိုဗီတော့", away: "ဘယ်တီကာ", time: "7:45", upper: "away", body: "=-50", goal: "2-70", hxg: 1.1, hxga: 1.2, axg: 1.3, axga: 1.0, turf: false, low: true },
-                { home: "ဂရော့ဇ်နီ", away: "ဒိုင်နမို မော်စကို", time: "10:00", upper: "away", body: "=-40", goal: "3+60", hxg: 1.3, hxga: 1.5, axg: 1.6, axga: 1.2, turf: false, low: false },
-                { home: "FC အိုရန်", away: "ဇင်းနစ်", time: "10:00", upper: "away", body: "1+10", goal: "3+50", hxg: 1.0, hxga: 1.8, axg: 2.0, axga: 0.9, turf: false, low: false },
-                { home: "CSKA မော်စကို", away: "ရော့စတော့", time: "12:15", upper: "home", body: "1+10", goal: "3+80", hxg: 1.7, hxga: 1.0, axg: 1.1, axga: 1.5, turf: false, low: false }
+                { home: "ရှာတင်ကာခရို", away: "ဒိုရိုဘတ်", time: "10:00", upper: "home", body: "1+90", goal: "2-90", hxg: 1.6, hxga: 1.1, axg: 1.0, axga: 1.5, turf: false, low: true },
+                { home: "ရိုဒိုနာ", away: "ပေတေဘဲစတော့", time: "12:15", upper: "away", body: "1-60", goal: "3+30", hxg: 1.1, hxga: 1.6, axg: 1.7, axga: 1.1, turf: false, low: false }
             ],
-            "နော်ဝေ ပထမတန်း": [
-                { home: "စထရွန်းမင်း", away: "အာဆန်ဒ်", time: "7:30", upper: "home", body: "1+70", goal: "3-", hxg: 1.6, hxga: 1.2, axg: 1.2, axga: 1.5, turf: true, low: false },
-                { home: "ဟော့ဒ်", away: "ရန်ဟိုင်း", time: "11:30", upper: "away", body: "=-", goal: "3-", hxg: 1.3, hxga: 1.4, axg: 1.4, axga: 1.3, turf: true, low: false },
-                { home: "မော့စ်", away: "အီဂျာဆန်", time: "11:30", upper: "home", body: "=-70", goal: "3-", hxg: 1.6, hxga: 1.3, axg: 1.3, axga: 1.4, turf: true, low: false },
-                { home: "ဆောင်ဒယ်", away: "Odd BK", time: "11:30", upper: "away", body: "1+90", goal: "3-", hxg: 1.2, hxga: 1.6, axg: 1.6, axga: 1.2, turf: true, low: false },
-                { home: "စတာဘက်", away: "ဆန်းနက်", time: "11:30", upper: "home", body: "1-80", goal: "3-", hxg: 1.9, hxga: 1.1, axg: 1.1, axga: 1.7, turf: true, low: false },
-                { home: "စထရွန်းဂေါ့စက်", away: "ကွန်ဗင်ဂျာ", time: "11:30", upper: "home", body: "1+50", goal: "3-", hxg: 1.7, hxga: 1.2, axg: 1.2, axga: 1.5, turf: true, low: false }
+            "ဆော်ဒီ ပရိုလိဂ်": [
+                { home: "ဖာဆာလ်", away: "ကေဟိုလော့", time: "8:10", upper: "away", body: "=-80", goal: "2+90", hxg: 1.2, hxga: 1.4, axg: 1.5, axga: 1.2, turf: false, low: true },
+                { home: "ခါလီဂျေ", away: "အယ်ဖေဟာ", time: "9:20", upper: "home", body: "=-80", goal: "2-", hxg: 1.4, hxga: 1.2, axg: 1.2, axga: 1.3, turf: false, low: true },
+                { home: "အယ်ဟာခမ်း", away: "အယ်ဖာတက်", time: "9:45", upper: "home", body: "=-20", goal: "3+30", hxg: 1.5, hxga: 1.3, axg: 1.3, axga: 1.4, turf: false, low: false }
             ],
-            "ဂျာမန် လိဂ် - 3": [
-                { home: "SC ဗား", away: "ရီဂျင်ဘတ်", time: "11:30", upper: "home", body: "=-60", goal: "3-", hxg: 1.5, hxga: 1.2, axg: 1.2, axga: 1.4, turf: false, low: false },
-                { home: "ဝီဟင်", away: "အာချန်", time: "11:30", upper: "home", body: "=-50", goal: "3+20", hxg: 1.6, hxga: 1.3, axg: 1.3, axga: 1.4, turf: false, low: false },
-                { home: "မန်းဟိုင်း", away: "အင်ဂူးစတက်", time: "11:30", upper: "home", body: "1+90", goal: "3-50", hxg: 1.7, hxga: 1.3, axg: 1.3, axga: 1.5, turf: false, low: false },
-                { home: "V ကိုလုံး", away: "ဂရော့ဆာပက်", time: "11:30", upper: "home", body: "1-20", goal: "3-", hxg: 1.8, hxga: 1.2, axg: 1.1, axga: 1.6, turf: false, low: false },
-                { home: "မန်စတာ", away: "အော့စ်အေ", time: "11:30", upper: "away", body: "=-40", goal: "3+30", hxg: 1.3, hxga: 1.4, axg: 1.5, axga: 1.2, turf: false, low: false }
+            "အင်္ဂလန် ပထမတန်း": [
+                { home: "မန်းစီးတောင်း", away: "အော့စ်ဒ် Utd", time: "1:30", upper: "home", body: "=-40", goal: "3+40", hxg: 1.5, hxga: 1.2, axg: 1.2, axga: 1.4, turf: false, low: false }
             ],
-            "တူရကီ ပထမတန်း": [
-                { home: "ပီထရိုစပူး", away: "အစ္စတန်ဘူစပူး", time: "6:00", upper: "home", body: "1+10", goal: "3+40", hxg: 1.6, hxga: 1.1, axg: 1.1, axga: 1.5, turf: false, low: false },
-                { home: "အမ်ရန်နီရစ်စပူး", away: "ဘိုလူစပူး", time: "8:30", upper: "home", body: "1-40", goal: "3+60", hxg: 1.7, hxga: 1.1, axg: 1.0, axga: 1.5, turf: false, low: false },
-                { home: "ကီစီရင်ဂူကူ", away: "အိုင်ဂျဒါ", time: "11:30", upper: "home", body: "=-", goal: "3+50", hxg: 1.4, hxga: 1.2, axg: 1.3, axga: 1.3, turf: false, low: false },
-                { home: "အန်တာရာစပူး", away: "ကေစာရီစပူး", time: "11:30", upper: "away", body: "=-40", goal: "3+90", hxg: 1.2, hxga: 1.4, axg: 1.5, axga: 1.2, turf: false, low: false }
-            ],
-            "အခြား လိဂ်များ (ချက် / ဘီလာရုစ် / ကာဇက်စတန် / အစ်တိုးနီးယား)": [
-                { home: "ပါဗလိုဒါ", away: "အက်စတာနာ", time: "4:30 ညနေ", upper: "away", body: "1+80", goal: "3+60", hxg: 1.0, hxga: 1.6, axg: 1.7, axga: 1.0, turf: false, low: false },
-                { home: "အေတီရောအူ", away: "အီလီမိုင်း", time: "8:30", upper: "home", body: "=-", goal: "3+60", hxg: 1.3, hxga: 1.2, axg: 1.2, axga: 1.3, turf: false, low: true },
-                { home: "ဘိုဟီးမီးယန်း", away: "ဘိုလ်ဆလပ်", time: "10:30", upper: "home", body: "=-80", goal: "3+10", hxg: 1.6, hxga: 1.3, axg: 1.3, axga: 1.5, turf: false, low: false },
-                { home: "ဘိုရီဆော့", away: "ဂရိုဒ်နို", time: "10:30", upper: "away", body: "1+90", goal: "2-70", hxg: 1.0, hxga: 1.4, axg: 1.5, axga: 0.9, turf: false, low: true },
-                { home: "ထရန်းနာဗာ", away: "ကူရစ်ဆာရီ", time: "7:30", upper: "home", body: "=-", goal: "3+50", hxg: 1.5, hxga: 1.2, axg: 1.2, axga: 1.4, turf: false, low: false },
-                { home: "ပိုင်ဒီ", away: "တမ်မီကာ", time: "10:30", upper: "home", body: "1=", goal: "3-20", hxg: 2.0, hxga: 1.1, axg: 1.0, axga: 1.8, turf: false, low: false }
+            "ပိုလန် / ပြင်သစ် / တူရကီ": [
+                { home: "ဒီလက်", away: "ပူစီဆာ", time: "11:00", upper: "away", body: "=-20", goal: "2+90", hxg: 1.2, hxga: 1.3, axg: 1.4, axga: 1.2, turf: false, low: true },
+                { home: "ဂီနိန်း", away: "လာရီချီ", time: "1:15", upper: "home", body: "=-80", goal: "3+20", hxg: 1.5, hxga: 1.2, axg: 1.2, axga: 1.4, turf: false, low: false },
+                { home: "ဗာဒင်း", away: "ဖာတက်", time: "8:30", upper: "home", body: "=-", goal: "2-", hxg: 1.3, hxga: 1.2, axg: 1.2, axga: 1.3, turf: false, low: true },
+                { home: "မန်နီဆာ", away: "အီးဂျေစပွန်း", time: "11:30", upper: "away", body: "=-80", goal: "3+50", hxg: 1.3, hxga: 1.5, axg: 1.5, axga: 1.3, turf: false, low: false },
+                { home: "မူလာစပွန်း", away: "ဘာဆာစပွန်း", time: "11:30", upper: "away", body: "1+20", goal: "3-90", hxg: 1.1, hxga: 1.6, axg: 1.6, axga: 1.1, turf: false, low: false }
             ]
         };
 
