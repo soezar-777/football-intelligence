@@ -264,7 +264,7 @@
         }
 
         function updateApiStatusBadge() {
-            const hasKey = !!localStorage.getItem('gemini_api_key');
+            const hasKey = !!getApiKey();
             const badge = document.getElementById('apiStatusBadge');
             if (hasKey) {
                 badge.innerText = "Gemini AI Active";
@@ -480,6 +480,10 @@
         }
 
         const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.8-flash", "gemini-3-flash-preview"];
+        const PROXY_URL = "https://fragrant-dawn-ee09.soezar56456.workers.dev/"; // Cloudflare Worker proxy (server key)
+        function getApiKey() {
+            return localStorage.getItem('gemini_api_key');
+        }
 
         async function processImage(input) {
             if (!input.files || !input.files[0]) return;
@@ -492,8 +496,9 @@
                 document.getElementById('slipThumb').classList.remove('hidden');
                 document.getElementById('slipIcon').classList.add('hidden');
 
-                const apiKey = localStorage.getItem('gemini_api_key');
-                if (!apiKey) {
+                const apiKey = getApiKey();
+                const useProxy = !apiKey && PROXY_URL;
+                if (!apiKey && !PROXY_URL) {
                     alert(currentLang === 'en'
                         ? 'Please enter your Gemini API Key in Settings (⚙️) to analyze slips with AI!'
                         : 'ကြေးစာရွက်ကို AI ဖြင့် တိုက်ရိုက်ဖတ်ရန် Settings (⚙️) ထဲတွင် Gemini API Key အရင်ထည့်ပေးပါ!');
@@ -522,6 +527,17 @@
 
                     let data = null;
                     let modelErr = "";
+                    let text = "";
+                    if (useProxy) {
+                        // Shared proxy: no personal key needed (server key on Cloudflare Worker)
+                        const presp = await fetch(PROXY_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ image: base64Data, mime: file.type || "image/jpeg", prompt: prompt })
+                        });
+                        const pdata = await presp.json();
+                        if (!pdata.ok) { throw new Error(pdata.error || "Proxy request failed"); }
+                        text = (pdata.data || "").trim();
+                    } else {
                     for (let i = 0; i < GEMINI_MODELS.length; i++) {
                         const mdl = GEMINI_MODELS[i];
                         const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + mdl + ":generateContent?key=" + encodeURIComponent(apiKey), {
@@ -547,7 +563,8 @@
                         throw new Error(modelErr || "Gemini request failed");
                     }
                     const c0 = (data.candidates && data.candidates[0] && data.candidates[0].content) || {};
-                    const text = (c0.parts || []).map(function(p){ return p.text || ""; }).join("").trim();
+                    text = (c0.parts || []).map(function(p){ return p.text || ""; }).join("").trim();
+                    }
                     if (!text) throw new Error("Empty response from Gemini");
 
                     let parsed = null;
