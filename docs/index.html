@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Intelligence AI Pro</title>
+    <title>Football Intelligence AI Pro (Gemini Powered)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
@@ -22,40 +22,50 @@
 
     <div class="max-w-2xl mx-auto space-y-4">
         <!-- Top Navigation Bar -->
-        <div class="flex justify-between items-center bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 shadow-lg backdrop-blur-md sticky top-2 z-50">
+        <div class="flex justify-between items-center bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 shadow-lg backdrop-blur-md sticky top-2 z-40">
             <div class="flex items-center space-x-2">
                 <span class="text-2xl">⚽</span>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold text-amber-400 leading-tight" data-i18n="app_title">Football Intelligence AI Pro</h1>
-                    <p class="text-[10px] text-slate-400" data-i18n="app_subtitle">ကြေး + ဒေတာ သုံးသပ်ချက် | Poisson + xG Engine</p>
+                    <p class="text-[10px] text-slate-400" data-i18n="app_subtitle">Gemini Vision + Poisson Mathematical Engine</p>
                 </div>
             </div>
 
-            <!-- Full Display EN / MM Toggle -->
-            <div class="flex items-center space-x-2 bg-slate-950 px-3 py-1.5 rounded-full border border-slate-700">
-                <span id="langLabel" class="text-xs font-bold text-amber-400">MM</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="langToggle" onchange="switchLanguage()" class="sr-only peer">
-                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                </label>
-                <span class="text-xs font-bold text-slate-400">EN</span>
+            <div class="flex items-center space-x-2">
+                <!-- EN / MM Toggle -->
+                <div class="flex items-center space-x-1.5 bg-slate-950 px-2.5 py-1 rounded-full border border-slate-700">
+                    <span id="langLabel" class="text-xs font-bold text-amber-400">MM</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="langToggle" onchange="switchLanguage()" class="sr-only peer">
+                        <div class="w-8 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                    <span class="text-xs font-bold text-slate-400">EN</span>
+                </div>
+
+                <!-- Settings Button (Gear) -->
+                <button onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-full border border-slate-700 text-sm">
+                    ⚙️
+                </button>
             </div>
         </div>
 
-        <!-- Section 1: Slip Input (Camera & Upload) -->
+        <!-- Section 1: Slip Input -->
         <div class="card-border rounded-2xl p-4 shadow-xl">
-            <h2 class="text-sm font-bold text-amber-400 mb-3 flex items-center gap-1.5">
-                <span>📸</span> <span data-i18n="section1_title">၁။ ကြေးစာရွက် ထည့်သွင်းရန်</span>
+            <h2 class="text-sm font-bold text-amber-400 mb-3 flex items-center justify-between">
+                <span class="flex items-center gap-1.5">
+                    <span>📸</span> <span data-i18n="section1_title">၁။ ကြေးစာရွက် ထည့်သွင်းရန်</span>
+                </span>
+                <span id="apiStatusBadge" class="text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">API Ready</span>
             </h2>
 
             <div class="grid grid-cols-2 gap-3 mb-3">
                 <label class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-3 rounded-xl cursor-pointer text-xs transition duration-200 shadow-md">
                     <span>📷</span> <span data-i18n="btn_camera">ကင်မရာဖြင့် ရိုက်မည်</span>
-                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageInput(this)">
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="processImage(this)">
                 </label>
                 <label class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-3 rounded-xl cursor-pointer text-xs transition duration-200 border border-slate-700 shadow-md">
                     <span>📁</span> <span data-i18n="btn_gallery">ဖုန်းထဲမှ ပုံရွေးမည်</span>
-                    <input type="file" accept="image/*" class="hidden" onchange="handleImageInput(this)">
+                    <input type="file" accept="image/*" class="hidden" onchange="processImage(this)">
                 </label>
             </div>
 
@@ -69,7 +79,7 @@
                     <p id="slipStatusText" class="text-xs font-bold text-emerald-400 flex items-center gap-1">
                         <span>✅</span> <span data-i18n="slip_ready">စာရွက်ပေါ်မှ ပွဲစဉ် (၁၈) ပွဲ ဖတ်ယူပြီးပါပြီ</span>
                     </p>
-                    <p class="text-[10px] text-slate-400 mt-0.5 truncate" data-i18n="slip_desc">UEFA ယူရိုပါလိဂ်၊ ကွန်းဖရန့်လိဂ် ပွဲစဉ်များ အသင့်ရှိသည်</p>
+                    <p id="slipSubText" class="text-[10px] text-slate-400 mt-0.5 truncate" data-i18n="slip_desc">UEFA ယူရိုပါလိဂ်၊ ကွန်းဖရန့်လိဂ် ပွဲစဉ်များ အသင့်ရှိသည်</p>
                 </div>
             </div>
         </div>
@@ -86,33 +96,53 @@
 
         <!-- Section 2: Horizontal League Tabs -->
         <div class="overflow-x-auto no-scrollbar py-1">
-            <div id="leagueTabsContainer" class="flex gap-2 text-xs whitespace-nowrap">
-                <!-- Dynamically generated tabs -->
-            </div>
+            <div id="leagueTabsContainer" class="flex gap-2 text-xs whitespace-nowrap"></div>
         </div>
 
         <!-- Match Prediction Cards Container -->
-        <div id="cardsContainer" class="space-y-3">
-            <!-- Dynamic cards render here -->
-        </div>
+        <div id="cardsContainer" class="space-y-3"></div>
 
         <!-- Section 3: Top 3 Picks Card (Summary) -->
         <div id="topPicksCard" class="card-border rounded-2xl p-4 shadow-xl border-amber-500/30">
             <h3 class="text-xs md:text-sm font-bold text-amber-400 mb-2.5 flex items-center gap-1.5">
                 <span>🏆</span> <span data-i18n="top_picks_title">ထိပ်တန်း လက်ရွေးစင် ၃ ပွဲ (Top 3 Picks)</span>
             </h3>
-            <div id="topPicksList" class="space-y-1.5 text-xs">
-                <!-- Populated dynamically based on language -->
+            <div id="topPicksList" class="space-y-1.5 text-xs"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="card-border rounded-2xl p-5 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                    <span>⚙️</span> <span data-i18n="settings_title">Settings / API Key ပြင်ဆင်ရန်</span>
+                </h3>
+                <button onclick="closeSettings()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-300 mb-1" data-i18n="api_key_label">Google AI Studio (Gemini) API Key</label>
+                <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-900 text-white rounded-lg p-2.5 text-xs border border-slate-700 focus:outline-none focus:border-amber-400 font-mono">
+                <p class="text-[10px] text-slate-400 mt-1" data-i18n="api_key_help">သင့် Key ကို ဖုန်းထဲတွင်သာ လုံခြုံစွာ သိမ်းဆည်းထားမည် ဖြစ်ပါသည်။</p>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="saveApiKey()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs" data-i18n="save_btn">
+                    သိမ်းဆည်းမည်
+                </button>
+                <button onclick="closeSettings()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded-lg text-xs" data-i18n="close_btn">
+                    ပိတ်မည်
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Full Localization Dictionary (MM / EN)
         const translations = {
             my: {
                 app_title: "Football Intelligence AI Pro",
-                app_subtitle: "ကြေး + ဒေတာ သုံးသပ်ချက် | Poisson + xG Engine",
+                app_subtitle: "Gemini Vision + Poisson Engine",
                 section1_title: "၁။ ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
                 btn_gallery: "ဖုန်းထဲမှ ပုံရွေးမည်",
@@ -137,11 +167,16 @@
                 score_label: "ရလဒ်",
                 badge_turf: "⚠️ Auto: မြက်ခင်းတုကွင်း (Turf Alert)",
                 badge_low: "🛡️ Auto: ခံစစ်ပိတ်ကစားမည့်ပွဲ (Low-Block)",
-                badge_open: "🔥 Auto: တိုက်စစ်အားသန် ခံစစ်ဖွင့်ပွဲ"
+                badge_open: "🔥 Auto: တိုက်စစ်အားသန် ခံစစ်ဖွင့်ပွဲ",
+                settings_title: "Settings / API Key ပြင်ဆင်ရန်",
+                api_key_label: "Google AI Studio (Gemini) API Key",
+                api_key_help: "သင့် Key ကို ဖုန်းထဲတွင်သာ လုံခြုံစွာ သိမ်းဆည်းထားမည် ဖြစ်ပါသည်။",
+                save_btn: "သိမ်းဆည်းမည်",
+                close_btn: "ပိတ်မည်"
             },
             en: {
                 app_title: "Football Intelligence AI Pro",
-                app_subtitle: "Odds + Data Analysis | Poisson + xG Engine",
+                app_subtitle: "Gemini Vision + Poisson Engine",
                 section1_title: "1. Match Slip Input",
                 btn_camera: "Direct Camera",
                 btn_gallery: "Upload Photo",
@@ -166,15 +201,20 @@
                 score_label: "Score",
                 badge_turf: "⚠️ Auto: Artificial Turf Alert",
                 badge_low: "🛡️ Auto: Low-Block Defense Expected",
-                badge_open: "🔥 Auto: High-Paced Open Game"
+                badge_open: "🔥 Auto: High-Paced Open Game",
+                settings_title: "Settings / Gemini API Key",
+                api_key_label: "Google AI Studio (Gemini) API Key",
+                api_key_help: "Your key is stored safely only in your device local storage.",
+                save_btn: "Save Settings",
+                close_btn: "Close"
             }
         };
 
         let currentLang = 'my';
         let selectedLeague = "ALL";
 
-        // Fixtures Database with Dual-Language
-        const matchData = [
+        // Initial fallback database
+        let matchData = [
             { id: 1, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "လိုက်ပ်ဇစ်", homeEn: "RB Leipzig", awayMy: "ပဲလေ", awayEn: "PAOK", time: "11:15", upper: "home", body: "=-50", goal: "3=", hxg: 1.8, hxga: 1.2, axg: 1.3, axga: 1.5, turf: false, low: false },
             { id: 2, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "တွန်ရင့်ဆီ", homeEn: "Twente", awayMy: "ဆန်းဒါးလင်း", awayEn: "Sunderland", time: "11:15", upper: "away", body: "1-", goal: "3-20", hxg: 1.1, hxga: 1.6, axg: 1.7, axga: 1.1, turf: false, low: false },
             { id: 3, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "လက်ပေရဲန်", homeEn: "Lech Poznań", awayMy: "လေဗာကူဆင်", awayEn: "Bayer Leverkusen", time: "11:15", upper: "away", body: "1-10", goal: "3+60", hxg: 1.0, hxga: 1.9, axg: 2.1, axga: 0.9, turf: false, low: false },
@@ -186,16 +226,45 @@
         ];
 
         window.onload = function() {
+            updateApiStatusBadge();
             renderLeagueTabs();
             renderAllMatches();
             renderTopPicks();
         };
 
+        function openSettings() {
+            document.getElementById('geminiApiKeyInput').value = localStorage.getItem('gemini_api_key') || '';
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('geminiApiKeyInput').value.trim();
+            localStorage.setItem('gemini_api_key', key);
+            updateApiStatusBadge();
+            closeSettings();
+            alert(currentLang === 'en' ? 'API Key saved successfully!' : 'API Key ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!');
+        }
+
+        function updateApiStatusBadge() {
+            const hasKey = !!localStorage.getItem('gemini_api_key');
+            const badge = document.getElementById('apiStatusBadge');
+            if (hasKey) {
+                badge.innerText = "Gemini AI Active";
+                badge.className = "text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800";
+            } else {
+                badge.innerText = "Offline Mode";
+                badge.className = "text-[10px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700";
+            }
+        }
+
         function switchLanguage() {
             currentLang = document.getElementById('langToggle').checked ? 'en' : 'my';
             document.getElementById('langLabel').innerText = currentLang === 'en' ? 'EN' : 'MM';
 
-            // Update all static i18n text
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[currentLang][key]) {
@@ -300,14 +369,12 @@
                         </p>
                     </div>
 
-                    <!-- Prediction 3-Col Box -->
                     <div class="grid grid-cols-3 text-center items-center py-2.5 bg-slate-900/90 rounded-xl my-2 border border-slate-800/80">
                         <div class="${goalColor} font-bold text-sm md:text-base">${goalVerdict}</div>
                         <div class="text-white font-bold text-sm md:text-base px-1 truncate">${winnerVerdict}</div>
                         <div class="${confColor} font-bold text-sm md:text-base">${confidence}</div>
                     </div>
 
-                    <!-- Percentage & Scoreline Stats -->
                     <div class="grid grid-cols-4 text-center text-[10px] md:text-[11px] text-slate-400 py-1.5 bg-slate-950/60 rounded-lg">
                         <div>${t.home_label}: ${hWin}%</div>
                         <div>${t.draw_label}: ${draw}%</div>
@@ -333,7 +400,6 @@
 
         function renderTopPicks() {
             const list = document.getElementById('topPicksList');
-            const t = translations[currentLang];
             if (currentLang === 'en') {
                 list.innerHTML = `
                     <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
@@ -367,18 +433,67 @@
             }
         }
 
-        function handleImageInput(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const thumb = document.getElementById('slipThumb');
-                    thumb.src = e.target.result;
-                    thumb.classList.remove('hidden');
-                    document.getElementById('slipIcon').classList.add('hidden');
+        async function processImage(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result.split(',')[1];
+                document.getElementById('slipThumb').src = e.target.result;
+                document.getElementById('slipThumb').classList.remove('hidden');
+                document.getElementById('slipIcon').classList.add('hidden');
+
+                const apiKey = localStorage.getItem('gemini_api_key');
+                if (!apiKey) {
+                    alert(currentLang === 'en'
+                        ? 'Please enter your Gemini API Key in Settings (⚙️) to analyze slips with AI!'
+                        : 'ကြေးစာရွက်ကို AI ဖြင့် တိုက်ရိုက်ဖတ်ရန် Settings (⚙️) ထဲတွင် Gemini API Key အရင်ထည့်ပေးပါ!');
                     renderAllMatches();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
+                    return;
+                }
+
+                document.getElementById('slipStatusText').innerText = currentLang === 'en' ? "Analyzing with Gemini AI..." : "Gemini AI ဖြင့် စာရွက်ကို ဖတ်ယူတွက်ချက်နေပါသည်...";
+
+                try {
+                    const prompt = "Read this Burmese football handicap/odds slip accurately. Extract each match into JSON array with fields: leagueMy, leagueEn, homeMy, homeEn, awayMy, awayEn, time, upper ('home' or 'away'), body, goal, hxg (1.0-2.5), hxga, axg, axga, turf (boolean), low (boolean). Output ONLY raw valid JSON array.";
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [
+                                    { text: prompt },
+                                    { inline_data: { mime_type: file.type || "image/jpeg", data: base64Data } }
+                                ]
+                            }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    const text = data.candidates[0].content.parts[0].text;
+                    const cleanedJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const parsedMatches = JSON.parse(cleanedJson);
+
+                    if (Array.isArray(parsedMatches) && parsedMatches.length > 0) {
+                        matchData = parsedMatches;
+                        selectedLeague = "ALL";
+                        document.getElementById('slipStatusText').innerText = currentLang === 'en'
+                            ? `Extracted ${matchData.length} matches with Gemini AI!`
+                            : `Gemini AI ဖြင့် ပွဲစဉ် (${matchData.length}) ပွဲ အောင်မြင်စွာ ဖတ်ပြီးပါပြီ!`;
+                        renderLeagueTabs();
+                        renderAllMatches();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById('slipStatusText').innerText = currentLang === 'en'
+                        ? "API Error, fallback loaded"
+                        : "ဖတ်ယူမှု အနည်းငယ် မပြည့်စုံသဖြင့် ပုံမှန်ဒေတာဖြင့် ပြသထားပါသည်";
+                    renderAllMatches();
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function clearCards() {
