@@ -474,6 +474,7 @@
         };
         function leagueName(ev) {
             try {
+                if (ev._leagueName) return ev._leagueName;
                 const slug = (ev.season && ev.season.slug) || '';
                 const m = slug.match(/\d{4}(?:-\d{2})?-(.+)/);
                 const key = m ? m[1] : slug;
@@ -713,14 +714,34 @@
 
         async function fetchEspnScores() {
             try {
-                const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard');
-                if (!res.ok) return;
-                const data = await res.json();
-                if (!data.events) return;
-                espnCache = data.events;
+                // Main feed + lower divisions missing from /all/
+                const feeds = [
+                    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard', lg: null },
+                    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.2/scoreboard', lg: 'English Championship' },
+                    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.3/scoreboard', lg: 'English League One' },
+                    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/ita.2/scoreboard', lg: 'Italian Serie B' },
+                    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/scoreboard', lg: 'Spanish Segunda División' }
+                ];
+                const results = await Promise.all(feeds.map(f => fetch(f.url).then(r => r.ok ? r.json().then(d => ({ data: d, lg: f.lg })) : null).catch(() => null)));
+                // Merge events, deduplicate by id
+                const seen = {};
+                const allEvents = [];
+                results.forEach(res => {
+                    if (res && res.data && res.data.events) {
+                        res.data.events.forEach(ev => {
+                            if (!seen[ev.id]) {
+                                seen[ev.id] = 1;
+                                if (res.lg) ev._leagueName = res.lg;
+                                allEvents.push(ev);
+                            }
+                        });
+                    }
+                });
+                if (!allEvents.length) return;
+                espnCache = allEvents;
                 renderEspnMatches();
                 // Goal / status change detection
-                data.events.forEach(ev => {
+                allEvents.forEach(ev => {
                     const comp = ev.competitions[0];
                     const st = comp.status.type;
                     const home = comp.competitors.find(c => c.homeAway === 'home');
