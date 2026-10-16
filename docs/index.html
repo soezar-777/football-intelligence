@@ -844,8 +844,8 @@
                     return '<div class="flex items-center gap-2 px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
                         '<div class="w-14 shrink-0 text-center">' + timeHtml + '</div>' +
                         '<div class="flex-1 min-w-0 space-y-1.5">' +
-                        '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + '</span></div>' +
-                        '<div class="flex items-center gap-2">' + logo(away) + '<span class="text-sm text-white truncate">' + esc(teamName(away.team.shortDisplayName)) + '</span></div>' +
+                        '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + '</span><span class="text-[9px] bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-1 rounded shrink-0" title="Home">🏠</span></div>' +
+                        '<div class="flex items-center gap-2">' + logo(away) + '<span class="text-sm text-white truncate">' + esc(teamName(away.team.shortDisplayName)) + '</span><span class="text-[9px] bg-slate-700/40 text-slate-400 border border-slate-600/30 px-1 rounded shrink-0" title="Away">✈️</span></div>' +
                         '</div>' + scoreHtml +
                         '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\')" class="text-xl pl-2 ' + (fav ? 'text-amber-400' : 'text-slate-600') + '">' + (fav ? '★' : '☆') + '</button>' +
                         '</div>';
