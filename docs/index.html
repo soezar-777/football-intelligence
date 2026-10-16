@@ -119,22 +119,14 @@
                     <button onclick="testNotification()" class="text-[10px] bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 px-2 py-1 rounded-full font-semibold">⚡ Test</button>
                 </div>
             </div>
-            <div id="espnLiveSection" class="hidden">
+            <div id="espnMatchesSection">
                 <div class="flex items-center gap-2 mb-2 px-1">
-                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                    <h3 class="text-xs font-bold text-rose-400">🔴 <span data-i18n="espn_live_title">ESPN တိုက်ရိုက် ရလဒ်များ</span></h3>
+                    <span>⚽</span>
+                    <h3 class="text-xs font-bold text-white"><span data-i18n="today_matches_title">ယနေ့ ပွဲစဉ်များ</span></h3>
                     <span id="espnUpdated" class="text-[10px] text-slate-500 ml-auto"></span>
                 </div>
-                <div id="espnLiveContainer" class="space-y-2"></div>
-            </div>
-            <div id="syncPredictionsSection">
-                <div class="flex items-center gap-2 mb-2 px-1">
-                    <span>📊</span>
-                    <h3 class="text-xs font-bold text-amber-400"><span data-i18n="sync_pred_title">နေ့စဉ် AI ခန့်မှန်းချက်များ</span></h3>
-                    <span id="syncPredUpdated" class="text-[10px] text-slate-500 ml-auto"></span>
-                </div>
-                <div id="syncPredContainer" class="space-y-2">
-                    <div class="text-center py-4 text-slate-500 text-xs" data-i18n="sync_loading">ခန့်မှန်းချက်များ ရယူနေပါသည်...</div>
+                <div id="espnMatchesContainer" class="space-y-3">
+                    <div class="text-center py-4 text-slate-500 text-xs" data-i18n="sync_loading">ပွဲစဉ်များ ရယူနေပါသည်...</div>
                 </div>
             </div>
             <div id="homeFixturesContainer" class="space-y-4"></div>
@@ -304,9 +296,8 @@
                 nav_standings: "အမှတ်ပေးဇယား",
                 nav_favorites: "အကြိုက်ဆုံး ပွဲများ",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
-                espn_live_title: "ESPN တိုက်ရိုက် ရလဒ်များ",
-                sync_pred_title: "နေ့စဉ် AI ခန့်မှန်းချက်များ",
-                sync_loading: "ခန့်မှန်းချက်များ ရယူနေပါသည်...",
+                today_matches_title: "ယနေ့ ပွဲစဉ်များ",
+                sync_loading: "ပွဲစဉ်များ ရယူနေပါသည်...",
                 section1_title: "ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
                 btn_gallery: "ဖုန်းထဲမှ ပုံရွေးမည်",
@@ -367,9 +358,8 @@
                 nav_standings: "Standings",
                 nav_favorites: "Favorites",
                 date_today: "📅 Today's Matches",
-                espn_live_title: "ESPN Live Scores",
-                sync_pred_title: "Daily AI Predictions",
-                sync_loading: "Loading predictions...",
+                today_matches_title: "Today's Matches",
+                sync_loading: "Loading matches...",
                 section1_title: "Upload Match Slip",
                 btn_camera: "Direct Camera",
                 btn_gallery: "Upload Photo",
@@ -542,74 +532,6 @@
         }
         function matchKey(m) { return (m.homeEn || '') + ' vs ' + (m.awayEn || '') + '|' + (m.time || ''); }
 
-        // ================= SYNC PREDICTIONS (daily pipeline) =================
-        const SYNC_LEAGUES = [
-            { code: 'PL', name: 'Premier League', nameMy: 'ပရီးမီးယားလိဂ်' },
-            { code: 'BL1', name: 'Bundesliga', nameMy: 'ဘွန်ဒက်စ်လီဂါ' },
-            { code: 'SA', name: 'Serie A', nameMy: 'စီးရီးအေ' },
-            { code: 'PD', name: 'La Liga', nameMy: 'လာလီဂါ' },
-            { code: 'FL1', name: 'Ligue 1', nameMy: 'လီဂူး ၁' },
-            { code: 'CL', name: 'Champions League', nameMy: 'ချန်ပီယံလိဂ်' }
-        ];
-        async function fetchSyncPredictions() {
-            const box = document.getElementById('syncPredContainer');
-            if (!box) return;
-            try {
-                const all = [];
-                for (const lg of SYNC_LEAGUES) {
-                    try {
-                        const res = await fetch('data/predictions_' + lg.code + '.json');
-                        if (!res.ok) continue;
-                        const d = await res.json();
-                        if (d.predictions && d.predictions.length) {
-                            d.predictions.slice(0, 4).forEach(p => { p._lg = lg; all.push(p); });
-                            const upd = document.getElementById('syncPredUpdated');
-                            if (upd && d.generated_at) {
-                                const dt = new Date(d.generated_at);
-                                upd.innerText = dt.getDate() + '/' + (dt.getMonth() + 1) + ' ' + dt.getHours() + ':' + String(dt.getMinutes()).padStart(2, '0');
-                            }
-                        }
-                    } catch (e) {}
-                }
-                if (!all.length) {
-                    box.innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No synced predictions yet.' : 'ခန့်မှန်းချက် မရှိသေးပါ။') + '</div>';
-                    return;
-                }
-                // Group by league
-                const byLg = {};
-                all.forEach(p => {
-                    const k = p._lg.code;
-                    if (!byLg[k]) byLg[k] = { lg: p._lg, items: [] };
-                    byLg[k].items.push(p);
-                });
-                box.innerHTML = Object.values(byLg).map(g => {
-                    const lname = currentLang === 'en' ? g.lg.name : g.lg.nameMy;
-                    const rows = g.items.map(p => {
-                        const m = p.markets['1x2'];
-                        const h = (m.home * 100).toFixed(0), dr = (m.draw * 100).toFixed(0), a = (m.away * 100).toFixed(0);
-                        const mx = Math.max(m.home, m.draw, m.away);
-                        let pick = currentLang === 'en' ? 'Draw' : 'သရေ', pc = 'text-slate-300';
-                        if (m.home === mx) { pick = p.home_team.name; pc = 'text-emerald-400'; }
-                        else if (m.away === mx) { pick = p.away_team.name; pc = 'text-emerald-400'; }
-                        const ou = p.markets.ou['2.5'];
-                        const ouPick = ou.over >= 0.5 ? 'O2.5' : 'U2.5';
-                        const ko = new Date(p.kickoff);
-                        const koStr = ko.getDate() + '/' + (ko.getMonth() + 1) + ' ' + ko.getHours() + ':' + String(ko.getMinutes()).padStart(2, '0');
-                        return '<div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800/80">' +
-                            '<div class="flex justify-between items-center text-xs mb-1.5"><span class="font-bold text-white truncate">' + esc(p.home_team.name) + ' <span class="text-slate-500">vs</span> ' + esc(p.away_team.name) + '</span>' +
-                            '<span class="text-[10px] text-slate-500 shrink-0 ml-2">' + koStr + '</span></div>' +
-                            '<div class="flex items-center gap-2 text-[10px]"><div class="flex-1 flex h-1.5 rounded-full overflow-hidden bg-slate-800">' +
-                            '<div class="bg-emerald-500" style="width:' + h + '%"></div><div class="bg-slate-500" style="width:' + dr + '%"></div><div class="bg-sky-500" style="width:' + a + '%"></div></div>' +
-                            '<span class="' + pc + ' font-bold whitespace-nowrap">' + esc(pick) + ' ' + (mx * 100).toFixed(0) + '%</span>' +
-                            '<span class="text-slate-400 whitespace-nowrap">' + ouPick + '</span></div></div>';
-                    }).join('');
-                    return '<div class="card-border rounded-2xl p-3 shadow-lg"><h4 class="text-xs font-bold text-amber-400 mb-2">🏆 ' + lname + '</h4><div class="space-y-2">' + rows + '</div></div>';
-                }).join('');
-            } catch (e) {
-                box.innerHTML = '';
-            }
-        }
-
         // ================= ESPN LIVE + NOTIFICATIONS =================
         let homeFilter = 'all';
         let espnPrevStates = {};
@@ -621,6 +543,7 @@
                 const b = document.getElementById('homeFilter' + x.charAt(0).toUpperCase() + x.slice(1));
                 if (b) b.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold ' + (x === f ? 'tab-active' : 'tab-inactive');
             });
+            renderEspnMatches();
             renderHomeFixtures();
         }
 
@@ -675,8 +598,7 @@
                 const data = await res.json();
                 if (!data.events) return;
                 espnCache = data.events;
-                const live = data.events.filter(e => e.competitions[0] && e.competitions[0].status && e.competitions[0].status.type.state === 'in');
-                renderEspnLive(data.events);
+                renderEspnMatches();
                 // Goal / status change detection
                 data.events.forEach(ev => {
                     const comp = ev.competitions[0];
@@ -698,24 +620,85 @@
                 });
             } catch (e) {}
         }
-        function renderEspnLive(events) {
-            const section = document.getElementById('espnLiveSection');
-            const box = document.getElementById('espnLiveContainer');
+        function isEspnFav(evId) { return favorites.indexOf('espn_' + evId) !== -1; }
+        function toggleEspnFav(evId) {
+            const k = 'espn_' + evId;
+            const i = favorites.indexOf(k);
+            if (i === -1) favorites.push(k); else favorites.splice(i, 1);
+            saveFavorites();
+            renderEspnMatches();
+        }
+        function renderEspnMatches() {
+            const section = document.getElementById('espnMatchesSection');
+            const box = document.getElementById('espnMatchesContainer');
             if (!section || !box) return;
-            const live = events.filter(e => { const c = e.competitions[0]; return c && c.status && c.status.type.state === 'in'; });
+            let events = espnCache || [];
+            // Apply home filter
+            if (homeFilter === 'live') {
+                events = events.filter(e => { const c = e.competitions[0]; return c && c.status && c.status.type.state === 'in'; });
+            } else if (homeFilter === 'fav') {
+                events = events.filter(e => isEspnFav(e.id));
+            }
             const upd = document.getElementById('espnUpdated');
             if (upd) { const d = new Date(); upd.innerText = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
-            if (!live.length) { section.classList.add('hidden'); return; }
-            section.classList.remove('hidden');
-            box.innerHTML = live.slice(0, 8).map(ev => {
+            if (!events.length) {
+                box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' +
+                    (homeFilter === 'fav'
+                        ? (currentLang === 'en' ? 'No favorites yet — tap ☆ on any match.' : 'အကြိုက်ဆုံး မရှိသေးပါ — ပွဲပေါ်က ☆ နှိပ်ပါ။')
+                        : homeFilter === 'live'
+                        ? (currentLang === 'en' ? 'No live matches right now.' : 'အခု တိုက်ရိုက် ပွဲမရှိသေးပါ။')
+                        : (currentLang === 'en' ? 'No matches today.' : 'ယနေ့ ပွဲမရှိပါ။')) + '</div>';
+                return;
+            }
+            // Group by country
+            const byCountry = {};
+            events.forEach(ev => {
                 const comp = ev.competitions[0];
-                const home = comp.competitors.find(c => c.homeAway === 'home');
-                const away = comp.competitors.find(c => c.homeAway === 'away');
-                const lg = (ev.league && ev.league.name) || '';
-                return '<div class="flex items-center justify-between p-2.5 bg-rose-950/30 rounded-xl border border-rose-900/50">' +
-                    '<div class="flex-1 min-w-0 text-xs"><div class="text-[10px] text-slate-500 truncate">' + esc(lg) + ' • <span class="text-rose-400 font-bold animate-pulse">' + esc(comp.status.type.shortDetail) + '</span></div>' +
-                    '<div class="font-bold text-white truncate">' + esc(home.team.shortDisplayName) + ' <span class="text-amber-400 font-mono">' + (home.score || 0) + '</span></div>' +
-                    '<div class="font-bold text-white truncate">' + esc(away.team.shortDisplayName) + ' <span class="text-amber-400 font-mono">' + (away.score || 0) + '</span></div></div></div>';
+                if (!comp) return;
+                const country = (comp.venue && comp.venue.address && comp.venue.address.country) || '?';
+                if (!byCountry[country]) byCountry[country] = [];
+                byCountry[country].push(ev);
+            });
+            box.innerHTML = Object.keys(byCountry).sort().map(country => {
+                const rows = byCountry[country].map(ev => {
+                    const comp = ev.competitions[0];
+                    const st = comp.status.type;
+                    const home = comp.competitors.find(c => c.homeAway === 'home');
+                    const away = comp.competitors.find(c => c.homeAway === 'away');
+                    const isLive = st.state === 'in';
+                    const isFT = st.state === 'post';
+                    const fav = isEspnFav(ev.id);
+                    // Time / status display
+                    let timeHtml;
+                    if (isLive) {
+                        timeHtml = '<span class="text-rose-400 font-bold text-xs animate-pulse">' + esc(st.shortDetail) + '</span>';
+                    } else if (isFT) {
+                        timeHtml = '<span class="text-slate-500 text-xs">FT</span>';
+                    } else {
+                        const kd = new Date(ev.date);
+                        timeHtml = '<span class="text-slate-400 text-xs">' + kd.getHours() + ':' + String(kd.getMinutes()).padStart(2, '0') + '</span>';
+                    }
+                    // Score or VS
+                    let scoreHtml;
+                    if (isLive || isFT) {
+                        const hs = home.score || '0', as = away.score || '0';
+                        scoreHtml = '<div class="text-right font-mono font-bold text-sm leading-tight"><div class="' + (parseInt(hs) > parseInt(as) ? 'text-amber-400' : 'text-white') + '">' + esc(hs) + '</div><div class="' + (parseInt(as) > parseInt(hs) ? 'text-amber-400' : 'text-white') + '">' + esc(as) + '</div></div>';
+                    } else {
+                        scoreHtml = '<div class="text-right text-slate-600 text-xs font-bold">VS</div>';
+                    }
+                    const logo = (t) => t.team.logo ? '<img src="' + esc(t.team.logo) + '" class="w-5 h-5 rounded-full bg-slate-800 object-contain shrink-0" loading="lazy" onerror="this.style.display=\'none\'">' : '<span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] shrink-0">⚽</span>';
+                    return '<div class="flex items-center gap-2 px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
+                        '<div class="w-14 shrink-0 text-center">' + timeHtml + '</div>' +
+                        '<div class="flex-1 min-w-0 space-y-1.5">' +
+                        '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(home.team.shortDisplayName) + '</span></div>' +
+                        '<div class="flex items-center gap-2">' + logo(away) + '<span class="text-sm text-white truncate">' + esc(away.team.shortDisplayName) + '</span></div>' +
+                        '</div>' + scoreHtml +
+                        '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\')" class="text-xl pl-2 ' + (fav ? 'text-amber-400' : 'text-slate-600') + '">' + (fav ? '★' : '☆') + '</button>' +
+                        '</div>';
+                }).join('');
+                return '<div class="rounded-xl overflow-hidden border border-slate-800">' +
+                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + esc(country) + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
+                    rows + '</div>';
             }).join('');
         }
 
@@ -1180,11 +1163,36 @@
             const c = document.getElementById('favoritesContainer');
             if (!c) return;
             const favMatches = matchData.filter(m => isFav(m));
-            if (!favMatches.length) {
-                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No favorites yet — tap ☆ on any match card.' : 'အကြိုက်ဆုံး မရှိသေးပါ — ကတ်ပေါ်က ☆ နှိပ်ပါ။') + '</div>';
+            // ESPN favorites
+            const espnFavs = (espnCache || []).filter(e => isEspnFav(e.id));
+            let html = '';
+            if (espnFavs.length) {
+                html += '<h4 class="text-xs font-bold text-amber-400 mb-2 px-1">⚽ ' + (currentLang === 'en' ? "Today's Matches" : 'ယနေ့ ပွဲစဉ်များ') + '</h4>';
+                html += espnFavs.map(ev => {
+                    const comp = ev.competitions[0];
+                    const st = comp.status.type;
+                    const home = comp.competitors.find(x => x.homeAway === 'home');
+                    const away = comp.competitors.find(x => x.homeAway === 'away');
+                    const isLive = st.state === 'in', isFT = st.state === 'post';
+                    let status = isLive ? '<span class="text-rose-400 font-bold animate-pulse">' + esc(st.shortDetail) + '</span>'
+                        : isFT ? '<span class="text-slate-500">FT</span>'
+                        : '<span class="text-slate-400">' + new Date(ev.date).getHours() + ':' + String(new Date(ev.date).getMinutes()).padStart(2, '0') + '</span>';
+                    let score = (isLive || isFT) ? '<span class="font-mono font-bold text-amber-400">' + esc(home.score || '0') + ' - ' + esc(away.score || '0') + '</span>' : '';
+                    return '<div class="flex items-center justify-between bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 mb-2">' +
+                        '<div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">' + esc(home.team.shortDisplayName) + ' <span class="text-slate-500">vs</span> ' + esc(away.team.shortDisplayName) + '</div>' +
+                        '<div class="text-[10px] text-slate-500">' + status + ' ' + score + '</div></div>' +
+                        '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\');renderFavorites();" class="text-amber-400 text-xl pl-2">★</button></div>';
+                }).join('');
+            }
+            if (favMatches.length) {
+                if (html) html += '<h4 class="text-xs font-bold text-amber-400 mb-2 mt-4 px-1">📋 ' + (currentLang === 'en' ? 'Slip Matches' : 'စာရွက် ပွဲများ') + '</h4>';
+                html += favMatches.map(m => calculateMatch(m)).join('');
+            }
+            if (!html) {
+                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No favorites yet — tap ☆ on any match.' : 'အကြိုက်ဆုံး မရှိသေးပါ — ပွဲပေါ်က ☆ နှိပ်ပါ။') + '</div>';
                 return;
             }
-            c.innerHTML = favMatches.map(m => calculateMatch(m)).join('');
+            c.innerHTML = html;
         }
 
         // ================= SETTINGS =================
@@ -1243,7 +1251,6 @@
             switchView('home');
             fetchEspnScores();
             setInterval(fetchEspnScores, 60000);
-            fetchSyncPredictions();
             if (localStorage.getItem('fi_slip_loaded') === '1' && matchData.length) {
                 const el = document.getElementById('slipStatusText');
                 if (el) el.innerHTML = '<span>✅</span> <span>' + (currentLang === 'en'
