@@ -127,6 +127,16 @@
                 </div>
                 <div id="espnLiveContainer" class="space-y-2"></div>
             </div>
+            <div id="syncPredictionsSection">
+                <div class="flex items-center gap-2 mb-2 px-1">
+                    <span>📊</span>
+                    <h3 class="text-xs font-bold text-amber-400"><span data-i18n="sync_pred_title">နေ့စဉ် AI ခန့်မှန်းချက်များ</span></h3>
+                    <span id="syncPredUpdated" class="text-[10px] text-slate-500 ml-auto"></span>
+                </div>
+                <div id="syncPredContainer" class="space-y-2">
+                    <div class="text-center py-4 text-slate-500 text-xs" data-i18n="sync_loading">ခန့်မှန်းချက်များ ရယူနေပါသည်...</div>
+                </div>
+            </div>
             <div id="homeFixturesContainer" class="space-y-4"></div>
         </section>
 
@@ -295,6 +305,8 @@
                 nav_favorites: "အကြိုက်ဆုံး ပွဲများ",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 espn_live_title: "ESPN တိုက်ရိုက် ရလဒ်များ",
+                sync_pred_title: "နေ့စဉ် AI ခန့်မှန်းချက်များ",
+                sync_loading: "ခန့်မှန်းချက်များ ရယူနေပါသည်...",
                 section1_title: "ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
                 btn_gallery: "ဖုန်းထဲမှ ပုံရွေးမည်",
@@ -356,6 +368,8 @@
                 nav_favorites: "Favorites",
                 date_today: "📅 Today's Matches",
                 espn_live_title: "ESPN Live Scores",
+                sync_pred_title: "Daily AI Predictions",
+                sync_loading: "Loading predictions...",
                 section1_title: "Upload Match Slip",
                 btn_camera: "Direct Camera",
                 btn_gallery: "Upload Photo",
@@ -521,6 +535,74 @@
             return c[0];
         }
         function matchKey(m) { return (m.homeEn || '') + ' vs ' + (m.awayEn || '') + '|' + (m.time || ''); }
+
+        // ================= SYNC PREDICTIONS (daily pipeline) =================
+        const SYNC_LEAGUES = [
+            { code: 'PL', name: 'Premier League', nameMy: 'ပရီးမီးယားလိဂ်' },
+            { code: 'BL1', name: 'Bundesliga', nameMy: 'ဘွန်ဒက်စ်လီဂါ' },
+            { code: 'SA', name: 'Serie A', nameMy: 'စီးရီးအေ' },
+            { code: 'PD', name: 'La Liga', nameMy: 'လာလီဂါ' },
+            { code: 'FL1', name: 'Ligue 1', nameMy: 'လီဂူး ၁' },
+            { code: 'CL', name: 'Champions League', nameMy: 'ချန်ပီယံလိဂ်' }
+        ];
+        async function fetchSyncPredictions() {
+            const box = document.getElementById('syncPredContainer');
+            if (!box) return;
+            try {
+                const all = [];
+                for (const lg of SYNC_LEAGUES) {
+                    try {
+                        const res = await fetch('data/predictions_' + lg.code + '.json');
+                        if (!res.ok) continue;
+                        const d = await res.json();
+                        if (d.predictions && d.predictions.length) {
+                            d.predictions.slice(0, 4).forEach(p => { p._lg = lg; all.push(p); });
+                            const upd = document.getElementById('syncPredUpdated');
+                            if (upd && d.generated_at) {
+                                const dt = new Date(d.generated_at);
+                                upd.innerText = dt.getDate() + '/' + (dt.getMonth() + 1) + ' ' + dt.getHours() + ':' + String(dt.getMinutes()).padStart(2, '0');
+                            }
+                        }
+                    } catch (e) {}
+                }
+                if (!all.length) {
+                    box.innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No synced predictions yet.' : 'ခန့်မှန်းချက် မရှိသေးပါ။') + '</div>';
+                    return;
+                }
+                // Group by league
+                const byLg = {};
+                all.forEach(p => {
+                    const k = p._lg.code;
+                    if (!byLg[k]) byLg[k] = { lg: p._lg, items: [] };
+                    byLg[k].items.push(p);
+                });
+                box.innerHTML = Object.values(byLg).map(g => {
+                    const lname = currentLang === 'en' ? g.lg.name : g.lg.nameMy;
+                    const rows = g.items.map(p => {
+                        const m = p.markets['1x2'];
+                        const h = (m.home * 100).toFixed(0), dr = (m.draw * 100).toFixed(0), a = (m.away * 100).toFixed(0);
+                        const mx = Math.max(m.home, m.draw, m.away);
+                        let pick = currentLang === 'en' ? 'Draw' : 'သရေ', pc = 'text-slate-300';
+                        if (m.home === mx) { pick = p.home_team.name; pc = 'text-emerald-400'; }
+                        else if (m.away === mx) { pick = p.away_team.name; pc = 'text-emerald-400'; }
+                        const ou = p.markets.ou['2.5'];
+                        const ouPick = ou.over >= 0.5 ? 'O2.5' : 'U2.5';
+                        const ko = new Date(p.kickoff);
+                        const koStr = ko.getDate() + '/' + (ko.getMonth() + 1) + ' ' + ko.getHours() + ':' + String(ko.getMinutes()).padStart(2, '0');
+                        return '<div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800/80">' +
+                            '<div class="flex justify-between items-center text-xs mb-1.5"><span class="font-bold text-white truncate">' + p.home_team.name + ' <span class="text-slate-500">vs</span> ' + p.away_team.name + '</span>' +
+                            '<span class="text-[10px] text-slate-500 shrink-0 ml-2">' + koStr + '</span></div>' +
+                            '<div class="flex items-center gap-2 text-[10px]"><div class="flex-1 flex h-1.5 rounded-full overflow-hidden bg-slate-800">' +
+                            '<div class="bg-emerald-500" style="width:' + h + '%"></div><div class="bg-slate-500" style="width:' + dr + '%"></div><div class="bg-sky-500" style="width:' + a + '%"></div></div>' +
+                            '<span class="' + pc + ' font-bold whitespace-nowrap">' + pick + ' ' + (mx * 100).toFixed(0) + '%</span>' +
+                            '<span class="text-slate-400 whitespace-nowrap">' + ouPick + '</span></div></div>';
+                    }).join('');
+                    return '<div class="card-border rounded-2xl p-3 shadow-lg"><h4 class="text-xs font-bold text-amber-400 mb-2">🏆 ' + lname + '</h4><div class="space-y-2">' + rows + '</div></div>';
+                }).join('');
+            } catch (e) {
+                box.innerHTML = '';
+            }
+        }
 
         // ================= ESPN LIVE + NOTIFICATIONS =================
         let homeFilter = 'all';
@@ -1155,6 +1237,7 @@
             switchView('home');
             fetchEspnScores();
             setInterval(fetchEspnScores, 60000);
+            fetchSyncPredictions();
             if (localStorage.getItem('fi_slip_loaded') === '1' && matchData.length) {
                 const el = document.getElementById('slipStatusText');
                 if (el) el.innerHTML = '<span>✅</span> <span>' + (currentLang === 'en'
