@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-16T00:43:31.481217+00:00",
+  "generated_at": "2026-10-16T12:48:05.543151+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 113,
+  "graded_count": 108,
   "matches": [
     {
       "fixture_id": 560593,
@@ -1684,41 +1684,6 @@
       }
     },
     {
-      "fixture_id": 564703,
-      "competition": "PD",
-      "home_team": "Elche CF",
-      "away_team": "RC Celta de Vigo",
-      "kickoff": "2026-10-11T12:00:00Z",
-      "actual": "0-0",
-      "probs_1x2": {
-        "home": 0.2181,
-        "draw": 0.2537,
-        "away": 0.5282
-      },
-      "grades": {
-        "1x2": {
-          "pick": "away",
-          "hit": false
-        },
-        "ou25": {
-          "pick": null,
-          "hit": null
-        },
-        "btts": {
-          "pick": null,
-          "hit": null
-        },
-        "ah": {
-          "pick": "1.5:home_cover",
-          "hit": true
-        },
-        "correct_score": {
-          "pick": "0-1",
-          "hit": false
-        }
-      }
-    },
-    {
       "fixture_id": 558874,
       "competition": "DED",
       "home_team": "PEC Zwolle",
@@ -1999,41 +1964,6 @@
       }
     },
     {
-      "fixture_id": 564707,
-      "competition": "PD",
-      "home_team": "Real Sociedad de Fútbol",
-      "away_team": "RC Deportivo La Coruña",
-      "kickoff": "2026-10-11T14:15:00Z",
-      "actual": "3-2",
-      "probs_1x2": {
-        "home": 0.2562,
-        "draw": 0.257,
-        "away": 0.4868
-      },
-      "grades": {
-        "1x2": {
-          "pick": "away",
-          "hit": false
-        },
-        "ou25": {
-          "pick": null,
-          "hit": null
-        },
-        "btts": {
-          "pick": null,
-          "hit": null
-        },
-        "ah": {
-          "pick": "-1.0:home_not_cover",
-          "hit": null
-        },
-        "correct_score": {
-          "pick": "1-1",
-          "hit": false
-        }
-      }
-    },
-    {
       "fixture_id": 567328,
       "competition": "PPL",
       "home_team": "Rio Ave FC",
@@ -2244,41 +2174,6 @@
       }
     },
     {
-      "fixture_id": 564701,
-      "competition": "PD",
-      "home_team": "Real Betis Balompié",
-      "away_team": "CA Osasuna",
-      "kickoff": "2026-10-11T16:30:00Z",
-      "actual": "5-2",
-      "probs_1x2": {
-        "home": 0.7007,
-        "draw": 0.1935,
-        "away": 0.1058
-      },
-      "grades": {
-        "1x2": {
-          "pick": "home",
-          "hit": true
-        },
-        "ou25": {
-          "pick": null,
-          "hit": null
-        },
-        "btts": {
-          "pick": "no",
-          "hit": false
-        },
-        "ah": {
-          "pick": "-1.5:home_not_cover",
-          "hit": false
-        },
-        "correct_score": {
-          "pick": "2-0",
-          "hit": false
-        }
-      }
-    },
-    {
       "fixture_id": 567320,
       "competition": "PPL",
       "home_team": "Sport Lisboa e Benfica",
@@ -2380,41 +2275,6 @@
         "correct_score": {
           "pick": "1-1",
           "hit": false
-        }
-      }
-    },
-    {
-      "fixture_id": 564705,
-      "competition": "PD",
-      "home_team": "Real Racing Club de Santander",
-      "away_team": "Valencia CF",
-      "kickoff": "2026-10-11T19:00:00Z",
-      "actual": "2-2",
-      "probs_1x2": {
-        "home": 0.5312,
-        "draw": 0.234,
-        "away": 0.2348
-      },
-      "grades": {
-        "1x2": {
-          "pick": "home",
-          "hit": false
-        },
-        "ou25": {
-          "pick": null,
-          "hit": null
-        },
-        "btts": {
-          "pick": "yes",
-          "hit": true
-        },
-        "ah": {
-          "pick": "-1.5:home_not_cover",
-          "hit": true
-        },
-        "correct_score": {
-          "pick": null,
-          "hit": null
         }
       }
     },
@@ -2726,41 +2586,6 @@
         "ah": {
           "pick": "0.5:home_not_cover",
           "hit": false
-        },
-        "correct_score": {
-          "pick": null,
-          "hit": null
-        }
-      }
-    },
-    {
-      "fixture_id": 564704,
-      "competition": "PD",
-      "home_team": "Levante UD",
-      "away_team": "Sevilla FC",
-      "kickoff": "2026-10-12T19:00:00Z",
-      "actual": "3-3",
-      "probs_1x2": {
-        "home": 0.2832,
-        "draw": 0.2075,
-        "away": 0.5093
-      },
-      "grades": {
-        "1x2": {
-          "pick": "away",
-          "hit": false
-        },
-        "ou25": {
-          "pick": "over",
-          "hit": true
-        },
-        "btts": {
-          "pick": "yes",
-          "hit": true
-        },
-        "ah": {
-          "pick": "1.5:home_cover",
-          "hit": true
         },
         "correct_score": {
           "pick": null,
@@ -3961,29 +3786,29 @@
   ],
   "summary": {
     "1x2": {
-      "graded": 86,
-      "hit": 45,
-      "hit_rate": 0.5233
+      "graded": 81,
+      "hit": 44,
+      "hit_rate": 0.5432
     },
     "ou25": {
-      "graded": 98,
-      "hit": 56,
-      "hit_rate": 0.5714
+      "graded": 97,
+      "hit": 55,
+      "hit_rate": 0.567
     },
     "btts": {
-      "graded": 87,
-      "hit": 46,
-      "hit_rate": 0.5287
+      "graded": 84,
+      "hit": 44,
+      "hit_rate": 0.5238
     },
     "ah": {
-      "graded": 106,
-      "hit": 76,
-      "hit_rate": 0.717
+      "graded": 102,
+      "hit": 73,
+      "hit_rate": 0.7157
     },
     "correct_score": {
-      "graded": 38,
+      "graded": 35,
       "hit": 4,
-      "hit_rate": 0.1053
+      "hit_rate": 0.1143
     }
   }
 }
