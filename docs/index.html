@@ -77,7 +77,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p id="slipStatusText" class="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                        <span>✅</span> <span data-i18n="slip_ready">စာရွက်ပေါ်မှ ပွဲစဉ် (၁၈) ပွဲ ဖတ်ယူပြီးပါပြီ</span>
+                        <span>📋</span> <span data-i18n="slip_ready">စာရွက်တင်ပြီး AI နဲ့ ဖတ်မည် (သို့မဟုတ် အောက်က နမူနာပွဲများ)</span>
                     </p>
                     <p id="slipSubText" class="text-[10px] text-slate-400 mt-0.5 truncate" data-i18n="slip_desc">UEFA ယူရိုပါလိဂ်၊ ကွန်းဖရန့်လိဂ် ပွဲစဉ်များ အသင့်ရှိသည်</p>
                 </div>
@@ -148,7 +148,7 @@
                 section1_title: "၁။ ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
                 btn_gallery: "ဖုန်းထဲမှ ပုံရွေးမည်",
-                slip_ready: "စာရွက်ပေါ်မှ ပွဲစဉ် (၁၈) ပွဲ ဖတ်ယူပြီးပါပြီ",
+                slip_ready: "စာရွက်တင်ပြီး AI နဲ့ ဖတ်မည် (သို့မဟုတ် အောက်က နမူနာပွဲများ)",
                 slip_desc: "UEFA ယူရိုပါလိဂ်၊ ကွန်းဖရန့်လိဂ် ပွဲစဉ်များ အသင့်ရှိသည်",
                 btn_predict_all: "ပွဲအားလုံး တစ်ပြိုင်နက် တွက်မည်",
                 btn_clear: "ရှင်းလင်းမည်",
@@ -188,7 +188,7 @@
                 section1_title: "1. Match Slip Input",
                 btn_camera: "Direct Camera",
                 btn_gallery: "Upload Photo",
-                slip_ready: "Slip Loaded: 18 Matches Extracted",
+                slip_ready: "Upload a slip to read with AI (or browse sample matches below)",
                 slip_desc: "UEFA Europa League, Conference League ready",
                 btn_predict_all: "Predict All Matches",
                 btn_clear: "Clear All",
@@ -241,9 +241,27 @@
 
         window.onload = function() {
             updateApiStatusBadge();
+            try {
+                const saved = localStorage.getItem('fi_slip_matches');
+                if (saved) {
+                    const arr = JSON.parse(saved);
+                    if (Array.isArray(arr) && arr.length) {
+                        matchData = arr;
+                        selectedLeague = "ALL";
+                    }
+                }
+            } catch (se) {}
             renderLeagueTabs();
             renderAllMatches();
             renderTopPicks();
+            try {
+                if (localStorage.getItem('fi_slip_loaded') === '1') {
+                    const el = document.getElementById('slipStatusText');
+                    if (el) el.innerHTML = '<span>✅</span> <span>' + (currentLang === 'en'
+                        ? 'Slip loaded: ' + matchData.length + ' matches'
+                        : 'စာရွက်ဖတ်ပြီးသား (' + matchData.length + ') ပွဲ') + '</span>';
+                }
+            } catch (se) {}
         };
 
         function openSettings() {
@@ -293,13 +311,14 @@
 
         function renderLeagueTabs() {
             const container = document.getElementById('leagueTabsContainer');
-            const leagues = ["ALL", ...new Set(matchData.map(m => currentLang === 'en' ? m.leagueEn : m.leagueMy))];
+            const leagues = ["ALL", ...new Set(matchData.map(m => m.leagueEn))];
 
             container.innerHTML = leagues.map(l => {
                 const isSelected = selectedLeague === l;
-                const displayName = l === "ALL" ? translations[currentLang].tab_all : l;
+                const displayName = l === "ALL" ? translations[currentLang].tab_all
+                    : (currentLang === 'en' ? l : (matchData.find(m => m.leagueEn === l) || {}).leagueMy || l);
                 return `
-                    <button onclick="filterLeague('${l}')" class="px-3.5 py-1.5 rounded-full transition duration-150 ${isSelected ? 'tab-active' : 'tab-inactive'}">
+                    <button onclick="filterLeague('${l.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-full transition duration-150 ${isSelected ? 'tab-active' : 'tab-inactive'}">
                         ${displayName}
                     </button>
                 `;
@@ -407,44 +426,60 @@
             const container = document.getElementById('cardsContainer');
             const filtered = selectedLeague === "ALL"
                 ? matchData
-                : matchData.filter(m => (currentLang === 'en' ? m.leagueEn : m.leagueMy) === selectedLeague);
+                : matchData.filter(m => m.leagueEn === selectedLeague);
 
             container.innerHTML = filtered.map(m => calculateMatch(m)).join('');
         }
 
+        function matchPickStats(m) {
+            let expHome = ((m.hxg + m.axga) / 2) * 1.08;
+            let expAway = ((m.axg + m.hxga) / 2) * 0.95;
+            if (m.turf) { expHome += 0.25; expAway -= 0.35; }
+            if (m.low) { expHome *= 0.83; expAway *= 0.83; }
+            let hWin = 0, draw = 0, aWin = 0, over25 = 0;
+            for (let h = 0; h <= 6; h++) {
+                for (let a = 0; a <= 6; a++) {
+                    const p = poisson(h, expHome) * poisson(a, expAway);
+                    if (h > a) hWin += p; else if (h === a) draw += p; else aWin += p;
+                    if ((h + a) > 2.5) over25 += p;
+                }
+            }
+            hWin *= 100; draw *= 100; aWin *= 100; over25 *= 100;
+            const under25 = 100 - over25;
+            const cands = [
+                { label: (currentLang === 'en' ? m.homeEn : m.homeMy) + (currentLang === 'en' ? ' Win' : ' နိုင်'), prob: hWin },
+                { label: (currentLang === 'en' ? m.awayEn : m.awayMy) + (currentLang === 'en' ? ' Win' : ' နိုင်'), prob: aWin },
+                { label: currentLang === 'en' ? 'Draw' : 'သရေ', prob: draw },
+                { label: currentLang === 'en' ? 'Over 2.5' : 'ဂိုးပေါင်း 2.5+', prob: over25 },
+                { label: currentLang === 'en' ? 'Under 2.5' : 'ဂိုးနည်း 2.5-', prob: under25 }
+            ];
+            cands.sort((x, y) => y.prob - x.prob);
+            return cands[0];
+        }
+
         function renderTopPicks() {
             const list = document.getElementById('topPicksList');
-            if (currentLang === 'en') {
-                list.innerHTML = `
+            const ranked = matchData
+                .map(m => ({ m: m, pick: matchPickStats(m) }))
+                .sort((a, b) => b.pick.prob - a.pick.prob)
+                .slice(0, 3);
+            const medals = ['1.', '2.', '3.'];
+            const mmMedals = ['၁။', '၂။', '၃။'];
+            list.innerHTML = ranked.map((r, i) => {
+                const home = currentLang === 'en' ? r.m.homeEn : r.m.homeMy;
+                const away = currentLang === 'en' ? r.m.awayEn : r.m.awayMy;
+                const medal = currentLang === 'en' ? medals[i] : mmMedals[i];
+                const probTxt = currentLang === 'en'
+                    ? r.pick.prob.toFixed(0) + '% Prob'
+                    : 'ဖြစ်နိုင်ခြေ ' + r.pick.prob.toFixed(0) + '%';
+                const probCls = r.pick.prob >= 56 ? 'text-amber-400' : (r.pick.prob >= 44 ? 'text-emerald-400' : 'text-sky-400');
+                return `
                     <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">1. Bayer Leverkusen (Win)</span>
-                        <span class="text-emerald-400 font-semibold">58% Win Prob</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">2. KuPS vs Trabzonspor (Under 2.5)</span>
-                        <span class="text-sky-400 font-semibold">62% Prob</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">3. Atalanta (Win)</span>
-                        <span class="text-emerald-400 font-semibold">65% Win Prob</span>
-                    </div>
-                `;
-            } else {
-                list.innerHTML = `
-                    <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">၁။ လေဗာကူဆင် (အနိုင်)</span>
-                        <span class="text-emerald-400 font-semibold">နိုင်ခြေ 58%</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">၂။ KUPS vs ထရာဇွန်စပွန်း (ဂိုးနည်း)</span>
-                        <span class="text-sky-400 font-semibold">ဖြစ်နိုင်ခြေ 62%</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <span class="font-bold text-white">၃။ အတ္တလန်တာ (အနိုင်)</span>
-                        <span class="text-emerald-400 font-semibold">နိုင်ခြေ 65%</span>
+                        <span class="font-bold text-white">${medal} ${home} vs ${away} (${r.pick.label})</span>
+                        <span class="${probCls} font-semibold">${probTxt}</span>
                     </div>
                 `;
-            }
+            }).join('');
         }
 
         async function testApiKey() {
@@ -579,6 +614,7 @@
 
                     matchData = parsedMatches;
                     selectedLeague = "ALL";
+                    try { localStorage.setItem('fi_slip_matches', JSON.stringify(parsedMatches)); localStorage.setItem('fi_slip_loaded', '1'); } catch (se) {}
                     setStatus(currentLang === 'en'
                         ? "✅ Gemini read " + matchData.length + " matches from the slip"
                         : "✅ စာရွက်ပေါ်မှ ပွဲစဉ် (" + matchData.length + ") ပွဲ ဖတ်ပြီးပါပြီ", true);
@@ -594,6 +630,7 @@
         }
 
         function clearCards() {
+            try { localStorage.removeItem('fi_slip_matches'); localStorage.removeItem('fi_slip_loaded'); } catch (se) {}
             document.getElementById('cardsContainer').innerHTML = `
                 <div class="text-center py-8 text-slate-500 text-xs">
                     ${currentLang === 'en' ? 'All match cards cleared.' : 'ခန့်မှန်းချက်ကတ်များ ရှင်းလင်းပြီးပါပြီ။'}
