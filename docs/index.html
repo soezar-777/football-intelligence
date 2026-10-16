@@ -440,6 +440,58 @@
             return c;
         }
 
+        // Team names: English -> Myanmar (popular teams; fallback to English)
+        const TEAM_MY = {
+            // Premier League
+            'Arsenal': 'အာဆင်နယ်', 'Aston Villa': 'အက်စတွန်ဗီလာ', 'Bournemouth': 'ဘုန်းမောက်',
+            'Brentford': 'ဘရန့်ဖို့ဒ်', 'Brighton': 'ဘရိုက်တန်', 'Chelsea': 'ချယ်လ်ဆီး',
+            'Crystal Palace': 'ခရစ္စတယ်ပဲလေ့စ်', 'Everton': 'အဲဗာတန်', 'Fulham': 'ဖူလ်ဟမ်',
+            'Ipswich Town': 'အစ်ဝစ်ချ်', 'Leicester City': 'လက်စတာ', 'Liverpool': 'လီဗာပူး',
+            'Manchester City': 'မန်စီးတီး', 'Manchester United': 'မန်ယူ', 'Newcastle': 'နယူးကာဆယ်',
+            'Newcastle United': 'နယူးကာဆယ်', 'Nottingham Forest': 'နော်တင်ဟမ်', 'Southampton': 'ဆောက်သမ်တန်',
+            'Tottenham': 'စပါး', 'Tottenham Hotspur': 'စပါး', 'West Ham': 'ဝက်စ်ဟမ်း',
+            'West Ham United': 'ဝက်စ်ဟမ်း', 'Wolves': 'ဝုဗ်', 'Wolverhampton': 'ဝုဗ်',
+            // La Liga
+            'Real Madrid': 'ရီးရဲလ်မက်ဒရစ်', 'Barcelona': 'ဘာစီလိုနာ', 'Atlético Madrid': 'အက်သလက်တီကို',
+            'Atletico Madrid': 'အက်သလက်တီကို', 'Athletic Club': 'အက်သလက်တစ်', 'Villarreal': 'ဗီလာရီးရဲလ်',
+            'Real Betis': 'ရီးရဲလ်ဘက်တစ်', 'Real Sociedad': 'ရီးရဲလ်ဆိုစီဒက်', 'Valencia': 'ဗလင်စီယာ',
+            'Sevilla': 'ဆီဗီလာ', 'Getafe': 'ဂီတာဖေး', 'Celta Vigo': 'ဆယ်တာဗီဂို',
+            'Osasuna': 'အိုဆာဆူနာ', 'Alavés': 'အလာဗက်စ်', 'Las Palmas': 'လတ်စ်ပါးလ်မတ်စ်',
+            'Rayo Vallecano': 'ရာယိုဗယ်လေကာနို', 'Mallorca': 'မာယော့ကာ', 'Girona': 'ဂျီရိုနာ',
+            'Espanyol': 'အက်စ်ပန်ညိုလ်', 'Leganes': 'လက်ဂနက်စ်',
+            // Bundesliga
+            'Bayern Munich': 'ဘိုင်ယန်မြူးနစ်', 'Bayern München': 'ဘိုင်ယန်မြူးနစ်',
+            'Borussia Dortmund': 'ဒေါ့မွန်', 'RB Leipzig': 'လိုက်ပ်ဇစ်', 'Bayer Leverkusen': 'လေဗာကူဆင်',
+            'Stuttgart': 'စတုဂတ်', 'VfB Stuttgart': 'စတုဂတ်', 'Eintracht Frankfurt': 'ဖရန့်ခ်ဖုတ်',
+            'Borussia Mgladbach': 'ဂလက်ဘတ်', "Borussia M'gladbach": 'ဂလက်ဘတ်',
+            'Wolfsburg': 'ဝုဖ်ဘတ်', 'Freiburg': 'ဖရိုင်းဘတ်', 'Hoffenheim': 'ဟော့ဖန်ဟိမ်း',
+            'Mainz': 'မိန့်ဇ်', 'Augsburg': 'အော့ဂ်စ်ဘတ်', 'Werder Bremen': 'ဝါဒါဘရီမင်',
+            // Serie A
+            'Inter': 'အင်တာ', 'Internazionale': 'အင်တာ', 'AC Milan': 'အေစီမီလန်',
+            'Milan': 'အေစီမီလန်', 'Juventus': 'ဂျူဗင်တပ်', 'Napoli': 'နာပိုလီ',
+            'Roma': 'ရိုးမား', 'AS Roma': 'ရိုးမား', 'Lazio': 'လာဇီယို',
+            'Atalanta': 'အတ္တလန္တာ', 'Fiorentina': 'ဖီအိုရင်တီးနား', 'Bologna': 'ဘိုလော့ဂ်နာ',
+            'Torino': 'တိုရီနို', 'Udinese': 'ဥဒီးနီးစ်', 'Empoli': 'အမ်ပိုလီ',
+            // Ligue 1
+            'PSG': 'ပီအက်စ်ဂျီ', 'Paris Saint-Germain': 'ပီအက်စ်ဂျီ', 'Marseille': 'မာဆေး',
+            'Monaco': 'မိုနာကို', 'Lyon': 'လီယွန်', 'Lille': 'လီလ်',
+            'Lens': 'လွန်းစ်', 'Nice': 'နိစ်',
+            // Others - Champions League regulars
+            'Ajax': 'အေဂျက်စ်', 'PSV': 'ပီအက်စ်ဗွီ', 'Feyenoord': 'ဖီယင်နော့ဒ်',
+            'Porto': 'ပေါ်တို', 'Benfica': 'ဘင်ဖီကာ', 'Sporting CP': 'စပေါ်တင်း',
+            'Celtic': 'ဆဲလ်တစ်', 'Rangers': 'ရိန်းဂျားစ်', 'Shakhtar Donetsk': 'ရှက်တာဒိုးနက်စ်',
+            'Fenerbahçe': 'ဖီနာဘာချီ', 'Galatasaray': 'ဂါလာတာစာရေး', 'Trabzonspor': 'ထရာဇွန်စပွန်း',
+            'PAOK': 'ပီအေအိုကေ', 'Olympiacos': 'အိုလံပီယာကို့စ်',
+            'KuPS': 'ကပ်စ်', 'KuPS Kuopio': 'ကပ်စ်',
+            'Lech Poznan': 'လက်ပို့ဇ်နန်', 'Lech Poznań': 'လက်ပို့ဇ်နန်',
+            'Slavia Prague': 'ဆလာဗီးယားပရာ့ဂ်', 'SK Slavia Prague': 'ဆလာဗီးယားပရာ့ဂ်',
+            'Sabah': 'ဆာဘာ', 'Sabah FK': 'ဆာဘာ', 'AEK': 'အေအီးကေ'
+        };
+        function teamName(t) {
+            if (currentLang === 'my' && TEAM_MY[t]) return TEAM_MY[t];
+            return t;
+        }
+
         // ================= STATE =================
         let currentLang = 'my';
         let selectedLeague = "ALL";
@@ -712,8 +764,8 @@
                     return '<div class="flex items-center gap-2 px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
                         '<div class="w-14 shrink-0 text-center">' + timeHtml + '</div>' +
                         '<div class="flex-1 min-w-0 space-y-1.5">' +
-                        '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(home.team.shortDisplayName) + '</span></div>' +
-                        '<div class="flex items-center gap-2">' + logo(away) + '<span class="text-sm text-white truncate">' + esc(away.team.shortDisplayName) + '</span></div>' +
+                        '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + '</span></div>' +
+                        '<div class="flex items-center gap-2">' + logo(away) + '<span class="text-sm text-white truncate">' + esc(teamName(away.team.shortDisplayName)) + '</span></div>' +
                         '</div>' + scoreHtml +
                         '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\')" class="text-xl pl-2 ' + (fav ? 'text-amber-400' : 'text-slate-600') + '">' + (fav ? '★' : '☆') + '</button>' +
                         '</div>';
@@ -1201,7 +1253,7 @@
                         : '<span class="text-slate-400">' + new Date(ev.date).getHours() + ':' + String(new Date(ev.date).getMinutes()).padStart(2, '0') + '</span>';
                     let score = (isLive || isFT) ? '<span class="font-mono font-bold text-amber-400">' + esc(home.score || '0') + ' - ' + esc(away.score || '0') + '</span>' : '';
                     return '<div class="flex items-center justify-between bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 mb-2">' +
-                        '<div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">' + esc(home.team.shortDisplayName) + ' <span class="text-slate-500">vs</span> ' + esc(away.team.shortDisplayName) + '</div>' +
+                        '<div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + ' <span class="text-slate-500">vs</span> ' + esc(teamName(away.team.shortDisplayName)) + '</div>' +
                         '<div class="text-[10px] text-slate-500">' + status + ' ' + score + '</div></div>' +
                         '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\');renderFavorites();" class="text-amber-400 text-xl pl-2">★</button></div>';
                 }).join('');
