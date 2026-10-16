@@ -22,6 +22,18 @@
 </head>
 <body class="min-h-screen pb-20">
 
+    <!-- Live Toast Alert -->
+    <div id="liveAlertToast" class="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 hidden w-11/12 max-w-md bg-emerald-950/95 border-2 border-emerald-400 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <span id="toastIcon" class="text-2xl">⚽</span>
+            <div>
+                <p id="toastTitle" class="text-xs font-bold text-emerald-400 uppercase tracking-wider">GOAL!</p>
+                <p id="toastBody" class="text-sm font-bold text-white"></p>
+            </div>
+        </div>
+        <button onclick="hideToast()" class="text-slate-400 hover:text-white text-lg shrink-0">&times;</button>
+    </div>
+
     <!-- Slide-out Sidebar Overlay -->
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden"></div>
 
@@ -95,9 +107,25 @@
 
         <!-- ================= VIEW: HOME ================= -->
         <section id="view-home" class="space-y-4">
-            <div class="flex justify-between items-center bg-slate-900/70 p-2 rounded-xl border border-slate-800 text-xs">
-                <span class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30" data-i18n="date_today">📅 ယနေ့ ပွဲစဉ်များ</span>
-                <span id="homeCountBadge" class="px-3 py-1.5 text-slate-400"></span>
+            <div class="flex justify-between items-center bg-slate-900/70 p-2 rounded-xl border border-slate-800 text-xs gap-2">
+                <span class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30 whitespace-nowrap" data-i18n="date_today">📅 ယနေ့ ပွဲစဉ်များ</span>
+                <div class="flex gap-1.5">
+                    <button onclick="setHomeFilter('all')" id="homeFilterAll" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-active">All</button>
+                    <button onclick="setHomeFilter('live')" id="homeFilterLive" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-inactive">🔴 LIVE</button>
+                    <button onclick="setHomeFilter('fav')" id="homeFilterFav" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-inactive">⭐</button>
+                </div>
+                <div class="flex gap-1.5">
+                    <button onclick="enableNotifications()" class="text-[10px] bg-slate-800 border border-slate-700 px-2 py-1 rounded-full" title="Notifications">🔔</button>
+                    <button onclick="testNotification()" class="text-[10px] bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 px-2 py-1 rounded-full font-semibold">⚡ Test</button>
+                </div>
+            </div>
+            <div id="espnLiveSection" class="hidden">
+                <div class="flex items-center gap-2 mb-2 px-1">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                    <h3 class="text-xs font-bold text-rose-400">🔴 <span data-i18n="espn_live_title">ESPN တိုက်ရိုက် ရလဒ်များ</span></h3>
+                    <span id="espnUpdated" class="text-[10px] text-slate-500 ml-auto"></span>
+                </div>
+                <div id="espnLiveContainer" class="space-y-2"></div>
             </div>
             <div id="homeFixturesContainer" class="space-y-4"></div>
         </section>
@@ -266,6 +294,7 @@
                 nav_standings: "အမှတ်ပေးဇယား",
                 nav_favorites: "အကြိုက်ဆုံး ပွဲများ",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
+                espn_live_title: "ESPN တိုက်ရိုက် ရလဒ်များ",
                 section1_title: "ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
                 btn_gallery: "ဖုန်းထဲမှ ပုံရွေးမည်",
@@ -326,6 +355,7 @@
                 nav_standings: "Standings",
                 nav_favorites: "Favorites",
                 date_today: "📅 Today's Matches",
+                espn_live_title: "ESPN Live Scores",
                 section1_title: "Upload Match Slip",
                 btn_camera: "Direct Camera",
                 btn_gallery: "Upload Photo",
@@ -492,19 +522,133 @@
         }
         function matchKey(m) { return (m.homeEn || '') + ' vs ' + (m.awayEn || '') + '|' + (m.time || ''); }
 
+        // ================= ESPN LIVE + NOTIFICATIONS =================
+        let homeFilter = 'all';
+        let espnPrevStates = {};
+        let espnCache = [];
+
+        function setHomeFilter(f) {
+            homeFilter = f;
+            ['all', 'live', 'fav'].forEach(x => {
+                const b = document.getElementById('homeFilter' + x.charAt(0).toUpperCase() + x.slice(1));
+                if (b) b.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold ' + (x === f ? 'tab-active' : 'tab-inactive');
+            });
+            renderHomeFixtures();
+        }
+
+        function playNotiSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                if (type === 'GOAL') {
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+                } else { osc.frequency.setValueAtTime(660, ctx.currentTime); }
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                osc.start(); osc.stop(ctx.currentTime + 0.6);
+            } catch (e) {}
+        }
+        function showToast(title, body, icon) {
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastBody').innerText = body;
+            document.getElementById('toastIcon').innerText = icon || '⚽';
+            document.getElementById('liveAlertToast').classList.remove('hidden');
+            setTimeout(hideToast, 6000);
+        }
+        function hideToast() { document.getElementById('liveAlertToast').classList.add('hidden'); }
+        function notifyEvent(title, body, type) {
+            playNotiSound(type);
+            showToast(title, body, type === 'GOAL' ? '⚽' : '📢');
+            try {
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification(title, { body: body });
+                }
+            } catch (e) {}
+        }
+        function enableNotifications() {
+            if (!("Notification" in window)) { alert(currentLang === 'en' ? "Notifications not supported" : "Noti မရနိုင်ပါ"); return; }
+            Notification.requestPermission().then(p => {
+                if (p === "granted") notifyEvent(currentLang === 'en' ? "🔔 Notifications ON" : "🔔 Noti ဖွင့်ပြီးပါပြီ",
+                    currentLang === 'en' ? "Goal / kickoff / FT alerts enabled" : "ဂိုး/ပွဲစ/ပွဲပြီး noti များ ရမည်", "INFO");
+            });
+        }
+        function testNotification() {
+            notifyEvent(currentLang === 'en' ? "⚽ GOAL! Test" : "⚽ GOAL!! စမ်းသပ်မှု",
+                currentLang === 'en' ? "Test alert — sound + toast working" : "စမ်းသပ် noti — အသံ + စာတန်း အလုပ်လုပ်သည်", "GOAL");
+        }
+
+        async function fetchEspnScores() {
+            try {
+                const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!data.events) return;
+                espnCache = data.events;
+                const live = data.events.filter(e => e.competitions[0] && e.competitions[0].status && e.competitions[0].status.type.state === 'in');
+                renderEspnLive(data.events);
+                // Goal / status change detection
+                data.events.forEach(ev => {
+                    const comp = ev.competitions[0];
+                    const st = comp.status.type;
+                    const home = comp.competitors.find(c => c.homeAway === 'home');
+                    const away = comp.competitors.find(c => c.homeAway === 'away');
+                    const hs = parseInt(home.score || 0), as = parseInt(away.score || 0);
+                    const prev = espnPrevStates[ev.id];
+                    if (prev) {
+                        const hn = home.team.shortDisplayName, an = away.team.shortDisplayName;
+                        if (prev.state === 'pre' && st.state === 'in')
+                            notifyEvent("📢 " + (currentLang === 'en' ? "KICK-OFF" : "ပွဲစတင်ပါပြီ"), hn + " vs " + an, "KICKOFF");
+                        else if (st.state === 'in' && (hs > prev.hs || as > prev.as))
+                            notifyEvent("⚽ GOAL!", hn + " " + hs + " - " + as + " " + an + " (" + st.shortDetail + ")", "GOAL");
+                        else if (prev.state === 'in' && st.state === 'post')
+                            notifyEvent("🏁 " + (currentLang === 'en' ? "FULL-TIME" : "ပွဲပြီးပါပြီ"), hn + " " + hs + " - " + as + " " + an, "FT");
+                    }
+                    espnPrevStates[ev.id] = { state: st.state, hs: hs, as: as };
+                });
+            } catch (e) {}
+        }
+        function renderEspnLive(events) {
+            const section = document.getElementById('espnLiveSection');
+            const box = document.getElementById('espnLiveContainer');
+            if (!section || !box) return;
+            const live = events.filter(e => { const c = e.competitions[0]; return c && c.status && c.status.type.state === 'in'; });
+            const upd = document.getElementById('espnUpdated');
+            if (upd) { const d = new Date(); upd.innerText = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+            if (!live.length) { section.classList.add('hidden'); return; }
+            section.classList.remove('hidden');
+            box.innerHTML = live.slice(0, 8).map(ev => {
+                const comp = ev.competitions[0];
+                const home = comp.competitors.find(c => c.homeAway === 'home');
+                const away = comp.competitors.find(c => c.homeAway === 'away');
+                const lg = (ev.league && ev.league.name) || '';
+                return '<div class="flex items-center justify-between p-2.5 bg-rose-950/30 rounded-xl border border-rose-900/50">' +
+                    '<div class="flex-1 min-w-0 text-xs"><div class="text-[10px] text-slate-500 truncate">' + lg + ' • <span class="text-rose-400 font-bold animate-pulse">' + comp.status.type.shortDetail + '</span></div>' +
+                    '<div class="font-bold text-white truncate">' + home.team.shortDisplayName + ' <span class="text-amber-400 font-mono">' + (home.score || 0) + '</span></div>' +
+                    '<div class="font-bold text-white truncate">' + away.team.shortDisplayName + ' <span class="text-amber-400 font-mono">' + (away.score || 0) + '</span></div></div></div>';
+            }).join('');
+        }
+
         // ================= HOME =================
         function renderHomeFixtures() {
             const c = document.getElementById('homeFixturesContainer');
-            const badge = document.getElementById('homeCountBadge');
-            if (badge) badge.innerText = matchData.length + (currentLang === 'en' ? ' matches' : ' ပွဲ');
-            if (!matchData.length) {
-                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No fixtures — upload a slip in AI Predictor.' : 'ပွဲမရှိသေးပါ — AI Predictor မှာ စာရွက်တင်ပါ။') +
+            let list = matchData;
+            if (homeFilter === 'fav') list = matchData.filter(m => isFav(m));
+            // NOTE: slip matches have no live status; 'live' filter shows ESPN section above
+            if (!c) return;
+            if (!list.length) {
+                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' +
+                    (homeFilter === 'fav'
+                        ? (currentLang === 'en' ? 'No favorites yet — tap ☆ on any match card.' : 'အကြိုက်ဆုံး မရှိသေးပါ — ကတ်ပေါ်က ☆ နှိပ်ပါ။')
+                        : (currentLang === 'en' ? 'No fixtures — upload a slip in AI Predictor.' : 'ပွဲမရှိသေးပါ — AI Predictor မှာ စာရွက်တင်ပါ။')) +
                     '<br><button onclick="restoreSamples()" class="mt-3 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold py-2 px-4 rounded-xl border border-slate-700">🔄 ' + (currentLang === 'en' ? 'Restore sample matches' : 'နမူနာပွဲများ ပြန်ယူမည်') + '</button></div>';
                 return;
             }
-            const leagues = [...new Set(matchData.map(m => m.leagueEn))];
+            const leagues = [...new Set(list.map(m => m.leagueEn))];
             c.innerHTML = leagues.map(le => {
-                const ms = matchData.filter(m => m.leagueEn === le);
+                const ms = list.filter(m => m.leagueEn === le);
                 const lname = currentLang === 'en' ? le : ((ms[0] || {}).leagueMy || le);
                 const rows = ms.map(m => {
                     const home = currentLang === 'en' ? m.homeEn : m.homeMy;
@@ -1009,6 +1153,8 @@
             updateApiStatusBadge();
             updateFavBadge();
             switchView('home');
+            fetchEspnScores();
+            setInterval(fetchEspnScores, 60000);
             if (localStorage.getItem('fi_slip_loaded') === '1' && matchData.length) {
                 const el = document.getElementById('slipStatusText');
                 if (el) el.innerHTML = '<span>✅</span> <span>' + (currentLang === 'en'
