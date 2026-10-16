@@ -707,6 +707,21 @@
                 });
             } catch (e) {}
         }
+        function getTimePeriod(dateStr) {
+            try {
+                const d = new Date(new Date(dateStr).toLocaleString('en-US', { timeZone: 'Asia/Yangon' }));
+                const h = d.getHours();
+                if (h >= 5 && h < 12) return 'morning';
+                if (h >= 12 && h < 17) return 'day';
+                return 'evening';
+            } catch (e) { return 'evening'; }
+        }
+        function periodLabel(p) {
+            if (currentLang === 'en') {
+                return p === 'morning' ? '🌅 Morning' : p === 'day' ? '☀️ Afternoon' : '🌙 Evening';
+            }
+            return p === 'morning' ? '🌅 မနက်ပိုင်း' : p === 'day' ? '☀️ နေ့လည်ပိုင်း' : '🌙 ညပိုင်း';
+        }
         function isEspnFav(evId) { return favorites.indexOf('espn_' + evId) !== -1; }
         function toggleEspnFav(evId) {
             const k = 'espn_' + evId;
@@ -737,17 +752,34 @@
                         : (currentLang === 'en' ? 'No matches today.' : 'ယနေ့ ပွဲမရှိပါ။')) + '</div>';
                 return;
             }
-            // Group by country
-            const byCountry = {};
+            // Group by time period, then by country
+            const byPeriod = { live: [], morning: [], day: [], evening: [] };
             events.forEach(ev => {
                 const comp = ev.competitions[0];
                 if (!comp) return;
-                const country = (comp.venue && comp.venue.address && comp.venue.address.country) || '?';
-                if (!byCountry[country]) byCountry[country] = [];
-                byCountry[country].push(ev);
+                const state = comp.status.type.state;
+                if (state === 'in') { byPeriod.live.push(ev); return; }
+                const p = getTimePeriod(ev.date);
+                byPeriod[p].push(ev);
             });
-            box.innerHTML = Object.keys(byCountry).sort().map(country => {
-                const rows = byCountry[country].map(ev => {
+            const periodOrder = ['live', 'morning', 'day', 'evening'];
+            const periodTitles = {
+                live: currentLang === 'en' ? '🔴 Live Now' : '🔴 တိုက်ရိုက်',
+                morning: periodLabel('morning'), day: periodLabel('day'), evening: periodLabel('evening')
+            };
+            box.innerHTML = periodOrder.map(per => {
+                const list = byPeriod[per];
+                if (!list.length) return '';
+                // Sub-group by country
+                const byCountry = {};
+                list.forEach(ev => {
+                    const comp = ev.competitions[0];
+                    const country = (comp.venue && comp.venue.address && comp.venue.address.country) || '?';
+                    if (!byCountry[country]) byCountry[country] = [];
+                    byCountry[country].push(ev);
+                });
+                const countryHtml = Object.keys(byCountry).sort().map(country => {
+                    const rows = byCountry[country].map(ev => {
                     const comp = ev.competitions[0];
                     const st = comp.status.type;
                     const home = comp.competitors.find(c => c.homeAway === 'home');
@@ -782,9 +814,12 @@
                         '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\')" class="text-xl pl-2 ' + (fav ? 'text-amber-400' : 'text-slate-600') + '">' + (fav ? '★' : '☆') + '</button>' +
                         '</div>';
                 }).join('');
-                return '<div class="rounded-xl overflow-hidden border border-slate-800">' +
+                return '<div class="rounded-xl overflow-hidden border border-slate-800 mb-2">' +
                     '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + esc(countryName(country)) + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
                     rows + '</div>';
+                }).join('');
+                return '<div class="mb-4"><div class="text-sm font-bold text-amber-400 mb-2 px-1">' + periodTitles[per] +
+                    ' <span class="text-slate-500 font-normal text-xs">(' + list.length + ')</span></div>' + countryHtml + '</div>';
             }).join('');
         }
 
