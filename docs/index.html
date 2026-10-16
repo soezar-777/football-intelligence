@@ -110,8 +110,8 @@
             <div class="flex justify-between items-center bg-slate-900/70 p-2 rounded-xl border border-slate-800 text-xs gap-2">
                 <span class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30 whitespace-nowrap" data-i18n="date_today">📅 ယနေ့ ပွဲစဉ်များ</span>
                 <div class="flex gap-1.5">
-                    <button onclick="setHomeFilter('all')" id="homeFilterAll" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-active">All</button>
-                    <button onclick="setHomeFilter('live')" id="homeFilterLive" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-inactive">🔴 LIVE</button>
+                    <button onclick="setHomeFilter('all')" id="homeFilterAll" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-active" data-i18n="filter_all">အားလုံး</button>
+                    <button onclick="setHomeFilter('live')" id="homeFilterLive" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-inactive" data-i18n="filter_live">🔴 တိုက်ရိုက်</button>
                     <button onclick="setHomeFilter('fav')" id="homeFilterFav" class="px-2.5 py-1 rounded-full text-[10px] font-bold tab-inactive">⭐</button>
                 </div>
                 <div class="flex gap-1.5">
@@ -296,6 +296,8 @@
                 nav_favorites: "အကြိုက်ဆုံး ပွဲများ",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 today_matches_title: "ယနေ့ ပွဲစဉ်များ",
+                filter_all: "အားလုံး",
+                filter_live: "🔴 တိုက်ရိုက်",
                 sync_loading: "ပွဲစဉ်များ ရယူနေပါသည်...",
                 section1_title: "ကြေးစာရွက် ထည့်သွင်းရန်",
                 btn_camera: "ကင်မရာဖြင့် ရိုက်မည်",
@@ -358,6 +360,8 @@
                 nav_favorites: "Favorites",
                 date_today: "📅 Today's Matches",
                 today_matches_title: "Today's Matches",
+                filter_all: "All",
+                filter_live: "🔴 LIVE",
                 sync_loading: "Loading matches...",
                 section1_title: "Upload Match Slip",
                 btn_camera: "Direct Camera",
@@ -415,6 +419,25 @@
         function esc(s) {
             if (s === null || s === undefined) return '';
             return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Country names: English -> Myanmar
+        const COUNTRY_MY = {
+            'England': 'အင်္ဂလန်', 'Spain': 'စပိန်', 'Germany': 'ဂျာမနီ', 'Italy': 'အီတလီ',
+            'France': 'ပြင်သစ်', 'Netherlands': 'နယ်သာလန်', 'Portugal': 'ပေါ်တူဂီ',
+            'Scotland': 'စကော့တလန်', 'Türkiye': 'တူရကီ', 'Turkey': 'တူရကီ',
+            'Argentina': 'အာဂျင်တီးနား', 'Brazil': 'ဘရာဇီး', 'Mexico': 'မက္ကဆီကို',
+            'USA': 'အမေရိကန်', 'China PR': 'တရုတ်', 'India': 'အိန္ဒိယ',
+            'Japan': 'ဂျပန်', 'Korea Republic': 'တောင်ကိုရီးယား', 'Australia': 'ဩစတြေးလျ',
+            'Saudi Arabia': 'ဆော်ဒီအာရေဗျ', 'Egypt': 'အီဂျစ်', 'Uruguay': 'ဥရုဂွေး',
+            'Ecuador': 'အီကွေဒေါ', 'Peru': 'ပီရူး', 'Bolivia': 'ဘိုလီးဗီးယား',
+            'Paraguay': 'ပါရာဂွေး', 'Denmark': 'ဒိန်းမတ်', 'Sweden': 'ဆွီဒင်',
+            'Austria': 'ဩစတြီးယား', 'Belgium': 'ဘယ်လ်ဂျီယံ', 'Greece': 'ဂရိ',
+            'Liberia': 'လိုက်ဘေးရီးယား', 'El Salvador': 'အယ်လ်ဆယ်ဗေဒေါ'
+        };
+        function countryName(c) {
+            if (currentLang === 'my' && COUNTRY_MY[c]) return COUNTRY_MY[c];
+            return c;
         }
 
         // ================= STATE =================
@@ -478,7 +501,7 @@
             const ab = document.getElementById('nav-' + v);
             if (ab) ab.classList.add('nav-active');
             if (!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
-            if (v === 'home') renderHomeFixtures();
+            if (v === 'home') { renderEspnMatches(); renderHomeFixtures(); }
             if (v === 'predictor') { renderLeagueTabs(); renderAllMatches(); renderTopPicks(); }
             if (v === 'records') renderRecords();
             if (v === 'parlay') renderParlay();
@@ -696,7 +719,7 @@
                         '</div>';
                 }).join('');
                 return '<div class="rounded-xl overflow-hidden border border-slate-800">' +
-                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + esc(country) + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
+                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + esc(countryName(country)) + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
                     rows + '</div>';
             }).join('');
         }
