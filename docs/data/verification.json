@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-15T12:23:20.270568+00:00",
+  "generated_at": "2026-10-16T00:43:31.481217+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 109,
+  "graded_count": 113,
   "matches": [
     {
       "fixture_id": 560593,
@@ -2034,6 +2034,41 @@
       }
     },
     {
+      "fixture_id": 567328,
+      "competition": "PPL",
+      "home_team": "Rio Ave FC",
+      "away_team": "CD Nacional",
+      "kickoff": "2026-10-11T14:30:00Z",
+      "actual": "3-2",
+      "probs_1x2": {
+        "home": 0.3181,
+        "draw": 0.2422,
+        "away": 0.4397
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
       "fixture_id": 558873,
       "competition": "DED",
       "home_team": "SBV Excelsior",
@@ -2244,6 +2279,41 @@
       }
     },
     {
+      "fixture_id": 567320,
+      "competition": "PPL",
+      "home_team": "Sport Lisboa e Benfica",
+      "away_team": "Vitória SC",
+      "kickoff": "2026-10-11T17:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.6335,
+        "draw": 0.1895,
+        "away": 0.177
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
       "fixture_id": 558584,
       "competition": "SA",
       "home_team": "Cagliari Calcio",
@@ -2380,6 +2450,41 @@
         "correct_score": {
           "pick": "1-1",
           "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 567324,
+      "competition": "PPL",
+      "home_team": "FC Arouca",
+      "away_team": "CF Estrela da Amadora",
+      "kickoff": "2026-10-11T19:30:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.5453,
+        "draw": 0.1875,
+        "away": 0.2672
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
         }
       }
     },
@@ -2694,6 +2799,41 @@
         },
         "correct_score": {
           "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 567325,
+      "competition": "PPL",
+      "home_team": "FC Famalicão",
+      "away_team": "FC Alverca",
+      "kickoff": "2026-10-12T19:15:00Z",
+      "actual": "1-4",
+      "probs_1x2": {
+        "home": 0.3715,
+        "draw": 0.2749,
+        "away": 0.3536
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
           "hit": false
         }
       }
@@ -3821,29 +3961,29 @@
   ],
   "summary": {
     "1x2": {
-      "graded": 84,
-      "hit": 43,
-      "hit_rate": 0.5119
+      "graded": 86,
+      "hit": 45,
+      "hit_rate": 0.5233
     },
     "ou25": {
-      "graded": 94,
-      "hit": 55,
-      "hit_rate": 0.5851
+      "graded": 98,
+      "hit": 56,
+      "hit_rate": 0.5714
     },
     "btts": {
-      "graded": 84,
-      "hit": 45,
-      "hit_rate": 0.5357
+      "graded": 87,
+      "hit": 46,
+      "hit_rate": 0.5287
     },
     "ah": {
-      "graded": 102,
-      "hit": 73,
-      "hit_rate": 0.7157
+      "graded": 106,
+      "hit": 76,
+      "hit_rate": 0.717
     },
     "correct_score": {
-      "graded": 37,
+      "graded": 38,
       "hit": 4,
-      "hit_rate": 0.1081
+      "hit_rate": 0.1053
     }
   }
 }

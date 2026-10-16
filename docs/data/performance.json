@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-10-15T12:23:20.330514+00:00",
+  "generated_at": "2026-10-16T00:43:31.529687+00:00",
   "model_version": "poisson-v1",
-  "graded_total": 109,
+  "graded_total": 113,
   "overall": {
     "1x2": {
-      "graded": 84,
-      "hit": 43,
-      "hit_rate": 0.5119
+      "graded": 86,
+      "hit": 45,
+      "hit_rate": 0.5233
     },
     "ou25": {
-      "graded": 94,
-      "hit": 55,
-      "hit_rate": 0.5851
+      "graded": 98,
+      "hit": 56,
+      "hit_rate": 0.5714
     },
     "btts": {
-      "graded": 84,
-      "hit": 45,
-      "hit_rate": 0.5357
+      "graded": 87,
+      "hit": 46,
+      "hit_rate": 0.5287
     },
     "ah": {
-      "graded": 102,
-      "hit": 73,
-      "hit_rate": 0.7157
+      "graded": 106,
+      "hit": 76,
+      "hit_rate": 0.717
     },
     "correct_score": {
-      "graded": 37,
+      "graded": 38,
       "hit": 4,
-      "hit_rate": 0.1081
+      "hit_rate": 0.1053
     }
   },
   "by_competition": {
@@ -275,27 +275,27 @@
     },
     "PPL": {
       "1x2": {
-        "graded": 2,
-        "hit": 2,
+        "graded": 4,
+        "hit": 4,
         "hit_rate": 1.0
       },
       "ou25": {
-        "graded": 3,
-        "hit": 1,
-        "hit_rate": 0.3333
+        "graded": 7,
+        "hit": 2,
+        "hit_rate": 0.2857
       },
       "btts": {
-        "graded": 2,
-        "hit": 1,
-        "hit_rate": 0.5
+        "graded": 5,
+        "hit": 2,
+        "hit_rate": 0.4
       },
       "ah": {
-        "graded": 1,
-        "hit": 1,
-        "hit_rate": 1.0
+        "graded": 5,
+        "hit": 4,
+        "hit_rate": 0.8
       },
       "correct_score": {
-        "graded": 3,
+        "graded": 4,
         "hit": 0,
         "hit_rate": 0.0
       }
@@ -355,5 +355,5 @@
       "hit_rate": 0.2
     }
   },
-  "brier_1x2": 0.6158
+  "brier_1x2": 0.6105
 }
