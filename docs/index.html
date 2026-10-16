@@ -498,7 +498,8 @@
             const badge = document.getElementById('homeCountBadge');
             if (badge) badge.innerText = matchData.length + (currentLang === 'en' ? ' matches' : ' ပွဲ');
             if (!matchData.length) {
-                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No fixtures — upload a slip in AI Predictor.' : 'ပွဲမရှိသေးပါ — AI Predictor မှာ စာရွက်တင်ပါ။') + '</div>';
+                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No fixtures — upload a slip in AI Predictor.' : 'ပွဲမရှိသေးပါ — AI Predictor မှာ စာရွက်တင်ပါ။') +
+                    '<br><button onclick="restoreSamples()" class="mt-3 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold py-2 px-4 rounded-xl border border-slate-700">🔄 ' + (currentLang === 'en' ? 'Restore sample matches' : 'နမူနာပွဲများ ပြန်ယူမည်') + '</button></div>';
                 return;
             }
             const leagues = [...new Set(matchData.map(m => m.leagueEn))];
@@ -714,10 +715,24 @@
             if (!container) return;
             const filtered = selectedLeague === "ALL" ? matchData : matchData.filter(m => m.leagueEn === selectedLeague);
             if (!filtered.length) {
-                container.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No matches — upload a slip to analyze.' : 'ပွဲမရှိသေးပါ — စာရွက်တင်ပြီး စစ်ဆေးမည်။') + '</div>';
+                container.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + (currentLang === 'en' ? 'No matches — upload a slip to analyze.' : 'ပွဲမရှိသေးပါ — စာရွက်တင်ပြီး စစ်ဆေးမည်။') +
+                    '<br><button onclick="restoreSamples()" class="mt-3 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold py-2 px-4 rounded-xl border border-slate-700">🔄 ' + (currentLang === 'en' ? 'Restore sample matches' : 'နမူနာပွဲများ ပြန်ယူမည်') + '</button></div>';
                 return;
             }
             container.innerHTML = filtered.map(m => calculateMatch(m)).join('');
+        }
+
+        function restoreSamples() {
+            try {
+                localStorage.removeItem('fi_cleared');
+                localStorage.removeItem('fi_slip_matches');
+                localStorage.removeItem('fi_slip_loaded');
+            } catch (e) {}
+            matchData = JSON.parse(JSON.stringify(DEFAULT_MATCHDATA));
+            selectedLeague = "ALL";
+            renderLeagueTabs(); renderAllMatches(); renderTopPicks(); renderHomeFixtures();
+            const el = document.getElementById('slipStatusText');
+            if (el) el.innerHTML = '<span>📋</span> <span>' + translations[currentLang].slip_ready + '</span>';
         }
 
         function clearCards() {
