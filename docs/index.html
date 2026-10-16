@@ -440,6 +440,19 @@
             return c;
         }
 
+        // Always display in Myanmar time (UTC+6:30) regardless of device timezone
+        function myanmarTime(dateStr) {
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour: '2-digit', minute: '2-digit', hour12: false });
+            } catch (e) { return ''; }
+        }
+        function myanmarNow() {
+            try {
+                return new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour: '2-digit', minute: '2-digit', hour12: false });
+            } catch (e) { return ''; }
+        }
+
         // Team names: English -> Myanmar (popular teams; fallback to English)
         const TEAM_MY = {
             // Premier League
@@ -714,7 +727,7 @@
                 events = events.filter(e => isEspnFav(e.id));
             }
             const upd = document.getElementById('espnUpdated');
-            if (upd) { const d = new Date(); upd.innerText = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+            if (upd) { upd.innerText = myanmarNow(); }
             if (!events.length) {
                 box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' +
                     (homeFilter === 'fav'
@@ -749,8 +762,7 @@
                     } else if (isFT) {
                         timeHtml = '<span class="text-slate-500 text-xs">FT</span>';
                     } else {
-                        const kd = new Date(ev.date);
-                        timeHtml = '<span class="text-slate-400 text-xs">' + kd.getHours() + ':' + String(kd.getMinutes()).padStart(2, '0') + '</span>';
+                        timeHtml = '<span class="text-slate-400 text-xs">' + myanmarTime(ev.date) + '</span>';
                     }
                     // Score or VS
                     let scoreHtml;
@@ -1250,7 +1262,7 @@
                     const isLive = st.state === 'in', isFT = st.state === 'post';
                     let status = isLive ? '<span class="text-rose-400 font-bold animate-pulse">' + esc(st.shortDetail) + '</span>'
                         : isFT ? '<span class="text-slate-500">FT</span>'
-                        : '<span class="text-slate-400">' + new Date(ev.date).getHours() + ':' + String(new Date(ev.date).getMinutes()).padStart(2, '0') + '</span>';
+                        : '<span class="text-slate-400">' + myanmarTime(ev.date) + '</span>';
                     let score = (isLive || isFT) ? '<span class="font-mono font-bold text-amber-400">' + esc(home.score || '0') + ' - ' + esc(away.score || '0') + '</span>' : '';
                     return '<div class="flex items-center justify-between bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 mb-2">' +
                         '<div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + ' <span class="text-slate-500">vs</span> ' + esc(teamName(away.team.shortDisplayName)) + '</div>' +
