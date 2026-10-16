@@ -238,16 +238,21 @@
             { id: 7, leagueMy: "UEFA ကွန်းဖရန့်လိဂ်", leagueEn: "UEFA Conference League", homeMy: "KUPS", homeEn: "KuPS Kuopio", awayMy: "ထရာဇွန်စပွန်း", awayEn: "Trabzonspor", time: "11:15", upper: "away", body: "1-40", goal: "3-40", hxg: 1.1, hxga: 1.7, axg: 1.8, axga: 1.1, turf: true, low: false },
             { id: 8, leagueMy: "UEFA ကွန်းဖရန့်လိဂ်", leagueEn: "UEFA Conference League", homeMy: "အတ္တလန်တာ", homeEn: "Atalanta", awayMy: "ပါဒိုဗာ FC", awayEn: "Paphos FC", time: "1:30", upper: "home", body: "2+90", goal: "3-30", hxg: 2.3, hxga: 0.9, axg: 0.8, axga: 2.2, turf: false, low: true }
         ];
+        const DEFAULT_MATCHDATA = JSON.parse(JSON.stringify(matchData));
 
         window.onload = function() {
             updateApiStatusBadge();
             try {
-                const saved = localStorage.getItem('fi_slip_matches');
-                if (saved) {
-                    const arr = JSON.parse(saved);
-                    if (Array.isArray(arr) && arr.length) {
-                        matchData = arr;
-                        selectedLeague = "ALL";
+                if (localStorage.getItem('fi_cleared') === '1') {
+                    matchData = [];
+                } else {
+                    const saved = localStorage.getItem('fi_slip_matches');
+                    if (saved) {
+                        const arr = JSON.parse(saved);
+                        if (Array.isArray(arr) && arr.length) {
+                            matchData = arr;
+                            selectedLeague = "ALL";
+                        }
                     }
                 }
             } catch (se) {}
@@ -428,6 +433,13 @@
                 ? matchData
                 : matchData.filter(m => m.leagueEn === selectedLeague);
 
+            if (!filtered.length) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-500 text-xs">
+                        ${currentLang === 'en' ? 'No matches — upload a slip to analyze.' : 'ပွဲမရှိသေးပါ — စာရွက်တင်ပြီး စစ်ဆေးမည်။'}
+                    </div>`;
+                return;
+            }
             container.innerHTML = filtered.map(m => calculateMatch(m)).join('');
         }
 
@@ -614,7 +626,7 @@
 
                     matchData = parsedMatches;
                     selectedLeague = "ALL";
-                    try { localStorage.setItem('fi_slip_matches', JSON.stringify(parsedMatches)); localStorage.setItem('fi_slip_loaded', '1'); } catch (se) {}
+                    try { localStorage.setItem('fi_slip_matches', JSON.stringify(parsedMatches)); localStorage.setItem('fi_slip_loaded', '1'); localStorage.removeItem('fi_cleared'); } catch (se) {}
                     setStatus(currentLang === 'en'
                         ? "✅ Gemini read " + matchData.length + " matches from the slip"
                         : "✅ စာရွက်ပေါ်မှ ပွဲစဉ် (" + matchData.length + ") ပွဲ ဖတ်ပြီးပါပြီ", true);
@@ -630,12 +642,25 @@
         }
 
         function clearCards() {
-            try { localStorage.removeItem('fi_slip_matches'); localStorage.removeItem('fi_slip_loaded'); } catch (se) {}
-            document.getElementById('cardsContainer').innerHTML = `
-                <div class="text-center py-8 text-slate-500 text-xs">
-                    ${currentLang === 'en' ? 'All match cards cleared.' : 'ခန့်မှန်းချက်ကတ်များ ရှင်းလင်းပြီးပါပြီ။'}
-                </div>
-            `;
+            try {
+                localStorage.removeItem('fi_slip_matches');
+                localStorage.removeItem('fi_slip_loaded');
+                localStorage.setItem('fi_cleared', '1');
+            } catch (se) {}
+            matchData = [];
+            selectedLeague = "ALL";
+            renderLeagueTabs();
+            renderAllMatches();
+            renderTopPicks();
+            const el = document.getElementById('slipStatusText');
+            if (el) {
+                const t = translations[currentLang];
+                el.innerHTML = '<span>📋</span> <span>' + t.slip_ready + '</span>';
+            }
+            const thumb = document.getElementById('slipThumb');
+            const icon = document.getElementById('slipIcon');
+            if (thumb) { thumb.src = ''; thumb.classList.add('hidden'); }
+            if (icon) { icon.classList.remove('hidden'); }
         }
     </script>
 </body>
