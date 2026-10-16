@@ -785,6 +785,8 @@
                         : (currentLang === 'en' ? 'No matches today.' : 'ယနေ့ ပွဲမရှိပါ။')) + '</div>';
                 return;
             }
+            // Sort chronologically by kickoff time (earliest first)
+            events.sort((a, b) => new Date(a.date) - new Date(b.date));
             // Group by time period, then by country
             const byPeriod = { live: [], morning: [], day: [], evening: [] };
             events.forEach(ev => {
