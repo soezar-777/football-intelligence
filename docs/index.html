@@ -441,15 +441,48 @@
         }
 
         // Always display in Myanmar time (UTC+6:30) regardless of device timezone
+        // 12-hour AM/PM format like reference app
         function myanmarTime(dateStr) {
             try {
                 const d = new Date(dateStr);
-                return d.toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour: '2-digit', minute: '2-digit', hour12: false });
+                return d.toLocaleString('en-US', { timeZone: 'Asia/Yangon', hour: 'numeric', minute: '2-digit', hour12: true });
             } catch (e) { return ''; }
         }
         function myanmarNow() {
             try {
-                return new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour: '2-digit', minute: '2-digit', hour12: false });
+                return new Date().toLocaleString('en-US', { timeZone: 'Asia/Yangon', hour: 'numeric', minute: '2-digit', hour12: true });
+            } catch (e) { return ''; }
+        }
+
+        // ESPN season slug -> readable league name
+        const LEAGUE_NAMES = {
+            'laliga': 'La Liga', 'italian-serie-a': 'Serie A', 'german-bundesliga': 'Bundesliga',
+            'german-2-bundesliga': '2. Bundesliga', 'ligue-1': 'Ligue 1', 'ligue-2': 'Ligue 2',
+            'saudi-pro-league': 'Saudi Pro League', 'turkish-super-lig': 'Süper Lig',
+            'chinese-super-league': 'Chinese Super League', 'torneo-apertura': 'Torneo Apertura',
+            'apertura-2026': 'Apertura 2026', 'english-premier-league': 'Premier League',
+            'dutch-eredivisie': 'Eredivisie', 'portuguese-primeira-liga': 'Primeira Liga',
+            'scottish-premiership': 'Scottish Premiership', 'belgian-pro-league': 'Pro League',
+            'austrian-bundesliga': 'Austrian Bundesliga', 'swiss-super-league': 'Super League',
+            'danish-superliga': 'Superliga', 'swedish-allsvenskan': 'Allsvenskan',
+            'norwegian-eliteserien': 'Eliteserien', 'russian-premier-league': 'Premier League',
+            'ukrainian-premier-league': 'Premier League', 'greek-super-league': 'Super League',
+            'argentine-primera-division': 'Primera División', 'brazilian-serie-a': 'Série A',
+            'mexican-liga-mx': 'Liga MX', 'mls': 'MLS', 'japanese-j-league': 'J League',
+            'korean-k-league': 'K League', 'australian-a-league': 'A-League',
+            'indian-super-league': 'Indian Super League', 'egyptian-premier-league': 'Premier League'
+        };
+        function leagueName(ev) {
+            try {
+                const slug = (ev.season && ev.season.slug) || '';
+                const m = slug.match(/\d{4}(?:-\d{2})?-(.+)/);
+                const key = m ? m[1] : slug;
+                if (LEAGUE_NAMES[key]) return LEAGUE_NAMES[key];
+                // Fallback: prettify slug
+                if (key && key !== 'regular-season' && key !== 'fall-season') {
+                    return key.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                }
+                return '';
             } catch (e) { return ''; }
         }
 
@@ -779,6 +812,9 @@
                     byCountry[country].push(ev);
                 });
                 const countryHtml = Object.keys(byCountry).sort().map(country => {
+                    // Get league name from first event in this country group
+                    const lgName = leagueName(byCountry[country][0]);
+                    const headerTitle = lgName ? esc(countryName(country)) + ': <span class="text-slate-400 font-normal">' + esc(lgName) + '</span>' : '🌍 ' + esc(countryName(country));
                     const rows = byCountry[country].map(ev => {
                     const comp = ev.competitions[0];
                     const st = comp.status.type;
@@ -815,7 +851,7 @@
                         '</div>';
                 }).join('');
                 return '<div class="rounded-xl overflow-hidden border border-slate-800 mb-2">' +
-                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + esc(countryName(country)) + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
+                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + headerTitle + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
                     rows + '</div>';
                 }).join('');
                 return '<div class="mb-4"><div class="text-sm font-bold text-amber-400 mb-2 px-1">' + periodTitles[per] +
