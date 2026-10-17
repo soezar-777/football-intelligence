@@ -1408,14 +1408,17 @@
                     const isLive = st.state === 'in';
                     const isFT = st.state === 'post';
                     const fav = isEspnFav(ev.id);
-                    // Time / status display
+                    // Time / status display (+ kickoff time always, so live/FT show when the match started)
+                    const koTime = myanmarTime(ev.date);
                     let timeHtml;
                     if (isLive) {
-                        timeHtml = '<span class="text-rose-400 font-bold text-xs animate-pulse">' + esc(st.shortDetail) + '</span>';
+                        timeHtml = '<div class="text-rose-400 font-bold text-xs animate-pulse">' + esc(st.shortDetail) + '</div>' +
+                            '<div class="text-[9px] text-slate-500">' + esc(koTime) + '</div>';
                     } else if (isFT) {
-                        timeHtml = '<span class="text-slate-500 text-xs">FT</span>';
+                        timeHtml = '<div class="text-slate-500 text-xs">FT</div>' +
+                            '<div class="text-[9px] text-slate-500">' + esc(koTime) + '</div>';
                     } else {
-                        timeHtml = '<span class="text-slate-400 text-xs">' + myanmarTime(ev.date) + '</span>';
+                        timeHtml = '<span class="text-slate-400 text-xs">' + esc(koTime) + '</span>';
                     }
                     // Score or VS
                     let scoreHtml;
