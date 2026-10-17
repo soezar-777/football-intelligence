@@ -1019,10 +1019,16 @@
                 fetch('data/predictions_' + c + '.json').then(r => r.ok ? r.json() : null).catch(() => null)));
             let gen = '';
             const matches = [];
+            const nowMs = Date.now();
             results.forEach(d => {
                 if (!d || !d.predictions) return;
                 if (d.generated_at && d.generated_at > gen) gen = d.generated_at;
-                d.predictions.forEach(p => { if (p && p.status === 'TIMED') matches.push(p); });
+                d.predictions.forEach(p => {
+                    if (!p || p.status !== 'TIMED') return;
+                    const koMs = new Date(p.kickoff).getTime();
+                    if (!koMs || koMs < nowMs) return; // stale: already kicked off
+                    matches.push(p);
+                });
             });
             let acc = null;
             try {
