@@ -1198,14 +1198,14 @@
             renderHomeFixtures();
         }
 
-        // Stadium crowd roar for GOAL (synthesized: layered band-passed noise + wobble)
+        // Stadium "GOAL!" chant (synthesized: 3 long shout pulses + roar bed; vowel-ish formants)
         function playCrowdCheer() {
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
                 if (!AC) return;
                 const ctx = new AC();
                 if (ctx.state === 'suspended') ctx.resume();
-                const dur = 2.8, sr = ctx.sampleRate, t0 = ctx.currentTime;
+                const dur = 4.6, sr = ctx.sampleRate, t0 = ctx.currentTime;
                 const buf = ctx.createBuffer(1, Math.floor(sr * dur), sr);
                 const ch = buf.getChannelData(0);
                 let last = 0;
@@ -1215,31 +1215,46 @@
                     ch[i] = last * 1.6;
                 }
                 const master = ctx.createGain();
-                master.gain.value = 0.6; // headroom: 3 summed layers peak ~1.4
+                master.gain.value = 0.5;
                 master.connect(ctx.destination);
-                const layer = (freq, q, peak, atk, sus) => {
-                    const src = ctx.createBufferSource();
-                    src.buffer = buf;
-                    src.playbackRate.value = 0.92 + Math.random() * 0.16;
-                    const bp = ctx.createBiquadFilter();
-                    bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = q;
-                    const g = ctx.createGain();
-                    g.gain.setValueAtTime(0.0001, t0);
-                    g.gain.exponentialRampToValueAtTime(peak, t0 + atk);
-                    g.gain.setValueAtTime(peak, t0 + sus);
-                    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-                    const lfo = ctx.createOscillator();
-                    lfo.type = 'sine'; lfo.frequency.value = 3.5 + Math.random() * 4;
-                    const lg = ctx.createGain(); lg.gain.value = peak * 0.3;
-                    lfo.connect(lg); lg.connect(g.gain);
-                    src.connect(bp); bp.connect(g); g.connect(master);
-                    src.start(t0); src.stop(t0 + dur + 0.05);
-                    lfo.start(t0); lfo.stop(t0 + dur + 0.05);
+                // one "GOAL!" shout: vowel formants (700/1500Hz) + shout presence + air
+                const shout = (start) => {
+                    const t = t0 + start, atk = 0.12, sus = 0.45, rel = 0.35;
+                    const end = t + atk + sus + rel;
+                    [[700, 1.5, 0.55], [1500, 1.2, 0.40], [2800, 1.5, 0.22]].forEach(cfg => {
+                        const freq = cfg[0], q = cfg[1], peak = cfg[2];
+                        const src = ctx.createBufferSource();
+                        src.buffer = buf;
+                        src.playbackRate.value = 0.94 + Math.random() * 0.12;
+                        const bp = ctx.createBiquadFilter();
+                        bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = q;
+                        const g = ctx.createGain();
+                        g.gain.setValueAtTime(0.0001, t);
+                        g.gain.exponentialRampToValueAtTime(peak, t + atk);
+                        g.gain.setValueAtTime(peak, t + atk + sus);
+                        g.gain.exponentialRampToValueAtTime(0.0001, end);
+                        const lfo = ctx.createOscillator();
+                        lfo.type = 'sine'; lfo.frequency.value = 5;
+                        const lg = ctx.createGain(); lg.gain.value = peak * 0.3;
+                        lfo.connect(lg); lg.connect(g.gain);
+                        src.connect(bp); bp.connect(g); g.connect(master);
+                        src.start(t); src.stop(end + 0.05);
+                        lfo.start(t); lfo.stop(end + 0.05);
+                    });
                 };
-                layer(650, 0.6, 0.55, 0.35, 1.7);   // low roar body
-                layer(1300, 0.8, 0.38, 0.22, 1.4);  // mid shouts
-                layer(2500, 1.1, 0.20, 0.15, 1.1);  // high whistles/air
-                setTimeout(() => { try { ctx.close(); } catch (e) {} }, 3600);
+                shout(0.15); shout(1.55); shout(2.95); // "GOAL! GOAL! GOAL!"
+                // low roar bed underneath
+                const bsrc = ctx.createBufferSource(); bsrc.buffer = buf;
+                const bbp = ctx.createBiquadFilter();
+                bbp.type = 'bandpass'; bbp.frequency.value = 500; bbp.Q.value = 0.7;
+                const bg = ctx.createGain();
+                bg.gain.setValueAtTime(0.0001, t0);
+                bg.gain.exponentialRampToValueAtTime(0.22, t0 + 0.4);
+                bg.gain.setValueAtTime(0.22, t0 + dur - 0.8);
+                bg.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                bsrc.connect(bbp); bbp.connect(bg); bg.connect(master);
+                bsrc.start(t0); bsrc.stop(t0 + dur + 0.05);
+                setTimeout(() => { try { ctx.close(); } catch (e) {} }, (dur + 0.6) * 1000);
             } catch (e) {}
         }
         // Referee whistle (synthesized pea-whistle: 2.3kHz + 35Hz pea-rattle warble)
