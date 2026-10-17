@@ -1242,8 +1242,46 @@
                 setTimeout(() => { try { ctx.close(); } catch (e) {} }, 3600);
             } catch (e) {}
         }
+        // Referee whistle (synthesized pea-whistle: 2.3kHz + 35Hz pea-rattle warble)
+        function playWhistle(blasts) {
+            try {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return;
+                const ctx = new AC();
+                if (ctx.state === 'suspended') ctx.resume();
+                const t0 = ctx.currentTime;
+                const master = ctx.createGain();
+                master.gain.value = 0.5;
+                master.connect(ctx.destination);
+                let t = t0 + 0.02;
+                (blasts || [0.9]).forEach(dur => {
+                    const osc = ctx.createOscillator();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(2250, t);
+                    osc.frequency.linearRampToValueAtTime(2350, t + 0.05);
+                    const fm = ctx.createOscillator();
+                    fm.type = 'sine'; fm.frequency.value = 35;
+                    const fmG = ctx.createGain(); fmG.gain.value = 180;
+                    fm.connect(fmG); fmG.connect(osc.frequency);
+                    const bp = ctx.createBiquadFilter();
+                    bp.type = 'bandpass'; bp.frequency.value = 2300; bp.Q.value = 2.5;
+                    const g = ctx.createGain();
+                    g.gain.setValueAtTime(0.0001, t);
+                    g.gain.exponentialRampToValueAtTime(0.9, t + 0.03);
+                    g.gain.setValueAtTime(0.9, Math.max(t + 0.03, t + dur - 0.05));
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                    osc.connect(bp); bp.connect(g); g.connect(master);
+                    osc.start(t); osc.stop(t + dur + 0.05);
+                    fm.start(t); fm.stop(t + dur + 0.05);
+                    t += dur + 0.18;
+                });
+                setTimeout(() => { try { ctx.close(); } catch (e) {} }, (t - t0 + 0.4) * 1000);
+            } catch (e) {}
+        }
         function playNotiSound(type) {
             if (type === 'GOAL') { playCrowdCheer(); return; }
+            if (type === 'KICKOFF') { playWhistle([0.9]); return; }      // one long blast
+            if (type === 'FT') { playWhistle([0.32, 0.32, 0.42]); return; } // triple blast
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 if (ctx.state === 'suspended') ctx.resume();
