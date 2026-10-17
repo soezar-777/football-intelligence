@@ -26,6 +26,12 @@ for f in data/predictions_*.json; do
   cp "$f" "docs/data/predictions_${code}.json"
   PUBLISH_FILES="$PUBLISH_FILES docs/data/predictions_${code}.json"
 done
+# League tables (published when the fetch succeeds; old files stay otherwise)
+for f in data/standings_*.json; do
+  [ -f "$f" ] || continue
+  cp "$f" "docs/data/"
+  PUBLISH_FILES="$PUBLISH_FILES docs/data/$(basename "$f")"
+done
 # verification + performance change rarely; always publish them too
 cp data/verification.json docs/data/ 2>/dev/null || true
 cp data/performance.json docs/data/ 2>/dev/null || true

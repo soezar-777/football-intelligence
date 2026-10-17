@@ -320,6 +320,9 @@
                 aipred_today: "ယနေ့",
                 aipred_tomorrow: "မနက်ဖြန်",
                 aipred_empty: "ခန့်မှန်းချက်ပွဲမရှိပါ",
+                standings_loading: "အမှတ်ပေးဇယား ရယူနေပါသည်...",
+                standings_empty: "အမှတ်ပေးဇယား မရှိသေးပါ",
+                standings_team: "အသင်း",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 today_matches_title: "ယနေ့ ပွဲစဉ်များ",
                 filter_all: "အားလုံး",
@@ -393,6 +396,9 @@
                 aipred_today: "Today",
                 aipred_tomorrow: "Tomorrow",
                 aipred_empty: "No predicted matches",
+                standings_loading: "Loading standings...",
+                standings_empty: "No standings available",
+                standings_team: "Team",
                 date_today: "📅 Today's Matches",
                 today_matches_title: "Today's Matches",
                 filter_all: "All",
@@ -1706,13 +1712,57 @@
         }
 
         // ================= STANDINGS =================
+        // ================= STANDINGS (football-data.org API, synced to docs/data/) =================
+        let standingsCache = null;
+        let standingsSel = 'PL';
+        async function loadStandings() {
+            if (standingsCache) return standingsCache;
+            const codes = ['PL', 'BL1', 'SA', 'PD', 'FL1', 'DED', 'PPL', 'CL', 'ELC', 'BSA'];
+            const results = await Promise.all(codes.map(c =>
+                fetch('data/standings_' + c + '.json').then(r => r.ok ? r.json() : null).catch(() => null)));
+            standingsCache = results.filter(Boolean);
+            return standingsCache;
+        }
         function renderStandings() {
             const c = document.getElementById('standingsContainer');
             if (!c) return;
-            c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' +
-                (currentLang === 'en'
-                    ? '🏆 League tables sync from the daily data pipeline.<br>Upload a slip or check back after the next sync.'
-                    : '🏆 အမှတ်ပေးဇယားများ နေ့စဉ် data sync မှ ရရှိမည်။<br>စာရွက်တင်ပါ သို့မဟုတ် နောက် sync ကို စောင့်ပါ။') + '</div>';
+            const T = translations[currentLang];
+            c.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + esc(T.standings_loading) + '</div>';
+            loadStandings().then(data => {
+                if (!data.length) {
+                    c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + esc(T.standings_empty) + '</div>';
+                    return;
+                }
+                if (!data.find(d => d.competition === standingsSel)) standingsSel = data[0].competition;
+                const tabs = data.map(d => {
+                    const ci = COMP_INFO[d.competition] || { en: d.competition, my: d.competition };
+                    const active = d.competition === standingsSel;
+                    return '<button onclick="standingsSel=\'' + d.competition + '\';renderStandings()" class="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap ' + (active ? 'tab-active' : 'tab-inactive') + '">' + esc(currentLang === 'en' ? ci.en : ci.my) + '</button>';
+                }).join('');
+                const d = data.find(x => x.competition === standingsSel);
+                const tbl = (d.tables && d.tables[0] && d.tables[0].rows) || [];
+                const head = '<div class="flex items-center gap-1.5 px-2 py-1.5 text-[9px] text-slate-600 font-bold border-b border-slate-700">' +
+                    '<span class="w-6 text-center">#</span><span class="flex-1">' + esc(T.standings_team) + '</span>' +
+                    '<span class="w-6 text-center">P</span><span class="w-6 text-center">W</span><span class="w-6 text-center">D</span><span class="w-6 text-center">L</span>' +
+                    '<span class="w-8 text-center">+/-</span><span class="w-8 text-center">Pts</span></div>';
+                const rows = tbl.map(r => {
+                    const form = r.form ? ' <span class="text-[9px] text-slate-500">' + esc(String(r.form).split(',').join(' ')) + '</span>' : '';
+                    return '<div class="flex items-center gap-1.5 px-2 py-1.5 border-b border-slate-800/60 text-xs">' +
+                        '<span class="w-6 text-center text-slate-400 font-bold">' + r.pos + '</span>' +
+                        '<span class="flex-1 truncate text-white">' + esc(teamName(r.name)) + form + '</span>' +
+                        '<span class="w-6 text-center text-slate-500">' + r.p + '</span>' +
+                        '<span class="w-6 text-center text-slate-500">' + r.w + '</span>' +
+                        '<span class="w-6 text-center text-slate-500">' + r.d + '</span>' +
+                        '<span class="w-6 text-center text-slate-500">' + r.l + '</span>' +
+                        '<span class="w-8 text-center text-slate-400">' + (r.gd > 0 ? '+' : '') + r.gd + '</span>' +
+                        '<span class="w-8 text-center text-amber-400 font-bold">' + r.pts + '</span></div>';
+                }).join('');
+                c.innerHTML = '<div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-2 mb-1">' + tabs + '</div>' +
+                    '<div class="text-[9px] text-slate-600 mb-1">🔄 ' + esc(d.fetched_at ? myanmarTime(d.fetched_at) : '') + '</div>' +
+                    '<div class="bg-slate-900/60 rounded-xl overflow-hidden border border-slate-800">' + head + rows + '</div>';
+            }).catch(e => {
+                c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + esc(T.standings_empty) + '</div>';
+            });
         }
 
         // ================= FAVORITES =================
