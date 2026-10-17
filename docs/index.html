@@ -58,6 +58,9 @@
                 <button onclick="switchView('predictor')" id="nav-predictor" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-900">
                     <span>🤖</span> <span data-i18n="nav_predictor">AI စာရွက် ခန့်မှန်းချက်</span>
                 </button>
+                <button onclick="switchView('aipredictions')" id="nav-aipredictions" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-900">
+                    <span>🔮</span> <span data-i18n="nav_aipredictions">AI ခန့်မှန်းချက်များ</span>
+                </button>
                 <button onclick="switchView('records')" id="nav-records" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-900">
                     <span class="flex items-center space-x-3"><span>📊</span> <span data-i18n="nav_records">AI အမှား/အမှန် မှတ်တမ်း</span></span>
                     <span id="navWinRateBadge" class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">—</span>
@@ -183,6 +186,20 @@
             </div>
         </section>
 
+        <!-- ================= VIEW: AI PREDICTIONS (API DATA) ================= -->
+        <section id="view-aipredictions" class="space-y-4 hidden">
+            <div class="card-border rounded-2xl p-4 shadow-xl">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                        <span>🔮</span> <span data-i18n="nav_aipredictions">AI ခန့်မှန်းချက်များ</span>
+                    </h2>
+                </div>
+                <p id="aipredMeta" class="text-[10px] text-slate-500 mb-2"></p>
+                <div id="aipredAccuracy" class="bg-slate-950/60 border border-slate-800 rounded-xl p-2.5 mb-3"></div>
+                <div id="aipredContainer" class="space-y-3"></div>
+            </div>
+        </section>
+
         <!-- ================= VIEW: RECORDS ================= -->
         <section id="view-records" class="space-y-4 hidden">
             <div class="card-border rounded-2xl p-4 shadow-xl border-emerald-500/30">
@@ -294,6 +311,15 @@
                 nav_parlay: "Top Picks & မောင်းတွဲ",
                 nav_standings: "အမှတ်ပေးဇယား",
                 nav_favorites: "အကြိုက်ဆုံး ပွဲများ",
+                nav_aipredictions: "AI ခန့်မှန်းချက်များ",
+                aipred_loading: "ခန့်မှန်းချက်များ ရယူနေပါသည်...",
+                aipred_data: "ဒေတာ",
+                aipred_matches: "ပွဲ",
+                aipred_accuracy: "မော်ဒယ် မှန်ကန်မှု (စစ်ဆေးပြီး)",
+                aipred_accuracy_note: "ပြီးခဲ့သောပွဲများ၏ အမှန်တကယ်ရလဒ်ဖြင့် စစ်ဆေးထားသော နှုန်းဖြစ်သည်",
+                aipred_today: "ယနေ့",
+                aipred_tomorrow: "မနက်ဖြန်",
+                aipred_empty: "ခန့်မှန်းချက်ပွဲမရှိပါ",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 today_matches_title: "ယနေ့ ပွဲစဉ်များ",
                 filter_all: "အားလုံး",
@@ -358,6 +384,15 @@
                 nav_parlay: "Top Picks & Parlay",
                 nav_standings: "Standings",
                 nav_favorites: "Favorites",
+                nav_aipredictions: "AI Predictions",
+                aipred_loading: "Loading predictions...",
+                aipred_data: "Data",
+                aipred_matches: "matches",
+                aipred_accuracy: "Model accuracy (verified)",
+                aipred_accuracy_note: "Hit rates graded against actual finished results",
+                aipred_today: "Today",
+                aipred_tomorrow: "Tomorrow",
+                aipred_empty: "No predicted matches",
                 date_today: "📅 Today's Matches",
                 today_matches_title: "Today's Matches",
                 filter_all: "All",
@@ -433,7 +468,8 @@
             'Ecuador': 'အီကွေဒေါ', 'Peru': 'ပီရူး', 'Bolivia': 'ဘိုလီးဗီးယား',
             'Paraguay': 'ပါရာဂွေး', 'Denmark': 'ဒိန်းမတ်', 'Sweden': 'ဆွီဒင်',
             'Austria': 'ဩစတြီးယား', 'Belgium': 'ဘယ်လ်ဂျီယံ', 'Greece': 'ဂရိ',
-            'Liberia': 'လိုက်ဘေးရီးယား', 'El Salvador': 'အယ်လ်ဆယ်ဗေဒေါ'
+            'Liberia': 'လိုက်ဘေးရီးယား', 'El Salvador': 'အယ်လ်ဆယ်ဗေဒေါ',
+            'New Zealand': 'နယူးဇီလန်', 'Wales': 'ဝေလး'
         };
         function countryName(c) {
             if (currentLang === 'my' && COUNTRY_MY[c]) return COUNTRY_MY[c];
@@ -451,6 +487,24 @@
         function myanmarNow() {
             try {
                 return new Date().toLocaleString('en-US', { timeZone: 'Asia/Yangon', hour: 'numeric', minute: '2-digit', hour12: true });
+            } catch (e) { return ''; }
+        }
+        // Yangon calendar date as YYYY-MM-DD (for "today" filtering)
+        function yangonDateStr(dateStr) {
+            try {
+                return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Yangon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(dateStr));
+            } catch (e) { return ''; }
+        }
+        function todayYangonStr() {
+            try {
+                return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Yangon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+            } catch (e) { return ''; }
+        }
+        function nextDayStr(ymd) {
+            try {
+                const d = new Date(ymd + 'T00:00:00');
+                d.setDate(d.getDate() + 1);
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             } catch (e) { return ''; }
         }
 
@@ -532,10 +586,188 @@
             'KuPS': 'ကပ်စ်', 'KuPS Kuopio': 'ကပ်စ်',
             'Lech Poznan': 'လက်ပို့ဇ်နန်', 'Lech Poznań': 'လက်ပို့ဇ်နန်',
             'Slavia Prague': 'ဆလာဗီးယားပရာ့ဂ်', 'SK Slavia Prague': 'ဆလာဗီးယားပရာ့ဂ်',
-            'Sabah': 'ဆာဘာ', 'Sabah FK': 'ဆာဘာ', 'AEK': 'အေအီးကေ'
+            'Sabah': 'ဆာဘာ', 'Sabah FK': 'ဆာဘာ', 'AEK': 'အေအီးကေ',
+            // England - Championship / League One / lower
+            'Barnsley': 'ဘန်စလေ', 'Bayern': 'ဘိုင်ယန်မြူးနစ်', 'Birmingham': 'ဘာမင်ဟမ်',
+            'Blackburn': 'ဘလက်ဘန်း', 'Blackpool': 'ဘလက်ပူး', 'Bolton': 'ဘိုးလ်တန်',
+            'Boro': 'မစ်ဒယ်ဘရာ', 'Bradford': 'ဘရက်ဖို့ဒ်', 'Bristol City': 'ဘရစ္စတോൾ',
+            'Bromley': 'ဘရွန်လေ', 'Burton Albion': 'ဘာတန်အယ်လ်ဘီယွန်',
+            'Cambridge': 'ကိန်းဘရစ်ချ်', 'Cardiff': 'ကာဒစ်ဖ်', 'Charlton': 'ချားလ်တန်',
+            'Derby': 'ဒါဘီ', 'Doncaster': 'ဒွန်ကာစတာ', 'Huddersfield': 'ဟတ်ဒါစ်ဖီးလ်',
+            'Hull': 'ဟားလ်', 'Ipswich': 'အစ်ဝစ်ချ်', 'Leicester': 'လက်စတာ',
+            'Leyton Orient': 'လေတန်အိုရီယန့်', 'Lincoln City': 'လင်ကွန်း', 'Luton': 'လူတန်',
+            'Man City': 'မန်စီးတီး', 'Millwall': 'မီဝေါလ်', 'MK Dons': 'အမ်ကေဒွန်း',
+            'Norwich City': 'နောဝစ်ချ်', 'Notts County': 'နော့စ်ကောင်တီ',
+            'Peterborough': 'ပီတာဘရာ', 'Plymouth': 'ပလိုင်းမတ်', 'Portsmouth': 'ပေါ့စ်မောက်',
+            'Preston': 'ပရက်စတန်', 'QPR': 'ကျူပီအာ', 'Reading': 'ရက်ဒင်း',
+            'Sheffield Utd': 'ရှက်ဖီးယူနိုက်တက်', 'Sheffield Wed': 'ရှက်ဖီးဝိန်းစ်ဒေး',
+            'Stevenage': 'စတီဗင်နိချ်', 'Stockport': 'စတော့ခ်ပေါ့', 'Stoke': 'စတုတ်ခ်',
+            'Swansea': 'ဆွမ်ဆီး', 'Watford': 'ဝက်ဖို့ဒ်', 'West Brom': 'ဝက်စ်ဘရွန်း',
+            'Wigan': 'ဝီဂန်', 'Wimbledon': 'ဝင်ဘယ်လ်ဒါန်', 'Wrexham': 'ရက်စ်ဟမ်',
+            'Wycombe': 'ဝိုင်ကွမ်း',
+            // Scotland
+            'Aberdeen': 'အဘာဒင်း', 'Dundee': 'ဒန်ဒီ', 'Dundee Utd': 'ဒန်ဒီယူနိုက်တက်',
+            'Falkirk': 'ဖော်ကာ့ခ်', 'Hibernian': 'ဟီဘာနီယံ', 'Kilmarnock': 'ကီမာနော့ခ်',
+            'Motherwell': 'မားသားဝဲလ်', 'St Johnstone': 'စိန့်ဂျွန်စတုန်း', 'St Mirren': 'စိန့်မီရန်',
+            // Spain
+            'Albacete': 'အယ်လ်ဘာစီတီ', 'Almería': 'အယ်လ်မီရီယာ', 'Athletic': 'အက်သလက်တစ်',
+            'Atlético': 'အက်သလက်တီကို', 'Badalona': 'ဘာဒါလိုနာ', 'Betis': 'ရီးရဲလ်ဘက်တစ်',
+            'Castellón': 'ကာစတယ်လွန်', 'Dux Logroño': 'ဒူလော့ဂ်ရိုညို', 'Eibar': 'အဲဘာရ်',
+            'Elche': 'အဲလ်ချီ', 'Gijón': 'ဂီဂျွန်', 'Granada': 'ဂရာနာဒါ',
+            'Real Sociedad II': 'ရီးရဲလ်ဆိုစီဒက် ဘီ', 'Tenerife': 'တယ်နရိဖ်',
+            // Italy
+            'Ascoli': 'အက်စ်ကိုလီ', 'Benevento': 'ဘေနေဗန်တို', 'Carrarese': 'ကာရာရီစီ',
+            'Cremonese': 'ခရီမိုနီစီ', 'Genoa': 'ဂျီနိုအာ', 'Inter Milan': 'အင်တာ',
+            'Mantova': 'မန်တိုဗာ', 'Modena': 'မိုဒီနာ', 'Padova': 'ပါဒိုဗာ',
+            'Palermo': 'ပါလာမို', 'Pisa': 'ပီဆာ', 'Venezia': 'ဗေနေဇီယာ',
+            'Vicenza': 'ဝီချန်ဇာ', 'Virtus Entella': 'ဗာတူးစ်အန်တယ်လာ',
+            // France
+            'Brest': 'ဘရက်စ်', 'Le Havre AC': 'လဟားဗ်', 'Lyonnes': 'လိယွန်းနဲစ်',
+            'Montpellier': 'မွန့်ပယ်လီယေး', 'Nantes': 'နန့်တ်', 'Paris FC': 'ပါရီအက်ဖ်စီ',
+            'Saint-Malo': 'စိန့်မာလို', 'Strasbourg': 'စထရာ့စ်ဘတ်', 'Toulouse': 'တူးလူးစ်',
+            'Troyes': 'ထရွာ',
+            // Germany
+            'Bremen': 'ဝါဒါဘရီမင်', 'Dortmund': 'ဒေါ့မွန်', 'Elversberg': 'အဲလ်ဗာ့စ်ဘတ်',
+            'Hamburg': 'ဟမ်းဘတ်', 'Paderborn': 'ပါဒါဘွန်း', 'Schalke': 'ရှော်ကေး',
+            'Union Berlin': 'ယူနီယံဘာလင်',
+            // Netherlands
+            'ADO Den Haag': 'အေဒီအိုဒန်ဟဂ်', 'Sparta': 'စပါတာရော့တာဒမ်',
+            'Telstar': 'တဲလ်စတာ', 'Willem II': 'ဝီလမ်နှစ်',
+            // Portugal
+            'AD Marco 09': 'မာကို ၀၉', 'Académica': 'အကာဒီမီကာ', 'Amarante': 'အမာရန်တီ',
+            'Atlético CP': 'အက်သလက်တီကိုစီပီ', 'AVS': 'အေဗွီအက်စ်', 'Bragança': 'ဘရာဂမ်ဆာ',
+            'Estrela': 'အက်စ်ထရဲလာ', 'FC Penafiel': 'ပီနာဖီယဲလ်', 'Fazendense': 'ဖာဇန်ဒန်စီ',
+            'Florgrade': 'ဖလိုဂြိတ်', 'Lamelas': 'လာမီလတ်စ်', 'Leca': 'လေဆာ',
+            'Leixoes': 'လေးရှိုးအိစ်', 'Louletano': 'လောလေတာနို', 'Moreirense': 'မိုရေရင်စီ',
+            'Nacional': 'နာစီယိုနယ်', 'Portimonense': 'ပေါ်တီမိုနန့်စ်', 'Rio Ave': 'ရီယိုအက်ဗီ',
+            'Sanjoanense': 'ဆန်ဂျိုနန်စီ', 'SC Farense': 'ဖာရင်စီ',
+            'Uniao Leiria': 'ယူနီယောင်းလယ်ရီယာ', 'Vianense': 'ဗီယာနန်စီ',
+            'Vitória': 'ဗီတိုးရီးယား', 'Vizela': 'ဝီဇဲလာ',
+            // Türkiye
+            'Amed SFK': 'အမက်ဒ်', 'Erzurum': 'အဲဇူရွမ်', 'Eyupspor': 'အဲယွပ်စပေါ်',
+            'Genclerbirli': 'ဂင့်ချ်လာဘီလီရီး', 'Konyaspor': 'ကိုညာစပေါ်',
+            // Saudi Arabia
+            'Al Diriyah': 'အယ်လ်ဒီရီယာ', 'Al Ettifaq': 'အယ်လ်အက်တီဖာ့ခ်',
+            'Al Taawoun': 'အယ်လ်တာဝွန်း', 'Neom SC': 'နီယွန်း',
+            // Mexico
+            'América': 'အမေရိကာ', 'Atl. San Luis': 'အက်သလက်တီကိုဆန်လူးဝစ်',
+            'Cruz Azul': 'ခရုဇ်အဇူးလ်', 'Guadalajara': 'ဂွါဒါလာဟာရာ', 'Juárez': 'ဝါးရက်ဇ်',
+            'León': 'လီယွန်း', 'Queretaro': 'ကဲရီတာရို', 'Santos': 'ဆန်းတို့စ်',
+            'Tigres': 'တီဂရက်စ်', 'Toluca': 'တိုလူကာ',
+            // USA - MLS
+            'Atlanta': 'အတ္တလန်တာယူနိုက်တက်', 'Austin': 'အော့စတင်', 'CF Montréal': 'မွန်ထရီယော',
+            'Charlotte': 'ရှားလော့', 'Chicago': 'ချီကာဂိုဖိုင်ယာ', 'Colorado': 'ကော်လိုရာဒိုရက်ပစ်စ်',
+            'D.C. United': 'ဒီစီယူနိုက်တက်', 'Dallas': 'ဒါးလတ်စ်', 'Denver': 'ဒန်ဗာ',
+            'Houston': 'ဟျူးစတန်ဒိုင်နမို', 'Kansas City': 'စပေါ်တင်းကန်ဆက်စ်စီးတီး',
+            'LA Galaxy': 'အယ်လ်အေဂါလက်ဆီ', 'LAFC': 'အယ်လ်အေအက်ဖ်စီ', 'Lexington': 'လက်ဆင်တန်',
+            'Miami': 'အင်တာမိုင်ယာမီ', 'Minnesota': 'မင်နီဆိုတာယူနိုက်တက်',
+            'Nashville': 'နက်ရှ်ဗီးလ်', 'New England': 'နယူးအင်္ဂလန်ရီဗော်လူးရှင်း',
+            'NYCFC': 'အန်ဝိုင်စီအက်ဖ်စီ', 'Orlando': 'အော်လန်ဒိုစီးတီး',
+            'Philadelphia': 'ဖီလာဒဲလ်ဖီးယားယူနီယံ', 'Portland': 'ပေါ့တ်လန်တင်ဘာစ်',
+            'Red Bull NY': 'နယူးယောက်ရက်ဘူး', 'Salt Lake': 'ရီးရဲလ်ဆော့လိတ်',
+            'San Diego': 'ဆန်ဒီယေဂို', 'San Jose': 'ဆန်ဟိုဆေးအာ့သ်ကွေးခ်',
+            'Seattle': 'ဆီယက်တယ်ဆောင်းဒါစ်', 'St. Louis': 'စိန့်လူးဝစ်စီးတီး',
+            'Tampa Bay': 'တမ်ပါဘေး', 'Toronto': 'တိုရွန်တို', 'Vancouver': 'ဗန်ကူးဗားဝိုက်ကပ်',
+            // USA - NWSL (women)
+            'Angel City': 'အိန်ဂျယ်စီးတီး', 'Gotham': 'ဂေါ့သမ်',
+            'North Carolina': 'နော့သ်ကယ်ရိုလိုင်းနားကရေးချ်', 'Utah': 'ယူတားရွိုင်ရယ်စ်',
+            'Washington': 'ဝါရှင်တန်စပီရစ်',
+            // Australia - A-League
+            'Auckland': 'အော့ကလန်', 'Brisbane': 'ဘရစ္စဘိန်းရော',
+            'CC Mariners': 'စင်ထရယ်ကို့စ်မာရင်နာစ်', 'Macarthur': 'မက်အာသာ',
+            'Melbourne C': 'မဲလ်ဘုန်းစီးတီး', 'Melbourne V': 'မဲလ်ဘုန်းဗစ်ထရီ',
+            'New. Jets': 'နယူးကာဆယ်ဂျက်စ်', 'Newcastle Jets': 'နယူးကာဆယ်ဂျက်စ်',
+            'Perth Glory': 'ပါးသ်ဂလိုရီ', 'Wellington': 'ဝယ်လင်တန်ဖီးနစ်',
+            'Western Sydney': 'ဝက်စတန်ဆစ်ဒနီဝွန်ဒါရာစ်',
+            // Germany - API full names
+            'Heidenheim': 'ဟိုင်ဒင်ဟိုင်း', 'Kaiserslautern': 'ကိုင်ဇာစလောက်တန်',
+            'Köln': 'ကိုလုံး', 'Magdeburg': 'မက်ဒီဘတ်', 'Nürnberg': 'နန်းဘတ်',
+            'Arminia Bielefeld': 'အာမီးနီးယားဘီလီဖဲလ်', 'Eintracht Braunschweig': 'အိုင်းထရက်ခ်ဘရန်းရှ်ဝိုက်',
+            'Energie Cottbus': 'အင်နာဂျီကော့တ်ဘတ်စ်', 'Hamburger': 'ဟမ်းဘတ်', 'Hannover': 'ဟန်နိုဗာ',
+            'Hertha': 'ဟာသာဘာလင်', 'Holstein Kiel': 'ဟိုးလ်စတိုင်းကီးလ်', 'Karlsruher': 'ကားလ်စ်ရူးဟာ',
+            'Darmstadt': 'ဒါးမ်စတပ်', 'Greuther Fürth': 'ဂရွိုက်တာဖို့တ်', 'Bochum': 'ဘိုခွမ်',
+            'Osnabrück': 'အို့စ်နာဘရွတ်ခ်', 'St. Pauli': 'စိန့်ပေါလီ',
+            'Borussia Mönchengladbach': 'ဂလက်ဘတ်',
+            // Italy - API full names
+            'Monza': 'မွန်ဇာ', 'Cagliari': 'ကာဂလီယာရီ', 'Como': 'ကိုမို',
+            'Frosinone': 'ဖရိုစီနိုနီ', 'Parma': 'ပါးမား', 'Lecce': 'လက်ချီ',
+            'Sassuolo': 'ဆာဆူအိုလို',
+            // Spain - API full names
+            'Burgos': 'ဘူးဂို့စ်', 'Cádiz': 'ကာဒစ်ဇ်', 'Ceuta': 'ဆီအူတာ',
+            'Córdoba': 'ကော်ဒိုဘာ', 'Eldense': 'အဲလ်ဒန်စီ', 'Leganés': 'လက်ဂနက်စ်',
+            'Levante': 'လီဗန်တီ', 'Málaga': 'မာလာဂါ', 'Mirassol': 'မီရာဆိုးလ်',
+            'Deportivo Alavés': 'အလာဗက်စ်', 'Real Oviedo': 'ရီးရဲလ်အိုဗီယေဒို',
+            'Real Racing Club de Santander': 'ရာစင်ဆန်တန်ဒါ', 'Real Valladolid': 'ရီးရဲလ်ဗယ်လာဒိုလစ်',
+            'Celta de Vigo': 'ဆယ်တာဗီဂို', 'Deportivo La Coruña': 'ဒီပို့တီဗိုလာကိုရူးညာ',
+            'Sporting Gijón': 'စပေါ်တင်းဂီဂွန်', 'Sabadell': 'ဆာဘာဒဲလ်', 'Andorra': 'အန်ဒိုရာ',
+            // Portugal - API full names
+            'Alverca': 'အယ်လ်ဗာကာ', 'Arouca': 'အာရိုကာ', 'Famalicão': 'ဖာမာလီကောင်း',
+            'Estoril': 'အက်စ်တိုရီလ်', 'Gil Vicente': 'ဂျီလ်ဝီဆန်တီ',
+            'Académico de Viseu': 'အကာဒီမီကိုဒီဝီဇူး', 'Marítimo': 'မာရီတီမို',
+            'Santa Clara': 'ဆန်တာကလာရာ', 'Casa Pia': 'ကာဆာပီယာ',
+            'Sport Lisboa e Benfica': 'ဘင်ဖီကာ', 'Sporting Clube de Braga': 'စပေါ်တင်းဘရာဂါ',
+            'Sporting Clube de Portugal': 'စပေါ်တင်း',
+            // France - API full names
+            'Auxerre': 'အော့ဆေး', 'Angers': 'အွန်ဂျေး', 'Le Mans': 'လီမန်း',
+            'Olympique Lyonnais': 'လီယွန်', 'Olympique de Marseille': 'မာဆေး',
+            'Racing Club de Lens': 'လွန်းစ်', 'Stade Brestois': 'ဘရက်စ်', 'Stade Rennais': 'ရန်းစ်',
+            'Lorient': 'လောရီယန့်',
+            // Netherlands - API full names
+            'Cambuur': 'ကမ်ဘူး', 'Cambuur-Leeuwarden': 'ကမ်ဘူး', 'Excelsior': 'အက်စ်ဆဲလ်စီယာ',
+            'Heerenveen': 'ဟီရန်ဗိန်း', 'Groningen': 'ဂရိုနင်ဂန်', 'Twente': 'တွန်တီ',
+            'Utrecht': 'ယူထရက်ခ့်', 'Fortuna Sittard': 'ဖော်တူနာစစ်တာ့ဒ်',
+            'Go Ahead Eagles': 'ဂိုးအဟက်ဒ်အီးဂယ်လ်စ်', 'NEC': 'အန်အီးစီ', 'PEC Zwolle': 'ပီအီးစီဇွဲလာ',
+            // Sweden / Norway - Allsvenskan etc.
+            'AIK': 'အေအိုင်ကေ', 'Häcken': 'ဟက်ကင်', 'Degerfors': 'ဒီဂါဖို့စ်',
+            'Djurgården': 'ဂျူဂေါ်ဒန်', 'Djurgårdens': 'ဂျူဂေါ်ဒန်', 'Dynamo Dresden': 'ဒိုင်နမိုဒရက်စ်ဒန်',
+            'GAIS': 'ဂိုက်စ်', 'Halmstad': 'ဟာလမ်စတပ်',
+            'Halmstads': 'ဟာလမ်စတပ်', 'Hammarby': 'ဟာမာဘီ', 'Brommapojkarna': 'ဘရိုမာပိုကာနာ',
+            'Elfsborg': 'အဲလ်ဖ်စ်ဘော့ဂ်', 'Göteborg': 'ဂိုသင်ဘတ်', 'Sirius': 'ဆီရီးယပ်စ်',
+            'Kalmar': 'ကားလ်မာ', 'Malmö': 'မာလ်မို', 'Mjällby': 'မျယ်ဘီ',
+            'Västerås': 'ဗက်စ်တရော့စ်', 'Örgryte': 'အော်ဂရူးတီ', 'Viking': 'ဗိုက်ကင်း',
+            'Bodø/Glimt': 'ဘိုဒိုဂလင့်မ်',
+            // Brazil - Série A
+            'Botafogo': 'ဘိုတာဖိုဂို', 'Mineiro': 'အက်သလက်တီကိုမီးနေရို',
+            'Paranaense': 'ပါရာနန်စီ', 'Flamengo': 'ဖလာမင်ဂို', 'Vasco da Gama': 'ဗက်စကိုဒါဂါမာ',
+            'Chapecoense': 'ချာပီကိုအန်စီ', 'Clube do Remo': 'ရီမို', 'Coritiba': 'ကိုရီတီဘာ',
+            'Cruzeiro': 'ခရူဇေရို', 'Bahia': 'ဘာဟီးယား', 'Fluminense': 'ဖလူမီနန်စီ',
+            'Grêmio': 'ဂရီမီယို', 'Bragantino': 'ဘရာဂမ်တီနို', 'Corinthians': 'ကိုရင်သီယန်စ်',
+            'Internacional': 'အင်တာနာစီယိုနယ်', 'Palmeiras': 'ပါးလ်မေရက်စ်',
+            'São Paulo': 'ဆောင်းပါအိုလို',
+            // England - API full-name aliases
+            'Burnley': 'ဘန်လေ', 'Coventry': 'ကိုဗင်ထရီ', 'Leeds': 'လိဒ်စ်',
+            'Middlesbrough': 'မစ်ဒယ်ဘရာ', 'Queens Park Rangers': 'ကျူပီအာ',
+            'Sheffield United': 'ရှက်ဖီးယူနိုက်တက်', 'Sunderland': 'ဆန်းဒါးလန်း',
+            'West Bromwich Albion': 'ဝက်စ်ဘရွန်း',
+            // Other API aliases
+            'Club Atlético de Madrid': 'အက်သလက်တီကို', 'Club Brugge': 'ကလပ်ဘရူးဂျ်',
+            'LASK': 'လတ်စ်ခ်', 'Slavia Praha': 'ဆလာဗီးယားပရာ့ဂ်',
+            'Slovan Bratislava': 'စလိုဗန်ဘရာတစ်လာဗာ', 'AZ': 'အေဇက်'
         };
+        // Normalize football-data.org / variant names to dictionary base names
+        function normalizeTeam(t) {
+            let s = String(t || '').trim();
+            s = s.replace(/['’]\d{2}$/, '');                                     // "FC Twente '65" -> "FC Twente"
+            s = s.replace(/\s+\d{2,4}$/, '');                                   // "Como 1907" -> "Como", "Hannover 96" -> "Hannover"
+            s = s.replace(/\s+\d{2,4}(?=\s)/, '');                              // "Bayer 04 Leverkusen" -> "Bayer Leverkusen"
+            s = s.replace(/\s+(FC|AFC|ACF|CF|SC|AC|AS|BC|CA|CR|FK|IFK|BK|SV|II|B|U21|UD|CD|CS|GD|SBV|ES|SCO|OSC|OGC|IF|IK|FF|AIF|SK|IS|KV|EC|AF|FBC|FBPA|FR|SE|RB|Calcio|CFC)$/i, ''); // trailing club suffix
+            s = s.replace(/^(AFC|ACF|AC|AS|CA|CR|CF|SC|FK|IFK|IF|IK|BK|GD|SV|SBV|CD|CS|RC|RCD|EC|AF|SE|RB|SK|PAE|ŠK|KV|FSV|TSG|SpVgg|VfL|DSC|SS|SSC|US|AJ|ES|OGC|1\.\s*(?:FC|FSV)|FC)\s+/i, ''); // leading club prefix
+            return s.trim();
+        }
         function teamName(t) {
-            if (currentLang === 'my' && TEAM_MY[t]) return TEAM_MY[t];
+            if (!t) return t;
+            if (currentLang !== 'my') return t;
+            if (TEAM_MY[t]) return TEAM_MY[t];
+            const tr = String(t).trim();
+            if (tr !== t && TEAM_MY[tr]) return TEAM_MY[tr];
+            const base = normalizeTeam(t);
+            if (base && TEAM_MY[base]) return TEAM_MY[base];
+            // Progressive: drop trailing words ("Birmingham City" -> "Birmingham")
+            const words = base.split(/\s+/);
+            for (let i = words.length - 1; i >= 1 && i >= words.length - 4; i--) {
+                const cand = words.slice(0, i).join(' ');
+                if (TEAM_MY[cand]) return TEAM_MY[cand];
+            }
             return t;
         }
 
@@ -591,7 +823,7 @@
         }
         function switchView(v) {
             currentView = v;
-            ['home', 'predictor', 'records', 'parlay', 'standings', 'favorites'].forEach(x => {
+            ['home', 'predictor', 'aipredictions', 'records', 'parlay', 'standings', 'favorites'].forEach(x => {
                 document.getElementById('view-' + x).classList.add('hidden');
                 const b = document.getElementById('nav-' + x);
                 if (b) b.classList.remove('nav-active');
@@ -602,6 +834,7 @@
             if (!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
             if (v === 'home') { renderEspnMatches(); renderHomeFixtures(); }
             if (v === 'predictor') { renderLeagueTabs(); renderAllMatches(); renderTopPicks(); }
+            if (v === 'aipredictions') renderAiPredictions();
             if (v === 'records') renderRecords();
             if (v === 'parlay') renderParlay();
             if (v === 'standings') renderStandings();
@@ -617,6 +850,135 @@
                 if (translations[currentLang][k]) el.innerText = translations[currentLang][k];
             });
             switchView(currentView);
+        }
+
+        // ================= AI PREDICTIONS (football-data.org API, synced to docs/data/) =================
+        const COMP_INFO = {
+            PL:  { en: 'English Premier League', my: 'အင်္ဂလန် ပရီးမီးယားလိဂ်' },
+            BL1: { en: 'German Bundesliga', my: 'ဂျာမနီ ဘွန်ဒက်စ်လီဂါ' },
+            BL2: { en: 'German 2. Bundesliga', my: 'ဂျာမနီ ဘွန်ဒက်စ်လီဂါ ၂' },
+            SA:  { en: 'Italian Serie A', my: 'အီတလီ စီးရီးအေ' },
+            PD:  { en: 'Spanish La Liga', my: 'စပိန် လာလီဂါ' },
+            FL1: { en: 'French Ligue 1', my: 'ပြင်သစ် လီဂူး ၁' },
+            DED: { en: 'Dutch Eredivisie', my: 'နယ်သာလန် အရီဒီဗီစီ' },
+            PPL: { en: 'Portuguese Primeira Liga', my: 'ပေါ်တူဂီ ပရိုင်းရာလီဂါ' },
+            CL:  { en: 'UEFA Champions League', my: 'ချန်ပီယံလိဂ်' },
+            ELC: { en: 'English Championship', my: 'အင်္ဂလန် ချန်ပီယံရှစ်' },
+            BSA: { en: 'Brazilian Série A', my: 'ဘရာဇီး စီးရီးအေ' },
+            SDV: { en: 'Spanish Segunda División', my: 'စပိန် ဆီဂန်ဒါဒီဗီရှင်' },
+            ALV: { en: 'Swedish Allsvenskan', my: 'ဆွီဒင် အောလ်စဗန်စကန်' }
+        };
+        const COMP_CODES = ['PL', 'BL1', 'BL2', 'SA', 'PD', 'FL1', 'DED', 'PPL', 'CL', 'ELC', 'BSA', 'SDV', 'ALV'];
+        let aipredCache = null;
+        async function loadAiPredictions() {
+            if (aipredCache) return aipredCache;
+            const results = await Promise.all(COMP_CODES.map(c =>
+                fetch('data/predictions_' + c + '.json').then(r => r.ok ? r.json() : null).catch(() => null)));
+            let gen = '';
+            const matches = [];
+            results.forEach(d => {
+                if (!d || !d.predictions) return;
+                if (d.generated_at && d.generated_at > gen) gen = d.generated_at;
+                d.predictions.forEach(p => { if (p && p.status === 'TIMED') matches.push(p); });
+            });
+            let acc = null;
+            try {
+                const v = await fetch('data/verification.json').then(r => r.ok ? r.json() : null).catch(() => null);
+                if (v && v.summary) acc = v.summary;
+            } catch (e) {}
+            aipredCache = { matches: matches, generatedAt: gen, accuracy: acc };
+            return aipredCache;
+        }
+        function aipredRow(p) {
+            const hn = esc(teamName(p.home_team.name)), an = esc(teamName(p.away_team.name));
+            const pk = p.picks || {};
+            const line = [];
+            if (pk['1x2']) {
+                const s = pk['1x2'].selection;
+                const nm = s === 'home' ? teamName(p.home_team.name) : s === 'away' ? teamName(p.away_team.name) : (currentLang === 'en' ? 'Draw' : 'သရေ');
+                line.push('1X2 ' + esc(nm) + ' ' + Math.round(pk['1x2'].prob * 100) + '%');
+            }
+            if (pk.ou25) {
+                const lbl = pk.ou25.selection === 'over' ? (currentLang === 'en' ? 'O2.5' : '2.5အထက်') : (currentLang === 'en' ? 'U2.5' : '2.5အောက်');
+                line.push(esc(lbl) + ' ' + Math.round(pk.ou25.prob * 100) + '%');
+            }
+            if (pk.btts) {
+                line.push('BTTS ' + (pk.btts.selection === 'yes' ? (currentLang === 'en' ? 'Yes' : 'ရှိ') : (currentLang === 'en' ? 'No' : 'မရှိ')) + ' ' + Math.round(pk.btts.prob * 100) + '%');
+            }
+            let cs = '';
+            try {
+                if (p.markets && p.markets.correct_scores && p.markets.correct_scores.length) {
+                    const c0 = p.markets.correct_scores[0];
+                    cs = 'CS ' + c0.score + ' ' + Math.round(c0.prob * 100) + '%';
+                }
+            } catch (e) {}
+            return '<div class="px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
+                '<div class="flex items-center gap-2">' +
+                '<span class="text-[10px] text-slate-400 w-16 shrink-0">' + esc(myanmarTime(p.kickoff)) + '</span>' +
+                '<span class="text-xs text-white flex-1 truncate">' + hn + ' <span class="text-slate-500">vs</span> ' + an + '</span>' +
+                '</div>' +
+                '<div class="text-[10px] text-amber-300/90 mt-1 ml-[4.5rem]">' + line.join(' · ') + (cs ? ' · <span class="text-slate-400">' + esc(cs) + '</span>' : '') + '</div>' +
+                '</div>';
+        }
+        async function renderAiPredictions() {
+            const T = translations[currentLang];
+            const box = document.getElementById('aipredContainer');
+            if (!box) return;
+            box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + esc(T.aipred_loading) + '</div>';
+            let data;
+            try { data = await loadAiPredictions(); }
+            catch (e) { box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">⚠️</div>'; return; }
+            const meta = document.getElementById('aipredMeta');
+            if (meta) {
+                meta.innerHTML = '🔄 ' + esc(T.aipred_data) + ': ' + esc(data.generatedAt ? myanmarTime(data.generatedAt) : '—') +
+                    ' <span class="text-slate-600">(' + data.matches.length + ' ' + esc(T.aipred_matches) + ')</span>';
+            }
+            const accBox = document.getElementById('aipredAccuracy');
+            if (accBox) {
+                if (data.accuracy) {
+                    const a = data.accuracy, pc = x => Math.round(x * 100) + '%';
+                    const chip = lbl => '<span class="bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5">' + lbl + '</span>';
+                    accBox.innerHTML = '<div class="text-[11px] font-bold text-emerald-400 mb-1.5">✅ ' + esc(T.aipred_accuracy) + '</div>' +
+                        '<div class="flex flex-wrap gap-1.5 text-[10px] text-slate-300">' +
+                        chip('1X2 ' + pc(a['1x2'].hit_rate)) + chip('O/U 2.5 ' + pc(a.ou25.hit_rate)) +
+                        chip('BTTS ' + pc(a.btts.hit_rate)) + chip('AH ' + pc(a.ah.hit_rate)) + '</div>' +
+                        '<div class="text-[9px] text-slate-600 mt-1">' + esc(T.aipred_accuracy_note) + '</div>';
+                } else { accBox.innerHTML = ''; }
+            }
+            const byDate = {};
+            data.matches.forEach(p => {
+                const ds = yangonDateStr(p.kickoff);
+                if (!ds) return;
+                if (!byDate[ds]) byDate[ds] = [];
+                byDate[ds].push(p);
+            });
+            const dates = Object.keys(byDate).sort();
+            if (!dates.length) {
+                box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + esc(T.aipred_empty) + '</div>';
+                return;
+            }
+            const todayS = todayYangonStr(), tomorrowS = nextDayStr(todayS);
+            box.innerHTML = dates.map(ds => {
+                const list = byDate[ds].sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+                const isToday = ds === todayS;
+                const dp = ds.split('-');
+                const dateLabel = isToday ? T.aipred_today : ds === tomorrowS ? T.aipred_tomorrow : dp[2] + '.' + dp[1] + '.' + dp[0];
+                let html = '', lastComp = null;
+                list.forEach(p => {
+                    if (p.competition !== lastComp) {
+                        if (lastComp !== null) html += '</div>';
+                        lastComp = p.competition;
+                        const ci = COMP_INFO[p.competition] || { en: p.competition, my: p.competition };
+                        html += '<div class="rounded-xl overflow-hidden border border-slate-800 mb-2">' +
+                            '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🏆 ' + esc(currentLang === 'en' ? ci.en : ci.my) + '</div>';
+                    }
+                    html += aipredRow(p);
+                });
+                if (lastComp !== null) html += '</div>';
+                return '<details class="mb-3"' + (isToday ? ' open' : '') + '>' +
+                    '<summary class="text-sm font-bold text-amber-400 px-1 py-1 cursor-pointer list-none">' + esc(dateLabel) +
+                    ' <span class="text-slate-500 font-normal text-xs">(' + list.length + ')</span></summary>' + html + '</details>';
+            }).join('');
         }
 
         // ================= POISSON ENGINE =================
@@ -704,7 +1066,7 @@
             if (!("Notification" in window)) { alert(currentLang === 'en' ? "Notifications not supported" : "Noti မရနိုင်ပါ"); return; }
             Notification.requestPermission().then(p => {
                 if (p === "granted") notifyEvent(currentLang === 'en' ? "🔔 Notifications ON" : "🔔 Noti ဖွင့်ပြီးပါပြီ",
-                    currentLang === 'en' ? "Goal / kickoff / FT alerts enabled" : "ဂိုး/ပွဲစ/ပွဲပြီး noti များ ရမည်", "INFO");
+                    currentLang === 'en' ? "Goal / kickoff / HT / FT alerts enabled" : "ဂိုး/ပွဲစ/HT/ပွဲပြီး noti များ ရမည်", "INFO");
             });
         }
         function testNotification() {
@@ -748,16 +1110,19 @@
                     const away = comp.competitors.find(c => c.homeAway === 'away');
                     const hs = parseInt(home.score || 0), as = parseInt(away.score || 0);
                     const prev = espnPrevStates[ev.id];
+                    const htNow = st.state === 'in' && /\bht\b|half[\s-]?time/i.test((st.shortDetail || '') + ' ' + (st.detail || ''));
                     if (prev) {
                         const hn = esc(home.team.shortDisplayName), an = esc(away.team.shortDisplayName);
                         if (prev.state === 'pre' && st.state === 'in')
                             notifyEvent("📢 " + (currentLang === 'en' ? "KICK-OFF" : "ပွဲစတင်ပါပြီ"), hn + " vs " + an, "KICKOFF");
+                        else if (!prev.ht && htNow)
+                            notifyEvent("⏸ " + (currentLang === 'en' ? "HALF-TIME" : "ပွဲတစ်ပိုင်းပြီးပါပြီ"), hn + " " + hs + " - " + as + " " + an, "HT");
                         else if (st.state === 'in' && (hs > prev.hs || as > prev.as))
                             notifyEvent("⚽ GOAL!", hn + " " + hs + " - " + as + " " + an + " (" + st.shortDetail + ")", "GOAL");
                         else if (prev.state === 'in' && st.state === 'post')
                             notifyEvent("🏁 " + (currentLang === 'en' ? "FULL-TIME" : "ပွဲပြီးပါပြီ"), hn + " " + hs + " - " + as + " " + an, "FT");
                     }
-                    espnPrevStates[ev.id] = { state: st.state, hs: hs, as: as };
+                    espnPrevStates[ev.id] = { state: st.state, hs: hs, as: as, ht: htNow || (prev && prev.ht) };
                 });
             } catch (e) {}
         }
@@ -795,6 +1160,14 @@
             } else if (homeFilter === 'fav') {
                 events = events.filter(e => isEspnFav(e.id));
             }
+            // Keep only today's (Yangon calendar) matches, plus anything currently live
+            const todayS = todayYangonStr();
+            events = events.filter(e => {
+                const c = e.competitions[0];
+                if (!c || !c.status) return false;
+                if (c.status.type.state === 'in') return true;
+                return yangonDateStr(e.date) === todayS;
+            });
             const upd = document.getElementById('espnUpdated');
             if (upd) { upd.innerText = myanmarNow(); }
             if (!events.length) {
@@ -808,7 +1181,7 @@
             }
             // Sort chronologically by kickoff time (earliest first)
             events.sort((a, b) => new Date(a.date) - new Date(b.date));
-            // Group by time period, then by country
+            // Group by time period; within each, strict chronological order with running country+league headers
             const byPeriod = { live: [], morning: [], day: [], evening: [] };
             events.forEach(ev => {
                 const comp = ev.competitions[0];
@@ -826,19 +1199,8 @@
             box.innerHTML = periodOrder.map(per => {
                 const list = byPeriod[per];
                 if (!list.length) return '';
-                // Sub-group by country
-                const byCountry = {};
-                list.forEach(ev => {
-                    const comp = ev.competitions[0];
-                    const country = (comp.venue && comp.venue.address && comp.venue.address.country) || '?';
-                    if (!byCountry[country]) byCountry[country] = [];
-                    byCountry[country].push(ev);
-                });
-                const countryHtml = Object.keys(byCountry).sort().map(country => {
-                    // Get league name from first event in this country group
-                    const lgName = leagueName(byCountry[country][0]);
-                    const headerTitle = lgName ? esc(countryName(country)) + ': <span class="text-slate-400 font-normal">' + esc(lgName) + '</span>' : '🌍 ' + esc(countryName(country));
-                    const rows = byCountry[country].map(ev => {
+                // Row builder (used with running country+league headers below)
+                const rowHtml = ev => {
                     const comp = ev.competitions[0];
                     const st = comp.status.type;
                     const home = comp.competitors.find(c => c.homeAway === 'home');
@@ -872,11 +1234,26 @@
                         '</div>' + scoreHtml +
                         '<button onclick="toggleEspnFav(\'' + esc(ev.id) + '\')" class="text-xl pl-2 ' + (fav ? 'text-amber-400' : 'text-slate-600') + '">' + (fav ? '★' : '☆') + '</button>' +
                         '</div>';
-                }).join('');
-                return '<div class="rounded-xl overflow-hidden border border-slate-800 mb-2">' +
-                    '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + headerTitle + ' <span class="text-slate-500 font-normal">(' + byCountry[country].length + ')</span></div>' +
-                    rows + '</div>';
-                }).join('');
+                };
+                // Strict chronological order: running country+league headers (never re-sorted by country)
+                const groupHtml = (key, rowsAcc) => {
+                    const pp = key.split('|');
+                    const ht = pp[1] ? esc(countryName(pp[0])) + ': <span class="text-slate-400 font-normal">' + esc(pp[1]) + '</span>' : esc(countryName(pp[0]));
+                    return '<div class="rounded-xl overflow-hidden border border-slate-800 mb-2">' +
+                        '<div class="px-3 py-2 bg-slate-800/80 text-xs font-bold text-slate-200">🌍 ' + ht + '</div>' + rowsAcc + '</div>';
+                };
+                let countryHtml = '', lastKey = null, rowsAcc = '';
+                list.forEach(ev => {
+                    const comp0 = ev.competitions[0];
+                    const country = (comp0.venue && comp0.venue.address && comp0.venue.address.country) || '?';
+                    const key = country + '|' + leagueName(ev);
+                    if (key !== lastKey) {
+                        if (lastKey !== null) countryHtml += groupHtml(lastKey, rowsAcc);
+                        lastKey = key; rowsAcc = '';
+                    }
+                    rowsAcc += rowHtml(ev);
+                });
+                if (lastKey !== null) countryHtml += groupHtml(lastKey, rowsAcc);
                 return '<div class="mb-4"><div class="text-sm font-bold text-amber-400 mb-2 px-1">' + periodTitles[per] +
                     ' <span class="text-slate-500 font-normal text-xs">(' + list.length + ')</span></div>' + countryHtml + '</div>';
             }).join('');
