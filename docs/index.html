@@ -18,6 +18,13 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .sidebar-transition { transition: transform 0.25s ease-in-out; }
         .nav-active { background-color: #f59e0b !important; color: #0f172a !important; font-weight: bold !important; }
+        /* Design upgrade: motion + skeletons */
+        .view-enter { animation: viewIn 0.28s ease-out; }
+        @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        .skeleton { position: relative; overflow: hidden; background: #162033; }
+        .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent); animation: shimmer 1.3s infinite; }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        .live-glow { box-shadow: inset 0 0 18px rgba(244,63,94,0.08); }
     </style>
 </head>
 <body class="min-h-screen pb-20">
@@ -110,6 +117,7 @@
 
         <!-- ================= VIEW: HOME ================= -->
         <section id="view-home" class="space-y-4">
+            <div id="homeHero"></div>
             <div class="flex justify-between items-center bg-slate-900/70 p-2 rounded-xl border border-slate-800 text-xs gap-2">
                 <span class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30 whitespace-nowrap" data-i18n="date_today">📅 ယနေ့ ပွဲစဉ်များ</span>
                 <div class="flex gap-1.5">
@@ -129,7 +137,10 @@
                     <span id="espnUpdated" class="text-[10px] text-slate-500 ml-auto"></span>
                 </div>
                 <div id="espnMatchesContainer" class="space-y-3">
-                    <div class="text-center py-4 text-slate-500 text-xs" data-i18n="sync_loading">ပွဲစဉ်များ ရယူနေပါသည်...</div>
+                    <div class="skeleton rounded-xl h-16 mb-2"></div>
+                    <div class="skeleton rounded-xl h-16 mb-2"></div>
+                    <div class="skeleton rounded-xl h-16 mb-2"></div>
+                    <div class="skeleton rounded-xl h-16 mb-2"></div>
                 </div>
             </div>
         </section>
@@ -296,6 +307,30 @@
         </div>
     </div>
 
+    <!-- Bottom Tab Bar (mobile) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800" style="padding-bottom: env(safe-area-inset-bottom);">
+        <div class="grid grid-cols-6 max-w-2xl mx-auto">
+            <button onclick="switchView('home')" id="tab-home" class="flex flex-col items-center py-2 text-amber-400">
+                <span class="text-xl leading-none">🏠</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_home">ပွဲစဉ်</span>
+            </button>
+            <button onclick="switchView('aipredictions')" id="tab-aipredictions" class="flex flex-col items-center py-2 text-slate-500">
+                <span class="text-xl leading-none">🔮</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_ai">AI</span>
+            </button>
+            <button onclick="switchView('predictor')" id="tab-predictor" class="flex flex-col items-center py-2 text-slate-500">
+                <span class="text-xl leading-none">🤖</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_slip">စာရွက်</span>
+            </button>
+            <button onclick="switchView('parlay')" id="tab-parlay" class="flex flex-col items-center py-2 text-slate-500">
+                <span class="text-xl leading-none">🔥</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_parlay">မောင်း</span>
+            </button>
+            <button onclick="switchView('favorites')" id="tab-favorites" class="flex flex-col items-center py-2 text-slate-500">
+                <span class="text-xl leading-none">⭐</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_fav">အကြိုက်</span>
+            </button>
+            <button onclick="toggleSidebar()" class="flex flex-col items-center py-2 text-slate-500" aria-label="Menu">
+                <span class="text-xl leading-none">☰</span><span class="text-[9px] font-bold mt-0.5" data-i18n="tab_menu">မီနူး</span>
+            </button>
+        </div>
+    </nav>
+
     <script>
         // ================= CONFIG =================
         const PROXY_URL = "https://fragrant-dawn-ee09.soezar56456.workers.dev/";
@@ -323,6 +358,10 @@
                 standings_loading: "အမှတ်ပေးဇယား ရယူနေပါသည်...",
                 standings_empty: "အမှတ်ပေးဇယား မရှိသေးပါ",
                 standings_team: "အသင်း",
+                tab_home: "ပွဲစဉ်", tab_ai: "AI", tab_slip: "စာရွက်",
+                tab_parlay: "မောင်း", tab_fav: "အကြိုက်", tab_menu: "မီနူး",
+                hero_next: "နောက်ပွဲ",
+                aipred_toppick: "ယနေ့ အကောင်းဆုံး ခန့်မှန်းချက်",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 today_matches_title: "ယနေ့ ပွဲစဉ်များ",
                 filter_all: "အားလုံး",
@@ -399,6 +438,10 @@
                 standings_loading: "Loading standings...",
                 standings_empty: "No standings available",
                 standings_team: "Team",
+                tab_home: "Matches", tab_ai: "AI", tab_slip: "Slip",
+                tab_parlay: "Parlay", tab_fav: "Favs", tab_menu: "Menu",
+                hero_next: "Next",
+                aipred_toppick: "Top pick today",
                 date_today: "📅 Today's Matches",
                 today_matches_title: "Today's Matches",
                 filter_all: "All",
@@ -834,9 +877,14 @@
                 const b = document.getElementById('nav-' + x);
                 if (b) b.classList.remove('nav-active');
             });
-            document.getElementById('view-' + v).classList.remove('hidden');
+            const vb = document.getElementById('view-' + v);
+            vb.classList.remove('hidden');
+            vb.classList.remove('view-enter');
+            void vb.offsetWidth;
+            vb.classList.add('view-enter');
             const ab = document.getElementById('nav-' + v);
             if (ab) ab.classList.add('nav-active');
+            updateTabs(v);
             if (!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
             if (v === 'home') { renderEspnMatches(); renderHomeFixtures(); }
             if (v === 'predictor') { renderLeagueTabs(); renderAllMatches(); renderTopPicks(); }
@@ -846,6 +894,19 @@
             if (v === 'standings') renderStandings();
             if (v === 'favorites') renderFavorites();
             window.scrollTo(0, 0);
+        }
+        function updateTabs(v) {
+            ['home', 'aipredictions', 'predictor', 'parlay', 'favorites'].forEach(x => {
+                const b = document.getElementById('tab-' + x);
+                if (!b) return;
+                if (x === v) { b.classList.add('text-amber-400'); b.classList.remove('text-slate-500'); }
+                else { b.classList.remove('text-amber-400'); b.classList.add('text-slate-500'); }
+            });
+        }
+        function skeletonRows(n) {
+            let h = '';
+            for (let i = 0; i < (n || 4); i++) h += '<div class="skeleton rounded-xl h-16 mb-2"></div>';
+            return h;
         }
         function switchLanguage() {
             currentLang = document.getElementById('langToggle').checked ? 'en' : 'my';
@@ -875,6 +936,11 @@
             ALV: { en: 'Swedish Allsvenskan', my: 'ဆွီဒင် အောလ်စဗန်စကန်' }
         };
         const COMP_CODES = ['PL', 'BL1', 'BL2', 'SA', 'PD', 'FL1', 'DED', 'PPL', 'CL', 'ELC', 'BSA', 'SDV', 'ALV'];
+        function compName(code) {
+            const ci = COMP_INFO[code];
+            if (!ci) return code;
+            return currentLang === 'en' ? ci.en : ci.my;
+        }
         let aipredCache = null;
         async function loadAiPredictions() {
             if (aipredCache) return aipredCache;
@@ -930,7 +996,7 @@
             const T = translations[currentLang];
             const box = document.getElementById('aipredContainer');
             if (!box) return;
-            box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + esc(T.aipred_loading) + '</div>';
+            box.innerHTML = skeletonRows(5);
             let data;
             try { data = await loadAiPredictions(); }
             catch (e) { box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">⚠️</div>'; return; }
@@ -964,7 +1030,26 @@
                 return;
             }
             const todayS = todayYangonStr(), tomorrowS = nextDayStr(todayS);
-            box.innerHTML = dates.map(ds => {
+            // Top pick of the day: highest 1X2 probability among today's matches
+            let heroHtml = '';
+            const todayList = byDate[todayS] || [];
+            let top = null, topProb = -1;
+            todayList.forEach(p => {
+                const pr = p.picks && p.picks['1x2'] ? p.picks['1x2'].prob : -1;
+                if (pr > topProb) { topProb = pr; top = p; }
+            });
+            if (top) {
+                const pk = top.picks['1x2'];
+                const pct = Math.round(pk.prob * 100);
+                const nm = pk.selection === 'home' ? teamName(top.home_team.name) : pk.selection === 'away' ? teamName(top.away_team.name) : (currentLang === 'en' ? 'Draw' : 'သရေ');
+                heroHtml = '<div class="rounded-2xl p-4 mb-3 bg-gradient-to-br from-amber-500/25 via-yellow-500/10 to-transparent border border-amber-500/30">' +
+                    '<div class="text-[10px] font-bold text-amber-400 mb-1">🔥 ' + esc(T.aipred_toppick) + '</div>' +
+                    '<div class="text-sm font-bold text-white">' + esc(teamName(top.home_team.name)) + ' <span class="text-slate-500 font-normal">vs</span> ' + esc(teamName(top.away_team.name)) + '</div>' +
+                    '<div class="text-xs text-amber-300 mt-1">🏆 ' + esc(nm) + ' · ' + pct + '%</div>' +
+                    '<div class="h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden"><div class="h-full bg-gradient-to-r from-amber-500 to-yellow-300 rounded-full" style="width:' + pct + '%"></div></div>' +
+                    '<div class="text-[9px] text-slate-500 mt-1.5">' + esc(myanmarTime(top.kickoff)) + ' · ' + esc(compName(top.competition)) + '</div></div>';
+            }
+            box.innerHTML = heroHtml + dates.map(ds => {
                 const list = byDate[ds].sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
                 const isToday = ds === todayS;
                 const dp = ds.split('-');
@@ -1155,10 +1240,42 @@
             saveFavorites();
             renderEspnMatches();
         }
+        function renderHomeHero() {
+            const el = document.getElementById('homeHero');
+            if (!el) return;
+            const T = translations[currentLang];
+            let dateStr = '';
+            try {
+                dateStr = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-GB' : 'my-MM',
+                    { timeZone: 'Asia/Yangon', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+            } catch (e) { dateStr = todayStr(); }
+            const evs = espnCache || [];
+            let live = 0;
+            const todayS = todayYangonStr();
+            let nextTs = 0;
+            evs.forEach(e => {
+                const comp = e.competitions[0];
+                if (!comp || !comp.status) return;
+                const st = comp.status.type.state;
+                if (st === 'in') { live++; return; }
+                if (st === 'pre' && yangonDateStr(e.date) === todayS) {
+                    const ts = new Date(e.date).getTime();
+                    if (!nextTs || ts < nextTs) nextTs = ts;
+                }
+            });
+            el.innerHTML = '<div class="rounded-2xl p-4 bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                '<div class="min-w-0"><div class="text-sm font-bold text-white truncate">📅 ' + esc(dateStr) + '</div>' +
+                '<div class="text-[10px] text-slate-400 mt-0.5">' + evs.length + ' ' + esc(T.aipred_matches) +
+                (nextTs ? ' · ⏰ ' + esc(T.hero_next) + ' ' + esc(myanmarTime(new Date(nextTs).toISOString())) : '') + '</div></div>' +
+                (live ? '<span class="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold px-2.5 py-1 rounded-full animate-pulse whitespace-nowrap">🔴 ' + live + ' LIVE</span>' : '') +
+                '</div></div>';
+        }
         function renderEspnMatches() {
             const section = document.getElementById('espnMatchesSection');
             const box = document.getElementById('espnMatchesContainer');
             if (!section || !box) return;
+            renderHomeHero();
             let events = espnCache || [];
             // Apply home filter
             if (homeFilter === 'live') {
@@ -1232,7 +1349,7 @@
                         scoreHtml = '<div class="text-right text-slate-600 text-xs font-bold">VS</div>';
                     }
                     const logo = (t) => t.team.logo ? '<img src="' + esc(t.team.logo) + '" class="w-5 h-5 rounded-full bg-slate-800 object-contain shrink-0" loading="lazy" onerror="this.style.display=\'none\'">' : '<span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] shrink-0">⚽</span>';
-                    return '<div class="flex items-center gap-2 px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
+                    return '<div class="flex items-center gap-2 px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60' + (isLive ? ' border-l-2 border-l-rose-500 live-glow' : '') + '">' +
                         '<div class="w-14 shrink-0 text-center">' + timeHtml + '</div>' +
                         '<div class="flex-1 min-w-0 space-y-1.5">' +
                         '<div class="flex items-center gap-2">' + logo(home) + '<span class="text-sm text-white truncate">' + esc(teamName(home.team.shortDisplayName)) + '</span><span class="text-[9px] bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-1 rounded shrink-0" title="Home">🏠</span></div>' +
@@ -1727,7 +1844,7 @@
             const c = document.getElementById('standingsContainer');
             if (!c) return;
             const T = translations[currentLang];
-            c.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">' + esc(T.standings_loading) + '</div>';
+            c.innerHTML = skeletonRows(6);
             loadStandings().then(data => {
                 if (!data.length) {
                     c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + esc(T.standings_empty) + '</div>';
@@ -1747,7 +1864,8 @@
                     '<span class="w-8 text-center">+/-</span><span class="w-8 text-center">Pts</span></div>';
                 const rows = tbl.map(r => {
                     const form = r.form ? ' <span class="text-[9px] text-slate-500">' + esc(String(r.form).split(',').join(' ')) + '</span>' : '';
-                    return '<div class="flex items-center gap-1.5 px-2 py-1.5 border-b border-slate-800/60 text-xs">' +
+                    const zone = r.pos === 1 ? ' border-l-2 border-l-amber-400' : r.pos <= 4 ? ' border-l-2 border-l-emerald-500' : r.pos > tbl.length - 3 ? ' border-l-2 border-l-rose-500' : ' border-l-2 border-l-transparent';
+                    return '<div class="flex items-center gap-1.5 px-2 py-1.5 border-b border-slate-800/60 text-xs' + zone + '">' +
                         '<span class="w-6 text-center text-slate-400 font-bold">' + r.pos + '</span>' +
                         '<span class="flex-1 truncate text-white">' + esc(teamName(r.name)) + form + '</span>' +
                         '<span class="w-6 text-center text-slate-500">' + r.p + '</span>' +
@@ -1758,7 +1876,12 @@
                         '<span class="w-8 text-center text-amber-400 font-bold">' + r.pts + '</span></div>';
                 }).join('');
                 c.innerHTML = '<div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-2 mb-1">' + tabs + '</div>' +
-                    '<div class="text-[9px] text-slate-600 mb-1">🔄 ' + esc(d.fetched_at ? myanmarTime(d.fetched_at) : '') + '</div>' +
+                    '<div class="flex items-center justify-between mb-1">' +
+                    '<div class="text-[9px] text-slate-600">🔄 ' + esc(d.fetched_at ? myanmarTime(d.fetched_at) : '') + '</div>' +
+                    '<div class="flex gap-2 text-[9px] text-slate-500">' +
+                    '<span><span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-0.5"></span>1</span>' +
+                    '<span><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-0.5"></span>2–4</span>' +
+                    '<span><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-0.5"></span>▽3</span></div></div>' +
                     '<div class="bg-slate-900/60 rounded-xl overflow-hidden border border-slate-800">' + head + rows + '</div>';
             }).catch(e => {
                 c.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">' + esc(T.standings_empty) + '</div>';
