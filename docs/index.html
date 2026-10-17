@@ -362,6 +362,7 @@
                 tab_parlay: "မောင်း", tab_fav: "အကြိုက်", tab_menu: "မီနူး",
                 hero_next: "နောက်ပွဲ",
                 aipred_toppick: "ယနေ့ အကောင်းဆုံး ခန့်မှန်းချက်",
+                tomorrow_label: "မနက်ဖြန်",
                 date_today: "📅 ယနေ့ ပွဲစဉ်များ",
                 today_matches_title: "ယနေ့ ပွဲစဉ်များ",
                 filter_all: "အားလုံး",
@@ -442,6 +443,7 @@
                 tab_parlay: "Parlay", tab_fav: "Favs", tab_menu: "Menu",
                 hero_next: "Next",
                 aipred_toppick: "Top pick today",
+                tomorrow_label: "Tomorrow",
                 date_today: "📅 Today's Matches",
                 today_matches_title: "Today's Matches",
                 filter_all: "All",
@@ -1474,6 +1476,7 @@
             const box = document.getElementById('espnMatchesContainer');
             if (!section || !box) return;
             renderHomeHero();
+            const T = translations[currentLang];
             let events = espnCache || [];
             // Apply home filter
             if (homeFilter === 'live') {
@@ -1481,13 +1484,18 @@
             } else if (homeFilter === 'fav') {
                 events = events.filter(e => isEspnFav(e.id));
             }
-            // Keep only today's (Yangon calendar) matches, plus anything currently live
+            // Keep today's (Yangon) matches + tomorrow's upcoming (so late-night 1:30AM games show),
+            // plus anything currently live
             const todayS = todayYangonStr();
+            const tomorrowS = nextDayStr(todayS);
             events = events.filter(e => {
                 const c = e.competitions[0];
                 if (!c || !c.status) return false;
-                if (c.status.type.state === 'in') return true;
-                return yangonDateStr(e.date) === todayS;
+                const st = c.status.type.state;
+                if (st === 'in') return true;
+                const ds = yangonDateStr(e.date);
+                if (st === 'pre') return ds === todayS || ds === tomorrowS;
+                return ds === todayS;
             });
             const upd = document.getElementById('espnUpdated');
             if (upd) { upd.innerText = myanmarNow(); }
@@ -1502,22 +1510,30 @@
             }
             // Sort chronologically by kickoff time (earliest first)
             events.sort((a, b) => new Date(a.date) - new Date(b.date));
-            // Group by time period; within each, strict chronological order with running country+league headers
-            const byPeriod = { live: [], morning: [], day: [], evening: [] };
+            // Split today vs tomorrow (Yangon); live/FT stay under today
+            const todayList = [], tomorrowList = [];
             events.forEach(ev => {
-                const comp = ev.competitions[0];
-                if (!comp) return;
-                const state = comp.status.type.state;
-                if (state === 'in') { byPeriod.live.push(ev); return; }
-                const p = getTimePeriod(ev.date);
-                byPeriod[p].push(ev);
+                const st = ev.competitions[0].status.type.state;
+                if (st === 'pre' && yangonDateStr(ev.date) === tomorrowS) tomorrowList.push(ev);
+                else todayList.push(ev);
             });
             const periodOrder = ['live', 'morning', 'day', 'evening'];
             const periodTitles = {
                 live: currentLang === 'en' ? '🔴 Live Now' : '🔴 တိုက်ရိုက်',
                 morning: periodLabel('morning'), day: periodLabel('day'), evening: periodLabel('evening')
             };
-            box.innerHTML = periodOrder.map(per => {
+            // Group one date's matches by time period; strict chronological order with running country+league headers
+            const renderPeriods = (list) => {
+                const byPeriod = { live: [], morning: [], day: [], evening: [] };
+                list.forEach(ev => {
+                    const comp = ev.competitions[0];
+                    if (!comp) return;
+                    const state = comp.status.type.state;
+                    if (state === 'in') { byPeriod.live.push(ev); return; }
+                    const p = getTimePeriod(ev.date);
+                    byPeriod[p].push(ev);
+                });
+                return periodOrder.map(per => {
                 const list = byPeriod[per];
                 if (!list.length) return '';
                 // Row builder (used with running country+league headers below)
@@ -1580,7 +1596,17 @@
                 if (lastKey !== null) countryHtml += groupHtml(lastKey, rowsAcc);
                 return '<div class="mb-4"><div class="text-sm font-bold text-amber-400 mb-2 px-1">' + periodTitles[per] +
                     ' <span class="text-slate-500 font-normal text-xs">(' + list.length + ')</span></div>' + countryHtml + '</div>';
-            }).join('');
+                }).join('');
+            };
+            let htmlOut = renderPeriods(todayList);
+            if (tomorrowList.length) {
+                const tmrFmt = tomorrowS.split('-').reverse().join('.');
+                htmlOut += '<div class="text-sm font-bold text-sky-400 mb-2 px-1 mt-3">📅 ' +
+                    esc(T.tomorrow_label) + ' <span class="text-slate-500 font-normal">(' + tmrFmt + ')</span>' +
+                    ' <span class="text-slate-500 font-normal text-xs">(' + tomorrowList.length + ')</span></div>' +
+                    renderPeriods(tomorrowList);
+            }
+            box.innerHTML = htmlOut;
         }
 
         // ================= HOME =================
