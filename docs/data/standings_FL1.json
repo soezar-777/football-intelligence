@@ -1,1 +1,376 @@
-{"competition":"FL1","name":"Ligue 1","season":"2026","updated":"2026","tables":[{"group":"Matchday","rows":[{"pos":1,"name":"AS Monaco FC","short":"Monaco","tla":"ASM","p":6,"w":4,"d":2,"l":0,"gf":10,"ga":5,"gd":5,"pts":14,"form":null},{"pos":2,"name":"Lille OSC","short":"Lille","tla":"LIL","p":6,"w":4,"d":1,"l":1,"gf":9,"ga":4,"gd":5,"pts":13,"form":null},{"pos":3,"name":"Stade Rennais FC 1901","short":"Stade Rennais","tla":"REN","p":6,"w":4,"d":1,"l":1,"gf":12,"ga":10,"gd":2,"pts":13,"form":null},{"pos":4,"name":"Olympique Lyonnais","short":"Olympique Lyon","tla":"LYO","p":6,"w":3,"d":2,"l":1,"gf":11,"ga":4,"gd":7,"pts":11,"form":null},{"pos":5,"name":"Paris FC","short":"Paris FC","tla":"PFC","p":6,"w":3,"d":2,"l":1,"gf":8,"ga":4,"gd":4,"pts":11,"form":null},{"pos":6,"name":"Paris Saint-Germain FC","short":"PSG","tla":"PSG","p":6,"w":3,"d":2,"l":1,"gf":11,"ga":8,"gd":3,"pts":11,"form":null},{"pos":7,"name":"Toulouse FC","short":"Toulouse","tla":"TOU","p":7,"w":2,"d":3,"l":2,"gf":12,"ga":11,"gd":1,"pts":9,"form":null},{"pos":8,"name":"Stade Brestois 29","short":"Brest","tla":"BRE","p":6,"w":2,"d":2,"l":2,"gf":12,"ga":9,"gd":3,"pts":8,"form":null},{"pos":9,"name":"FC Lorient","short":"Lorient","tla":"FCL","p":6,"w":2,"d":2,"l":2,"gf":6,"ga":6,"gd":0,"pts":8,"form":null},{"pos":10,"name":"OGC Nice","short":"Nice","tla":"NIC","p":6,"w":2,"d":2,"l":2,"gf":5,"ga":7,"gd":-2,"pts":8,"form":null},{"pos":11,"name":"Racing Club de Lens","short":"RC Lens","tla":"RCL","p":6,"w":2,"d":1,"l":3,"gf":11,"ga":10,"gd":1,"pts":7,"form":null},{"pos":12,"name":"RC Strasbourg Alsace","short":"Strasbourg","tla":"RC ","p":6,"w":2,"d":1,"l":3,"gf":11,"ga":12,"gd":-1,"pts":7,"form":null},{"pos":13,"name":"Angers SCO","short":"Angers SCO","tla":"ANG","p":6,"w":2,"d":1,"l":3,"gf":7,"ga":10,"gd":-3,"pts":7,"form":null},{"pos":14,"name":"Olympique de Marseille","short":"Marseille","tla":"MAR","p":6,"w":2,"d":0,"l":4,"gf":9,"ga":8,"gd":1,"pts":6,"form":null},{"pos":15,"name":"Le Mans FC","short":"Le Mans","tla":"LMF","p":7,"w":1,"d":3,"l":3,"gf":10,"ga":15,"gd":-5,"pts":6,"form":null},{"pos":16,"name":"AJ Auxerre","short":"Auxerre","tla":"AJA","p":6,"w":2,"d":0,"l":4,"gf":8,"ga":16,"gd":-8,"pts":6,"form":null},{"pos":17,"name":"ES Troyes AC","short":"Troyes","tla":"ETR","p":6,"w":1,"d":1,"l":4,"gf":4,"ga":13,"gd":-9,"pts":4,"form":null},{"pos":18,"name":"Le Havre AC","short":"Le Havre","tla":"HAC","p":6,"w":0,"d":2,"l":4,"gf":4,"ga":8,"gd":-4,"pts":2,"form":null}]}],"fetched_at":"2026-10-17T14:51:57.362588+00:00"}
+{
+  "filters": {
+    "season": "2026"
+  },
+  "area": {
+    "id": 2081,
+    "name": "France",
+    "code": "FRA",
+    "flag": "https://crests.football-data.org/773.svg"
+  },
+  "competition": {
+    "id": 2015,
+    "name": "Ligue 1",
+    "code": "FL1",
+    "type": "LEAGUE",
+    "emblem": "https://crests.football-data.org/FL1.png"
+  },
+  "season": {
+    "id": 2497,
+    "startDate": "2026-08-22",
+    "endDate": "2027-05-29",
+    "currentMatchday": 7,
+    "winner": null
+  },
+  "standings": [
+    {
+      "stage": "REGULAR_SEASON",
+      "type": "TOTAL",
+      "group": "Matchday",
+      "table": [
+        {
+          "position": 1,
+          "team": {
+            "id": 524,
+            "name": "Paris Saint-Germain FC",
+            "shortName": "PSG",
+            "tla": "PSG",
+            "crest": "https://crests.football-data.org/524.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 1,
+          "points": 14,
+          "goalsFor": 14,
+          "goalsAgainst": 9,
+          "goalDifference": 5
+        },
+        {
+          "position": 2,
+          "team": {
+            "id": 548,
+            "name": "AS Monaco FC",
+            "shortName": "Monaco",
+            "tla": "ASM",
+            "crest": "https://crests.football-data.org/548.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 0,
+          "points": 14,
+          "goalsFor": 10,
+          "goalsAgainst": 5,
+          "goalDifference": 5
+        },
+        {
+          "position": 2,
+          "team": {
+            "id": 521,
+            "name": "Lille OSC",
+            "shortName": "Lille",
+            "tla": "LIL",
+            "crest": "https://crests.football-data.org/521.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 1,
+          "points": 14,
+          "goalsFor": 10,
+          "goalsAgainst": 5,
+          "goalDifference": 5
+        },
+        {
+          "position": 4,
+          "team": {
+            "id": 529,
+            "name": "Stade Rennais FC 1901",
+            "shortName": "Stade Rennais",
+            "tla": "REN",
+            "crest": "https://crests.football-data.org/529.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 4,
+          "draw": 1,
+          "lost": 1,
+          "points": 13,
+          "goalsFor": 12,
+          "goalsAgainst": 10,
+          "goalDifference": 2
+        },
+        {
+          "position": 5,
+          "team": {
+            "id": 523,
+            "name": "Olympique Lyonnais",
+            "shortName": "Olympique Lyon",
+            "tla": "LYO",
+            "crest": "https://crests.football-data.org/523.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 3,
+          "draw": 2,
+          "lost": 1,
+          "points": 11,
+          "goalsFor": 11,
+          "goalsAgainst": 4,
+          "goalDifference": 7
+        },
+        {
+          "position": 6,
+          "team": {
+            "id": 1045,
+            "name": "Paris FC",
+            "shortName": "Paris FC",
+            "tla": "PFC",
+            "crest": "https://crests.football-data.org/1045.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 3,
+          "draw": 2,
+          "lost": 1,
+          "points": 11,
+          "goalsFor": 8,
+          "goalsAgainst": 4,
+          "goalDifference": 4
+        },
+        {
+          "position": 7,
+          "team": {
+            "id": 546,
+            "name": "Racing Club de Lens",
+            "shortName": "RC Lens",
+            "tla": "RCL",
+            "crest": "https://crests.football-data.org/546.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 3,
+          "draw": 1,
+          "lost": 3,
+          "points": 10,
+          "goalsFor": 14,
+          "goalsAgainst": 11,
+          "goalDifference": 3
+        },
+        {
+          "position": 8,
+          "team": {
+            "id": 512,
+            "name": "Stade Brestois 29",
+            "shortName": "Brest",
+            "tla": "BRE",
+            "crest": "https://crests.football-data.org/512.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 2,
+          "draw": 3,
+          "lost": 2,
+          "points": 9,
+          "goalsFor": 13,
+          "goalsAgainst": 10,
+          "goalDifference": 3
+        },
+        {
+          "position": 9,
+          "team": {
+            "id": 511,
+            "name": "Toulouse FC",
+            "shortName": "Toulouse",
+            "tla": "TOU",
+            "crest": "https://crests.football-data.org/511.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 2,
+          "draw": 3,
+          "lost": 2,
+          "points": 9,
+          "goalsFor": 12,
+          "goalsAgainst": 11,
+          "goalDifference": 1
+        },
+        {
+          "position": 10,
+          "team": {
+            "id": 525,
+            "name": "FC Lorient",
+            "shortName": "Lorient",
+            "tla": "FCL",
+            "crest": "https://crests.football-data.org/525.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 2,
+          "lost": 2,
+          "points": 8,
+          "goalsFor": 6,
+          "goalsAgainst": 6,
+          "goalDifference": 0
+        },
+        {
+          "position": 11,
+          "team": {
+            "id": 522,
+            "name": "OGC Nice",
+            "shortName": "Nice",
+            "tla": "NIC",
+            "crest": "https://crests.football-data.org/522.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 2,
+          "lost": 2,
+          "points": 8,
+          "goalsFor": 5,
+          "goalsAgainst": 7,
+          "goalDifference": -2
+        },
+        {
+          "position": 12,
+          "team": {
+            "id": 576,
+            "name": "RC Strasbourg Alsace",
+            "shortName": "Strasbourg",
+            "tla": "RC ",
+            "crest": "https://crests.football-data.org/576.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 2,
+          "draw": 1,
+          "lost": 4,
+          "points": 7,
+          "goalsFor": 12,
+          "goalsAgainst": 15,
+          "goalDifference": -3
+        },
+        {
+          "position": 13,
+          "team": {
+            "id": 532,
+            "name": "Angers SCO",
+            "shortName": "Angers SCO",
+            "tla": "ANG",
+            "crest": "https://crests.football-data.org/532.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 1,
+          "lost": 3,
+          "points": 7,
+          "goalsFor": 7,
+          "goalsAgainst": 10,
+          "goalDifference": -3
+        },
+        {
+          "position": 14,
+          "team": {
+            "id": 516,
+            "name": "Olympique de Marseille",
+            "shortName": "Marseille",
+            "tla": "MAR",
+            "crest": "https://crests.football-data.org/516.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 0,
+          "lost": 4,
+          "points": 6,
+          "goalsFor": 9,
+          "goalsAgainst": 8,
+          "goalDifference": 1
+        },
+        {
+          "position": 15,
+          "team": {
+            "id": 535,
+            "name": "Le Mans FC",
+            "shortName": "Le Mans",
+            "tla": "LMF",
+            "crest": "https://crests.football-data.org/535.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 1,
+          "draw": 3,
+          "lost": 3,
+          "points": 6,
+          "goalsFor": 10,
+          "goalsAgainst": 15,
+          "goalDifference": -5
+        },
+        {
+          "position": 16,
+          "team": {
+            "id": 519,
+            "name": "AJ Auxerre",
+            "shortName": "Auxerre",
+            "tla": "AJA",
+            "crest": "https://crests.football-data.org/519.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 0,
+          "lost": 4,
+          "points": 6,
+          "goalsFor": 8,
+          "goalsAgainst": 16,
+          "goalDifference": -8
+        },
+        {
+          "position": 17,
+          "team": {
+            "id": 531,
+            "name": "ES Troyes AC",
+            "shortName": "Troyes",
+            "tla": "ETR",
+            "crest": "https://crests.football-data.org/531.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 1,
+          "draw": 1,
+          "lost": 5,
+          "points": 4,
+          "goalsFor": 5,
+          "goalsAgainst": 16,
+          "goalDifference": -11
+        },
+        {
+          "position": 18,
+          "team": {
+            "id": 533,
+            "name": "Le Havre AC",
+            "shortName": "Le Havre",
+            "tla": "HAC",
+            "crest": "https://crests.football-data.org/533.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 0,
+          "draw": 2,
+          "lost": 4,
+          "points": 2,
+          "goalsFor": 4,
+          "goalsAgainst": 8,
+          "goalDifference": -4
+        }
+      ]
+    }
+  ]
+}
