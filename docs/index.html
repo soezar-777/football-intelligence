@@ -1014,31 +1014,34 @@
             if (!ci) return code;
             return currentLang === 'en' ? ci.en : ci.my;
         }
-        let aipredCache = null;
+        let aipredFetch = null; // raw fetch result; the stale filter below re-runs on EVERY call
         async function loadAiPredictions() {
-            if (aipredCache) return aipredCache;
-            const results = await Promise.all(COMP_CODES.map(c =>
-                fetch('data/predictions_' + c + '.json').then(r => r.ok ? r.json() : null).catch(() => null)));
-            let gen = '';
-            const matches = [];
             const nowMs = Date.now();
-            results.forEach(d => {
-                if (!d || !d.predictions) return;
-                if (d.generated_at && d.generated_at > gen) gen = d.generated_at;
-                d.predictions.forEach(p => {
-                    if (!p || p.status !== 'TIMED') return;
-                    const koMs = new Date(p.kickoff).getTime();
-                    if (!koMs || koMs < nowMs) return; // stale: already kicked off
-                    matches.push(p);
+            if (!aipredFetch || nowMs - aipredFetch.fetchedAt > 10 * 60 * 1000) {
+                const results = await Promise.all(COMP_CODES.map(c =>
+                    fetch('data/predictions_' + c + '.json').then(r => r.ok ? r.json() : null).catch(() => null)));
+                let gen = '';
+                const all = [];
+                results.forEach(d => {
+                    if (!d || !d.predictions) return;
+                    if (d.generated_at && d.generated_at > gen) gen = d.generated_at;
+                    d.predictions.forEach(p => {
+                        if (!p || p.status !== 'TIMED' || !p.kickoff) return;
+                        if (isNaN(new Date(p.kickoff).getTime())) return;
+                        all.push(p);
+                    });
                 });
-            });
-            let acc = null;
-            try {
-                const v = await fetch('data/verification.json').then(r => r.ok ? r.json() : null).catch(() => null);
-                if (v && v.summary) acc = v.summary;
-            } catch (e) {}
-            aipredCache = { matches: matches, generatedAt: gen, accuracy: acc };
-            return aipredCache;
+                let acc = null;
+                try {
+                    const v = await fetch('data/verification.json').then(r => r.ok ? r.json() : null).catch(() => null);
+                    if (v && v.summary) acc = v.summary;
+                } catch (e) {}
+                aipredFetch = { all: all, generatedAt: gen, accuracy: acc, fetchedAt: nowMs };
+            }
+            // Re-apply the stale filter on every call: matches kick off while the page stays open,
+            // so a list built an hour ago must not keep showing them as "upcoming".
+            const matches = aipredFetch.all.filter(p => new Date(p.kickoff).getTime() >= nowMs);
+            return { matches: matches, generatedAt: aipredFetch.generatedAt, accuracy: aipredFetch.accuracy };
         }
         function aipredRow(p) {
             const hn = esc(teamName(p.home_team.name)), an = esc(teamName(p.away_team.name));
