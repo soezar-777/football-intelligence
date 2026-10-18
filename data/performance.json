@@ -1,0 +1,359 @@
+{
+  "generated_at": "2026-10-18T12:43:38.667564+00:00",
+  "model_version": "poisson-v1",
+  "graded_total": 166,
+  "overall": {
+    "1x2": {
+      "graded": 125,
+      "hit": 64,
+      "hit_rate": 0.512
+    },
+    "ou25": {
+      "graded": 141,
+      "hit": 76,
+      "hit_rate": 0.539
+    },
+    "btts": {
+      "graded": 130,
+      "hit": 68,
+      "hit_rate": 0.5231
+    },
+    "ah": {
+      "graded": 156,
+      "hit": 104,
+      "hit_rate": 0.6667
+    },
+    "correct_score": {
+      "graded": 54,
+      "hit": 6,
+      "hit_rate": 0.1111
+    }
+  },
+  "by_competition": {
+    "BL1": {
+      "1x2": {
+        "graded": 11,
+        "hit": 5,
+        "hit_rate": 0.4545
+      },
+      "ou25": {
+        "graded": 15,
+        "hit": 9,
+        "hit_rate": 0.6
+      },
+      "btts": {
+        "graded": 15,
+        "hit": 8,
+        "hit_rate": 0.5333
+      },
+      "ah": {
+        "graded": 14,
+        "hit": 12,
+        "hit_rate": 0.8571
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "BL2": {
+      "1x2": {
+        "graded": 6,
+        "hit": 3,
+        "hit_rate": 0.5
+      },
+      "ou25": {
+        "graded": 9,
+        "hit": 5,
+        "hit_rate": 0.5556
+      },
+      "btts": {
+        "graded": 7,
+        "hit": 5,
+        "hit_rate": 0.7143
+      },
+      "ah": {
+        "graded": 9,
+        "hit": 5,
+        "hit_rate": 0.5556
+      },
+      "correct_score": {
+        "graded": 3,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "BSA": {
+      "1x2": {
+        "graded": 13,
+        "hit": 9,
+        "hit_rate": 0.6923
+      },
+      "ou25": {
+        "graded": 12,
+        "hit": 5,
+        "hit_rate": 0.4167
+      },
+      "btts": {
+        "graded": 8,
+        "hit": 4,
+        "hit_rate": 0.5
+      },
+      "ah": {
+        "graded": 14,
+        "hit": 10,
+        "hit_rate": 0.7143
+      },
+      "correct_score": {
+        "graded": 11,
+        "hit": 2,
+        "hit_rate": 0.1818
+      }
+    },
+    "CL": {
+      "1x2": {
+        "graded": 18,
+        "hit": 10,
+        "hit_rate": 0.5556
+      },
+      "ou25": {
+        "graded": 18,
+        "hit": 13,
+        "hit_rate": 0.7222
+      },
+      "btts": {
+        "graded": 18,
+        "hit": 10,
+        "hit_rate": 0.5556
+      },
+      "ah": {
+        "graded": 18,
+        "hit": 10,
+        "hit_rate": 0.5556
+      },
+      "correct_score": {
+        "graded": 0,
+        "hit": 0,
+        "hit_rate": null
+      }
+    },
+    "DED": {
+      "1x2": {
+        "graded": 8,
+        "hit": 3,
+        "hit_rate": 0.375
+      },
+      "ou25": {
+        "graded": 12,
+        "hit": 8,
+        "hit_rate": 0.6667
+      },
+      "btts": {
+        "graded": 12,
+        "hit": 10,
+        "hit_rate": 0.8333
+      },
+      "ah": {
+        "graded": 12,
+        "hit": 8,
+        "hit_rate": 0.6667
+      },
+      "correct_score": {
+        "graded": 1,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "ELC": {
+      "1x2": {
+        "graded": 23,
+        "hit": 11,
+        "hit_rate": 0.4783
+      },
+      "ou25": {
+        "graded": 28,
+        "hit": 13,
+        "hit_rate": 0.4643
+      },
+      "btts": {
+        "graded": 29,
+        "hit": 10,
+        "hit_rate": 0.3448
+      },
+      "ah": {
+        "graded": 33,
+        "hit": 24,
+        "hit_rate": 0.7273
+      },
+      "correct_score": {
+        "graded": 17,
+        "hit": 3,
+        "hit_rate": 0.1765
+      }
+    },
+    "FL1": {
+      "1x2": {
+        "graded": 7,
+        "hit": 4,
+        "hit_rate": 0.5714
+      },
+      "ou25": {
+        "graded": 9,
+        "hit": 6,
+        "hit_rate": 0.6667
+      },
+      "btts": {
+        "graded": 9,
+        "hit": 6,
+        "hit_rate": 0.6667
+      },
+      "ah": {
+        "graded": 12,
+        "hit": 8,
+        "hit_rate": 0.6667
+      },
+      "correct_score": {
+        "graded": 2,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "PD": {
+      "1x2": {
+        "graded": 13,
+        "hit": 5,
+        "hit_rate": 0.3846
+      },
+      "ou25": {
+        "graded": 8,
+        "hit": 5,
+        "hit_rate": 0.625
+      },
+      "btts": {
+        "graded": 9,
+        "hit": 4,
+        "hit_rate": 0.4444
+      },
+      "ah": {
+        "graded": 12,
+        "hit": 8,
+        "hit_rate": 0.6667
+      },
+      "correct_score": {
+        "graded": 5,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "PL": {
+      "1x2": {
+        "graded": 12,
+        "hit": 5,
+        "hit_rate": 0.4167
+      },
+      "ou25": {
+        "graded": 12,
+        "hit": 4,
+        "hit_rate": 0.3333
+      },
+      "btts": {
+        "graded": 10,
+        "hit": 4,
+        "hit_rate": 0.4
+      },
+      "ah": {
+        "graded": 13,
+        "hit": 7,
+        "hit_rate": 0.5385
+      },
+      "correct_score": {
+        "graded": 7,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "PPL": {
+      "1x2": {
+        "graded": 4,
+        "hit": 4,
+        "hit_rate": 1.0
+      },
+      "ou25": {
+        "graded": 7,
+        "hit": 2,
+        "hit_rate": 0.2857
+      },
+      "btts": {
+        "graded": 5,
+        "hit": 2,
+        "hit_rate": 0.4
+      },
+      "ah": {
+        "graded": 5,
+        "hit": 4,
+        "hit_rate": 0.8
+      },
+      "correct_score": {
+        "graded": 4,
+        "hit": 0,
+        "hit_rate": 0.0
+      }
+    },
+    "SA": {
+      "1x2": {
+        "graded": 10,
+        "hit": 5,
+        "hit_rate": 0.5
+      },
+      "ou25": {
+        "graded": 11,
+        "hit": 6,
+        "hit_rate": 0.5455
+      },
+      "btts": {
+        "graded": 8,
+        "hit": 5,
+        "hit_rate": 0.625
+      },
+      "ah": {
+        "graded": 14,
+        "hit": 8,
+        "hit_rate": 0.5714
+      },
+      "correct_score": {
+        "graded": 4,
+        "hit": 1,
+        "hit_rate": 0.25
+      }
+    }
+  },
+  "rolling_last_30": {
+    "1x2": {
+      "graded": 22,
+      "hit": 13,
+      "hit_rate": 0.5909
+    },
+    "ou25": {
+      "graded": 22,
+      "hit": 11,
+      "hit_rate": 0.5
+    },
+    "btts": {
+      "graded": 22,
+      "hit": 13,
+      "hit_rate": 0.5909
+    },
+    "ah": {
+      "graded": 27,
+      "hit": 16,
+      "hit_rate": 0.5926
+    },
+    "correct_score": {
+      "graded": 11,
+      "hit": 2,
+      "hit_rate": 0.1818
+    }
+  },
+  "brier_1x2": 0.6241
+}
