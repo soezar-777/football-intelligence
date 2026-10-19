@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-19T00:44:12.457484+00:00",
+  "generated_at": "2026-10-19T12:43:42.914067+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 195,
+  "graded_count": 196,
   "matches": [
     {
       "fixture_id": 560593,
@@ -6827,6 +6827,41 @@
           "hit": false
         }
       }
+    },
+    {
+      "fixture_id": 555048,
+      "competition": "BSA",
+      "home_team": "Clube do Remo",
+      "away_team": "RB Bragantino",
+      "kickoff": "2026-10-18T22:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3888,
+        "draw": 0.2812,
+        "away": 0.33
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": true
+        }
+      }
     }
   ],
   "summary": {
@@ -6836,9 +6871,9 @@
       "hit_rate": 0.5278
     },
     "ou25": {
-      "graded": 161,
-      "hit": 92,
-      "hit_rate": 0.5714
+      "graded": 162,
+      "hit": 93,
+      "hit_rate": 0.5741
     },
     "btts": {
       "graded": 147,
@@ -6846,14 +6881,14 @@
       "hit_rate": 0.5646
     },
     "ah": {
-      "graded": 185,
-      "hit": 123,
-      "hit_rate": 0.6649
+      "graded": 186,
+      "hit": 124,
+      "hit_rate": 0.6667
     },
     "correct_score": {
-      "graded": 66,
-      "hit": 6,
-      "hit_rate": 0.0909
+      "graded": 67,
+      "hit": 7,
+      "hit_rate": 0.1045
     }
   }
 }
