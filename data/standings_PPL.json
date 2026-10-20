@@ -126,6 +126,25 @@
         {
           "position": 6,
           "team": {
+            "id": 5533,
+            "name": "Gil Vicente FC",
+            "shortName": "Gil Vicente",
+            "tla": "GIL",
+            "crest": "https://crests.football-data.org/5533.png"
+          },
+          "playedGames": 8,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 2,
+          "points": 14,
+          "goalsFor": 8,
+          "goalsAgainst": 6,
+          "goalDifference": 2
+        },
+        {
+          "position": 7,
+          "team": {
             "id": 5527,
             "name": "Académico de Viseu FC",
             "shortName": "Acad. Viseu",
@@ -143,7 +162,7 @@
           "goalDifference": 1
         },
         {
-          "position": 7,
+          "position": 8,
           "team": {
             "id": 7822,
             "name": "FC Alverca",
@@ -162,25 +181,6 @@
           "goalDifference": 1
         },
         {
-          "position": 8,
-          "team": {
-            "id": 5533,
-            "name": "Gil Vicente FC",
-            "shortName": "Gil Vicente",
-            "tla": "GIL",
-            "crest": "https://crests.football-data.org/5533.png"
-          },
-          "playedGames": 7,
-          "form": null,
-          "won": 3,
-          "draw": 2,
-          "lost": 2,
-          "points": 11,
-          "goalsFor": 6,
-          "goalsAgainst": 5,
-          "goalDifference": 1
-        },
-        {
           "position": 9,
           "team": {
             "id": 5613,
@@ -189,15 +189,15 @@
             "tla": "SCB",
             "crest": "https://crests.football-data.org/5613.png"
           },
-          "playedGames": 7,
+          "playedGames": 8,
           "form": null,
           "won": 3,
           "draw": 2,
-          "lost": 2,
+          "lost": 3,
           "points": 11,
-          "goalsFor": 8,
-          "goalsAgainst": 8,
-          "goalDifference": 0
+          "goalsFor": 9,
+          "goalsAgainst": 10,
+          "goalDifference": -1
         },
         {
           "position": 10,

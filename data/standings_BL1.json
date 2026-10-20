@@ -75,15 +75,15 @@
             "tla": "SCF",
             "crest": "https://crests.football-data.org/17.png"
           },
-          "playedGames": 5,
+          "playedGames": 6,
           "form": null,
           "won": 4,
           "draw": 1,
-          "lost": 0,
+          "lost": 1,
           "points": 13,
-          "goalsFor": 14,
-          "goalsAgainst": 4,
-          "goalDifference": 10
+          "goalsFor": 15,
+          "goalsAgainst": 6,
+          "goalDifference": 9
         },
         {
           "position": 4,
@@ -94,15 +94,15 @@
             "tla": "B04",
             "crest": "https://crests.football-data.org/3.png"
           },
-          "playedGames": 5,
+          "playedGames": 6,
           "form": null,
-          "won": 3,
+          "won": 4,
           "draw": 1,
           "lost": 1,
-          "points": 10,
-          "goalsFor": 14,
-          "goalsAgainst": 8,
-          "goalDifference": 6
+          "points": 13,
+          "goalsFor": 16,
+          "goalsAgainst": 9,
+          "goalDifference": 7
         },
         {
           "position": 5,
@@ -278,6 +278,25 @@
         {
           "position": 14,
           "team": {
+            "id": 2,
+            "name": "TSG 1899 Hoffenheim",
+            "shortName": "Hoffenheim",
+            "tla": "TSG",
+            "crest": "https://crests.football-data.org/2.png"
+          },
+          "playedGames": 6,
+          "form": null,
+          "won": 2,
+          "draw": 0,
+          "lost": 4,
+          "points": 6,
+          "goalsFor": 11,
+          "goalsAgainst": 14,
+          "goalDifference": -3
+        },
+        {
+          "position": 15,
+          "team": {
             "id": 6,
             "name": "FC Schalke 04",
             "shortName": "Schalke",
@@ -295,7 +314,7 @@
           "goalDifference": -3
         },
         {
-          "position": 15,
+          "position": 16,
           "team": {
             "id": 29,
             "name": "SC Paderborn 07",
@@ -314,7 +333,7 @@
           "goalDifference": -4
         },
         {
-          "position": 16,
+          "position": 17,
           "team": {
             "id": 28,
             "name": "1. FC Union Berlin",
@@ -333,25 +352,6 @@
           "goalDifference": -12
         },
         {
-          "position": 17,
-          "team": {
-            "id": 2,
-            "name": "TSG 1899 Hoffenheim",
-            "shortName": "Hoffenheim",
-            "tla": "TSG",
-            "crest": "https://crests.football-data.org/2.png"
-          },
-          "playedGames": 5,
-          "form": null,
-          "won": 1,
-          "draw": 0,
-          "lost": 4,
-          "points": 3,
-          "goalsFor": 9,
-          "goalsAgainst": 13,
-          "goalDifference": -4
-        },
-        {
           "position": 18,
           "team": {
             "id": 18,
@@ -360,15 +360,15 @@
             "tla": "BMG",
             "crest": "https://crests.football-data.org/18.png"
           },
-          "playedGames": 5,
+          "playedGames": 6,
           "form": null,
           "won": 0,
           "draw": 0,
-          "lost": 5,
+          "lost": 6,
           "points": 0,
-          "goalsFor": 7,
-          "goalsAgainst": 18,
-          "goalDifference": -11
+          "goalsFor": 8,
+          "goalsAgainst": 20,
+          "goalDifference": -12
         }
       ]
     }
