@@ -221,6 +221,25 @@
         {
           "position": 11,
           "team": {
+            "id": 1782,
+            "name": "EC Vitória",
+            "shortName": "Vitória",
+            "tla": "VIT",
+            "crest": "https://crests.football-data.org/1782.png"
+          },
+          "playedGames": 31,
+          "form": null,
+          "won": 11,
+          "draw": 6,
+          "lost": 14,
+          "points": 39,
+          "goalsFor": 34,
+          "goalsAgainst": 44,
+          "goalDifference": -10
+        },
+        {
+          "position": 12,
+          "team": {
             "id": 1770,
             "name": "Botafogo FR",
             "shortName": "Botafogo",
@@ -238,7 +257,7 @@
           "goalDifference": -4
         },
         {
-          "position": 12,
+          "position": 13,
           "team": {
             "id": 4241,
             "name": "Coritiba FBC",
@@ -254,25 +273,6 @@
           "points": 39,
           "goalsFor": 38,
           "goalsAgainst": 49,
-          "goalDifference": -11
-        },
-        {
-          "position": 13,
-          "team": {
-            "id": 1782,
-            "name": "EC Vitória",
-            "shortName": "Vitória",
-            "tla": "VIT",
-            "crest": "https://crests.football-data.org/1782.png"
-          },
-          "playedGames": 30,
-          "form": null,
-          "won": 10,
-          "draw": 6,
-          "lost": 14,
-          "points": 36,
-          "goalsFor": 33,
-          "goalsAgainst": 44,
           "goalDifference": -11
         },
         {
@@ -322,15 +322,15 @@
             "tla": "COR",
             "crest": "https://crests.football-data.org/1779.png"
           },
-          "playedGames": 30,
+          "playedGames": 31,
           "form": null,
           "won": 8,
           "draw": 8,
-          "lost": 14,
+          "lost": 15,
           "points": 32,
           "goalsFor": 31,
-          "goalsAgainst": 38,
-          "goalDifference": -7
+          "goalsAgainst": 39,
+          "goalDifference": -8
         },
         {
           "position": 17,

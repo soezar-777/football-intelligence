@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-19T12:43:42.914067+00:00",
+  "generated_at": "2026-10-20T00:23:21.237787+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 196,
+  "graded_count": 201,
   "matches": [
     {
       "fixture_id": 560593,
@@ -6862,33 +6862,208 @@
           "hit": true
         }
       }
+    },
+    {
+      "fixture_id": 558576,
+      "competition": "SA",
+      "home_team": "AC Monza",
+      "away_team": "Cagliari Calcio",
+      "kickoff": "2026-10-19T16:30:00Z",
+      "actual": "4-0",
+      "probs_1x2": {
+        "home": 0.3021,
+        "draw": 0.2551,
+        "away": 0.4428
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558578,
+      "competition": "SA",
+      "home_team": "Parma Calcio 1913",
+      "away_team": "Torino FC",
+      "kickoff": "2026-10-19T18:45:00Z",
+      "actual": "0-3",
+      "probs_1x2": {
+        "home": 0.3871,
+        "draw": 0.2673,
+        "away": 0.3456
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 560606,
+      "competition": "PL",
+      "home_team": "Tottenham Hotspur FC",
+      "away_team": "Coventry City FC",
+      "kickoff": "2026-10-19T19:00:00Z",
+      "actual": "3-1",
+      "probs_1x2": {
+        "home": 0.3733,
+        "draw": 0.2892,
+        "away": 0.3375
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 564717,
+      "competition": "PD",
+      "home_team": "Getafe CF",
+      "away_team": "Rayo Vallecano de Madrid",
+      "kickoff": "2026-10-19T19:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.5936,
+        "draw": 0.2259,
+        "away": 0.1805
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567271,
+      "competition": "PPL",
+      "home_team": "Sporting Clube de Braga",
+      "away_team": "Gil Vicente FC",
+      "kickoff": "2026-10-19T19:15:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.338,
+        "draw": 0.298,
+        "away": 0.364
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 144,
+      "graded": 145,
       "hit": 76,
-      "hit_rate": 0.5278
+      "hit_rate": 0.5241
     },
     "ou25": {
-      "graded": 162,
+      "graded": 164,
       "hit": 93,
-      "hit_rate": 0.5741
+      "hit_rate": 0.5671
     },
     "btts": {
-      "graded": 147,
+      "graded": 149,
       "hit": 83,
-      "hit_rate": 0.5646
+      "hit_rate": 0.557
     },
     "ah": {
-      "graded": 186,
-      "hit": 124,
-      "hit_rate": 0.6667
+      "graded": 191,
+      "hit": 126,
+      "hit_rate": 0.6597
     },
     "correct_score": {
-      "graded": 67,
+      "graded": 71,
       "hit": 7,
-      "hit_rate": 0.1045
+      "hit_rate": 0.0986
     }
   }
 }

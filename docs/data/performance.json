@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-10-19T12:43:42.967500+00:00",
+  "generated_at": "2026-10-20T00:23:21.288829+00:00",
   "model_version": "poisson-v1",
-  "graded_total": 196,
+  "graded_total": 201,
   "overall": {
     "1x2": {
-      "graded": 144,
+      "graded": 145,
       "hit": 76,
-      "hit_rate": 0.5278
+      "hit_rate": 0.5241
     },
     "ou25": {
-      "graded": 162,
+      "graded": 164,
       "hit": 93,
-      "hit_rate": 0.5741
+      "hit_rate": 0.5671
     },
     "btts": {
-      "graded": 147,
+      "graded": 149,
       "hit": 83,
-      "hit_rate": 0.5646
+      "hit_rate": 0.557
     },
     "ah": {
-      "graded": 186,
-      "hit": 124,
-      "hit_rate": 0.6667
+      "graded": 191,
+      "hit": 126,
+      "hit_rate": 0.6597
     },
     "correct_score": {
-      "graded": 67,
+      "graded": 71,
       "hit": 7,
-      "hit_rate": 0.1045
+      "hit_rate": 0.0986
     }
   },
   "by_competition": {
@@ -221,9 +221,9 @@
     },
     "PD": {
       "1x2": {
-        "graded": 16,
+        "graded": 17,
         "hit": 8,
-        "hit_rate": 0.5
+        "hit_rate": 0.4706
       },
       "ou25": {
         "graded": 10,
@@ -236,9 +236,9 @@
         "hit_rate": 0.5455
       },
       "ah": {
-        "graded": 16,
+        "graded": 17,
         "hit": 10,
-        "hit_rate": 0.625
+        "hit_rate": 0.5882
       },
       "correct_score": {
         "graded": 7,
@@ -253,22 +253,22 @@
         "hit_rate": 0.4286
       },
       "ou25": {
-        "graded": 14,
+        "graded": 15,
         "hit": 5,
-        "hit_rate": 0.3571
+        "hit_rate": 0.3333
       },
       "btts": {
-        "graded": 12,
+        "graded": 13,
         "hit": 5,
-        "hit_rate": 0.4167
+        "hit_rate": 0.3846
       },
       "ah": {
-        "graded": 17,
+        "graded": 18,
         "hit": 9,
-        "hit_rate": 0.5294
+        "hit_rate": 0.5
       },
       "correct_score": {
-        "graded": 9,
+        "graded": 10,
         "hit": 0,
         "hit_rate": 0.0
       }
@@ -280,22 +280,22 @@
         "hit_rate": 1.0
       },
       "ou25": {
-        "graded": 7,
+        "graded": 8,
         "hit": 2,
-        "hit_rate": 0.2857
+        "hit_rate": 0.25
       },
       "btts": {
-        "graded": 5,
+        "graded": 6,
         "hit": 2,
-        "hit_rate": 0.4
+        "hit_rate": 0.3333
       },
       "ah": {
-        "graded": 5,
+        "graded": 6,
         "hit": 4,
-        "hit_rate": 0.8
+        "hit_rate": 0.6667
       },
       "correct_score": {
-        "graded": 4,
+        "graded": 5,
         "hit": 0,
         "hit_rate": 0.0
       }
@@ -317,43 +317,43 @@
         "hit_rate": 0.7273
       },
       "ah": {
-        "graded": 18,
-        "hit": 11,
-        "hit_rate": 0.6111
+        "graded": 20,
+        "hit": 13,
+        "hit_rate": 0.65
       },
       "correct_score": {
-        "graded": 7,
+        "graded": 9,
         "hit": 1,
-        "hit_rate": 0.1429
+        "hit_rate": 0.1111
       }
     }
   },
   "rolling_last_30": {
     "1x2": {
-      "graded": 19,
-      "hit": 12,
-      "hit_rate": 0.6316
+      "graded": 16,
+      "hit": 9,
+      "hit_rate": 0.5625
     },
     "ou25": {
-      "graded": 21,
-      "hit": 17,
-      "hit_rate": 0.8095
+      "graded": 20,
+      "hit": 15,
+      "hit_rate": 0.75
     },
     "btts": {
-      "graded": 17,
-      "hit": 15,
-      "hit_rate": 0.8824
+      "graded": 16,
+      "hit": 13,
+      "hit_rate": 0.8125
     },
     "ah": {
       "graded": 30,
-      "hit": 20,
-      "hit_rate": 0.6667
+      "hit": 18,
+      "hit_rate": 0.6
     },
     "correct_score": {
-      "graded": 13,
+      "graded": 14,
       "hit": 1,
-      "hit_rate": 0.0769
+      "hit_rate": 0.0714
     }
   },
-  "brier_1x2": 0.6159
+  "brier_1x2": 0.6184
 }

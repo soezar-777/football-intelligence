@@ -316,24 +316,43 @@
         {
           "position": 16,
           "team": {
+            "id": 73,
+            "name": "Tottenham Hotspur FC",
+            "shortName": "Tottenham",
+            "tla": "TOT",
+            "crest": "https://crests.football-data.org/73.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 1,
+          "draw": 3,
+          "lost": 3,
+          "points": 6,
+          "goalsFor": 6,
+          "goalsAgainst": 10,
+          "goalDifference": -4
+        },
+        {
+          "position": 17,
+          "team": {
             "id": 1076,
             "name": "Coventry City FC",
             "shortName": "Coventry City",
             "tla": "COV",
             "crest": "https://crests.football-data.org/1076.png"
           },
-          "playedGames": 6,
+          "playedGames": 7,
           "form": null,
           "won": 2,
           "draw": 0,
-          "lost": 4,
+          "lost": 5,
           "points": 6,
-          "goalsFor": 5,
-          "goalsAgainst": 11,
-          "goalDifference": -6
+          "goalsFor": 6,
+          "goalsAgainst": 14,
+          "goalDifference": -8
         },
         {
-          "position": 17,
+          "position": 18,
           "team": {
             "id": 63,
             "name": "Fulham FC",
@@ -352,7 +371,7 @@
           "goalDifference": -3
         },
         {
-          "position": 18,
+          "position": 19,
           "team": {
             "id": 351,
             "name": "Nottingham Forest FC",
@@ -371,7 +390,7 @@
           "goalDifference": -4
         },
         {
-          "position": 19,
+          "position": 20,
           "team": {
             "id": 71,
             "name": "Sunderland AFC",
@@ -388,25 +407,6 @@
           "goalsFor": 6,
           "goalsAgainst": 14,
           "goalDifference": -8
-        },
-        {
-          "position": 20,
-          "team": {
-            "id": 73,
-            "name": "Tottenham Hotspur FC",
-            "shortName": "Tottenham",
-            "tla": "TOT",
-            "crest": "https://crests.football-data.org/73.png"
-          },
-          "playedGames": 6,
-          "form": null,
-          "won": 0,
-          "draw": 3,
-          "lost": 3,
-          "points": 3,
-          "goalsFor": 3,
-          "goalsAgainst": 9,
-          "goalDifference": -6
         }
       ]
     }
