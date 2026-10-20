@@ -1066,12 +1066,21 @@
                     cs = 'CS ' + c0.score + ' ' + Math.round(c0.prob * 100) + '%';
                 }
             } catch (e) {}
+            let inj = '';
+            if (p.injuries && ((p.injuries.home || []).length || (p.injuries.away || []).length)) {
+                const iparts = [];
+                if ((p.injuries.home || []).length) iparts.push(hn + ': ' + p.injuries.home.map(function (n) { return esc(n); }).join(', '));
+                if ((p.injuries.away || []).length) iparts.push(an + ': ' + p.injuries.away.map(function (n) { return esc(n); }).join(', '));
+                const ilbl = currentLang === 'en' ? 'Ruled out' : 'မကစားနိုင်သူများ';
+                inj = '<div class="text-[10px] text-orange-400/90 mt-0.5 ml-[4.5rem]">⚠️ ' + ilbl + ': ' + iparts.join(' · ') + '</div>';
+            }
             return '<div class="px-3 py-2.5 bg-slate-900/60 border-b border-slate-800/60">' +
                 '<div class="flex items-center gap-2">' +
                 '<span class="text-[10px] text-slate-400 w-16 shrink-0">' + esc(myanmarTime(p.kickoff)) + '</span>' +
                 '<span class="text-xs text-white flex-1 truncate">' + hn + ' <span class="text-slate-500">vs</span> ' + an + '</span>' +
                 '</div>' +
                 '<div class="text-[10px] text-amber-300/90 mt-1 ml-[4.5rem]">' + line.join(' · ') + (cs ? ' · <span class="text-slate-400">' + esc(cs) + '</span>' : '') + '</div>' +
+                inj +
                 '</div>';
         }
         async function renderAiPredictions() {
