@@ -1,5 +1,5 @@
 /* Football Intelligence AI Pro+ service worker */
-var SHELL_CACHE = "fi-shell-v7";
+var SHELL_CACHE = "fi-shell-v8";
 var SHELL = [
   "./",
   "./index.html",

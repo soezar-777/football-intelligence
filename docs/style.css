@@ -77,6 +77,7 @@ main { padding: 12px 12px 40px; max-width: 720px; margin: 0 auto; }
 .kickoff { font-size: 12px; color: var(--muted); }
 .teams { font-size: 17px; font-weight: 700; margin: 4px 0; }
 .xg-line { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.injuries-line { font-size: 12px; color: #e67e22; margin-bottom: 10px; }
 
 .market { margin: 10px 0; }
 .market-title { font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }

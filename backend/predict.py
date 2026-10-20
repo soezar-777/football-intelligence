@@ -9,13 +9,73 @@ a pick is only published when its probability clears the MIN_EDGE threshold.
 """
 
 import json
+import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import config
 from poisson import build_team_stats, predict_match
 
 UPCOMING_STATUSES = ("SCHEDULED", "TIMED", "POSTPONED")
+
+# --- PL injury flags (display-only, Path 1 -- approved 2026-10-20) --------
+# premierinjuries.com team names differ slightly from football-data.org
+# names; both sides are normalized (and aliased) before matching. The flags
+# NEVER enter the model -- they only annotate the prediction for display.
+_INJURY_ALIASES = {
+    "man city": "manchester city",
+    "man utd": "manchester united",
+    "man united": "manchester united",
+    "nottm forest": "nottingham forest",
+    "wolves": "wolverhampton wanderers",
+    "spurs": "tottenham hotspur",
+}
+
+
+def _norm_team(name: str) -> str:
+    s = (name or "").lower().replace("&", " and ")
+    s = re.sub(r"[^a-z0-9 ]+", " ", s)
+    tokens = [t for t in s.split() if t not in ("fc", "afc", "the")]
+    s = " ".join(tokens)
+    return _INJURY_ALIASES.get(s, s)
+
+
+def _load_pl_injuries() -> dict[str, list[str]]:
+    """{normalized team name: [ruled-out players]} for the Premier League.
+
+    Refreshes injuries_PL.json via fetch_injuries when it is missing or
+    older than 12h; any failure degrades to {} (no flags attached).
+    """
+    path = config.DATA_DIR / "injuries_PL.json"
+    stale = True
+    if path.exists():
+        try:
+            gen = datetime.fromisoformat(
+                json.loads(path.read_text(encoding="utf-8"))["generated_at"])
+            stale = datetime.now(timezone.utc) - gen > timedelta(hours=12)
+        except (ValueError, KeyError, TypeError, json.JSONDecodeError, OSError):
+            stale = True
+    if stale:
+        try:
+            import fetch_injuries
+            fetch_injuries.fetch_and_save()
+        except Exception:
+            pass
+    if not path.exists():
+        return {}
+    try:
+        teams = json.loads(path.read_text(encoding="utf-8")).get("teams", {})
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return {_norm_team(name): players for name, players in teams.items()}
+
+
+def _kickoff_dt(m):
+    """Parse a fixture's utcDate; None when missing/unparseable."""
+    try:
+        return datetime.fromisoformat(str(m.get("utcDate") or "").replace("Z", "+00:00"))
+    except (ValueError, TypeError):
+        return None
 
 
 def _team_info(side: dict) -> dict:
@@ -81,6 +141,7 @@ def _picks(markets: dict) -> dict:
 def predict_all(codes: list[str]) -> dict:
     predictions = []
     skipped = 0
+    pl_injuries = _load_pl_injuries() if "PL" in codes else {}
     for code in codes:
         path = config.DATA_DIR / f"matches_{code}.json"
         if not path.exists():
@@ -89,7 +150,13 @@ def predict_all(codes: list[str]) -> dict:
         payload = json.loads(path.read_text(encoding="utf-8"))
         matches = payload.get("matches", [])
         finished = [m for m in matches if m.get("status") == "FINISHED"]
-        upcoming = [m for m in matches if m.get("status") in UPCOMING_STATUSES]
+        now = datetime.now(timezone.utc)
+        # Drop fixtures whose kickoff already passed: the API sometimes leaves
+        # old matches as TIMED for days, which would surface as stale "upcoming"
+        # predictions in the app.
+        upcoming = [m for m in matches
+                    if m.get("status") in UPCOMING_STATUSES
+                    and (_kickoff_dt(m) is None or _kickoff_dt(m) >= now)]
 
         team_stats, league_avgs = build_team_stats(finished)
         print(f"[predict] {code}: {len(finished)} finished -> stats for "
@@ -108,7 +175,7 @@ def predict_all(codes: list[str]) -> dict:
             except (KeyError, TypeError, ValueError):
                 skipped += 1
                 continue
-            predictions.append({
+            prediction = {
                 "fixture_id": m.get("id"),
                 "competition": code,
                 "home_team": home,
@@ -118,7 +185,16 @@ def predict_all(codes: list[str]) -> dict:
                 "xg": result["xg"],
                 "markets": result["markets"],
                 "picks": _picks(result["markets"]),
-            })
+            }
+            if code == "PL" and pl_injuries:
+                home_out = pl_injuries.get(_norm_team(home["name"]), [])
+                away_out = pl_injuries.get(_norm_team(away["name"]), [])
+                if home_out or away_out:
+                    prediction["injuries"] = {
+                        "home": home_out,
+                        "away": away_out,
+                    }
+            predictions.append(prediction)
 
     predictions.sort(key=lambda p: p.get("kickoff") or "")
     return {

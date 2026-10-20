@@ -45,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print("FOOTBALL INTELLIGENCE -- daily run starting", flush=True)
     run_step("fetch", "fetch_data.py", comp_args)
+    run_step("injuries", "fetch_injuries.py", [])
     run_step("predict", "predict.py", comp_args)
     run_step("verify", "verify.py", [])
     run_step("performance", "performance.py", [])

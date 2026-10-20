@@ -225,6 +225,22 @@
     html += '<div class="xg-line">' + esc(t.xg) + ": " + p.xg.home + " – " +
       p.xg.away + "</div>";
 
+    // Injury flags (display-only, PL): "Ruled out: Team: A, B · Team: C"
+    if (p.injuries && ((p.injuries.home || []).length ||
+        (p.injuries.away || []).length)) {
+      var injParts = [];
+      if ((p.injuries.home || []).length) {
+        injParts.push(esc(teamName(p.home_team.name)) + ": " +
+          p.injuries.home.map(function (n) { return esc(n); }).join(", "));
+      }
+      if ((p.injuries.away || []).length) {
+        injParts.push(esc(teamName(p.away_team.name)) + ": " +
+          p.injuries.away.map(function (n) { return esc(n); }).join(", "));
+      }
+      html += '<div class="injuries-line">⚠️ ' +
+        esc(t.ruled_out || "Ruled out") + ": " + injParts.join(" · ") + "</div>";
+    }
+
     var x12 = m["1x2"] || {};
     html += sectionTitle(t.market_1x2);
     html += probRow(t.home, x12.home, picks["1x2"] && picks["1x2"].selection === "home");
