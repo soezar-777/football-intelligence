@@ -76,6 +76,66 @@ def _lineups(summary: dict) -> dict:
     return out
 
 
+def _kickoff_lineups(day: str, home_id: int, away_id: int,
+                     reg: dict) -> tuple[dict | None, str]:
+    """Lineups via KickoffAPI (user's free Hobby key, verified 2026-10-20:
+    /fixtures/lineups works on the free plan). Covers every competition,
+    including ones ESPN has no slug for. The day's fixture list is cached
+    for 10 minutes so a full match night costs ~1 + n calls of the
+    100/day budget. Returns (lineups|None, note)."""
+    try:
+        sys.path.insert(0, "/home/hatch/workspace/custom-connectors/"
+                           "custom.kickoffapi/bin")
+        import kickoff  # noqa: PLC0415
+    except Exception as e:  # noqa: BLE001
+        return None, f"KickoffAPI unavailable: {e}"
+    cache = config.DATA_DIR / f"kickoff_fixtures_{day}.json"
+    body = None
+    try:
+        import time
+        if cache.exists() and time.time() - cache.stat().st_mtime < 600:
+            body = json.loads(cache.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        body = None
+    if body is None:
+        out = kickoff.get(f"/fixtures?date={day}")
+        if out.get("status") != 200:
+            return None, f"KickoffAPI fixtures HTTP {out.get('status')}"
+        body = out.get("body") or {}
+        try:
+            cache.write_text(json.dumps(body), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+    fixture = None
+    for fx in body.get("response", []):
+        hn = ((fx.get("homeTeam") or {}).get("name")) or ""
+        an = ((fx.get("awayTeam") or {}).get("name")) or ""
+        h = _map_team(hn, reg, {})
+        a = _map_team(an, reg, {})
+        if h and a and h[0] == home_id and a[0] == away_id:
+            fixture = fx
+            break
+    if not fixture:
+        return None, "fixture not found on KickoffAPI"
+    out = kickoff.get(f"/fixtures/lineups?fixture={fixture['id']}")
+    if out.get("status") != 200:
+        return None, f"KickoffAPI lineups HTTP {out.get('status')}"
+    resp = (out.get("body") or {}).get("response") or []
+    lus: dict = {}
+    for entry in resp:
+        xi = [((p.get("player") or {}).get("name")) or ""
+              for p in entry.get("startXI", [])]
+        xi = [x for x in xi if x]
+        if not xi:
+            continue
+        side = ("home" if entry.get("teamId") == fixture.get("homeTeamId")
+                else "away")
+        lus[side] = {"formation": entry.get("formation"), "xi": xi}
+    if lus.get("home") or lus.get("away"):
+        return lus, "KickoffAPI"
+    return None, "lineups not announced yet (KickoffAPI)"
+
+
 def main(argv: list[str]) -> int:
     if len(argv) < 3:
         print(__doc__)
@@ -93,30 +153,42 @@ def main(argv: list[str]) -> int:
         "ruled_out": {}, "notes": [],
     }
     if not home or not away:
-        info["notes"].append("team(s) not in registry — no ESPN lookup")
-    elif code in ESPN_SLUGS:
-        try:
-            ev_id = _find_event(ESPN_SLUGS[code], day, home[0], away[0], reg)
-            if ev_id:
-                s = _get(f"https://site.api.espn.com/apis/site/v2/sports/"
-                         f"soccer/{ESPN_SLUGS[code]}/summary?event={ev_id}")
-                lus = _lineups(s)
-                if lus.get("home", {}).get("xi") or \
-                        lus.get("away", {}).get("xi"):
-                    info["lineups"] = lus
-                else:
-                    info["notes"].append("lineups not announced yet")
-                gi = s.get("gameInfo") or {}
-                venue = gi.get("venue") or {}
-                info["venue"] = venue.get("fullName") or None
-                w = gi.get("weather") or {}
-                info["weather"] = w.get("displayValue") or None
-            else:
-                info["notes"].append("fixture not found on ESPN today")
-        except Exception as e:  # noqa: BLE001
-            info["notes"].append(f"ESPN lookup failed: {e}")
+        info["notes"].append("team(s) not in registry — no lookup")
     else:
-        info["notes"].append("no ESPN coverage for this competition")
+        # Primary: KickoffAPI (all competitions). Fallback: ESPN (venue,
+        # weather, and lineups for the leagues it covers).
+        lus, note = _kickoff_lineups(day, home[0], away[0], reg)
+        if lus:
+            info["lineups"] = lus
+            info["notes"].append(f"lineups via {note}")
+        else:
+            info["notes"].append(note)
+        if code in ESPN_SLUGS:
+            try:
+                ev_id = _find_event(ESPN_SLUGS[code], day, home[0],
+                                    away[0], reg)
+                if ev_id:
+                    s = _get(f"https://site.api.espn.com/apis/site/v2/"
+                             f"sports/soccer/{ESPN_SLUGS[code]}/summary"
+                             f"?event={ev_id}")
+                    if info["lineups"] is None:
+                        elus = _lineups(s)
+                        if elus.get("home", {}).get("xi") or \
+                                elus.get("away", {}).get("xi"):
+                            info["lineups"] = elus
+                            info["notes"].append("lineups via ESPN")
+                    gi = s.get("gameInfo") or {}
+                    venue = gi.get("venue") or {}
+                    info["venue"] = venue.get("fullName") or None
+                    w = gi.get("weather") or {}
+                    info["weather"] = w.get("displayValue") or None
+                else:
+                    info["notes"].append("fixture not found on ESPN today")
+            except Exception as e:  # noqa: BLE001
+                info["notes"].append(f"ESPN lookup failed: {e}")
+        if info["lineups"] is None and not any(
+                "not announced" in n for n in info["notes"]):
+            info["notes"].append("lineups not announced yet")
     if code == "PL":
         inj_path = config.DATA_DIR / "injuries_PL.json"
         if inj_path.exists():

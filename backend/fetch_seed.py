@@ -48,6 +48,9 @@ DROP_TOKENS = {
     "futbol", "calcio", "1901", "1903", "1904", "1907", "1910", "1899",
     "1846", "1900", "04", "05", "07", "09", "29", "65", "96", "1", "sv",
     "bsc", "vfl", "vfb", "fsv", "tsg", "ud", "bsc",
+    # Generic club suffixes that differ between providers
+    # (e.g. KickoffAPI "Sabah FA" vs football-data.org "Sabah FK").
+    "fk", "fa",
 }
 
 # normalised source name -> exact canonical name in the current registry.
