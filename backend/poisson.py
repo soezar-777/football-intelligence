@@ -14,7 +14,7 @@ Design notes
 ------------
 * Home and away performances are modelled separately: a team's home attack
   strength only ever comes from goals it scored at home, etc.
-* Recent matches matter more: exponential decay with a 180-day half-life.
+* Recent matches matter more: exponential decay with a 60-day half-life.
 * Teams with too little history fall back toward the league average
   (strength 1.0 = perfectly average), blended proportionally to how much
   data exists. Empty history therefore never crashes and simply predicts
@@ -27,8 +27,11 @@ import math
 from datetime import date, datetime
 
 MAX_GOALS = 8            # score matrix covers 0..8 goals per side
-MIN_MATCHES = 5.0        # weighted matches before a raw strength is trusted
-RECENCY_HALFLIFE_DAYS = 180.0
+MIN_MATCHES = 8.0        # weighted matches before a raw strength is trusted
+# Raised 5 -> 8 on 2026-10-20 (audit): thin samples (CL = 2 matches/team)
+# produced wild strengths; backtest on 201 graded matches: O/U Brier
+# 0.4990 -> 0.4856, 1X2 unchanged.
+RECENCY_HALFLIFE_DAYS = 60.0
 
 
 # ------------------------------------------------------------ Poisson ----

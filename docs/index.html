@@ -904,18 +904,11 @@
             return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear();
         }
 
-        // Fallback sample database
-        let matchData = [
-            { id: 1, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "လိုက်ပ်ဇစ်", homeEn: "RB Leipzig", awayMy: "ပါအောက်", awayEn: "PAOK", time: "11:15", upper: "home", body: "=-50", goal: "3=", hxg: 1.8, hxga: 1.2, axg: 1.3, axga: 1.5, turf: false, low: false },
-            { id: 2, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "တွန်ရင့်ဆီ", homeEn: "Twente", awayMy: "ဆန်းဒါးလင်း", awayEn: "Sunderland", time: "11:15", upper: "away", body: "1-", goal: "3-20", hxg: 1.1, hxga: 1.6, axg: 1.7, axga: 1.1, turf: false, low: false },
-            { id: 3, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "လက်ပေရဲန်", homeEn: "Lech Poznań", awayMy: "လေဗာကူဆင်", awayEn: "Bayer Leverkusen", time: "11:15", upper: "away", body: "1-10", goal: "3+60", hxg: 1.0, hxga: 1.9, axg: 2.1, axga: 0.9, turf: false, low: false },
-            { id: 4, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "ဆယ်ဗီယာ", homeEn: "Sevilla", awayMy: "ဟာပိုရယ်", awayEn: "Hapoel Be'er Sheva", time: "11:15", upper: "home", body: "2+60", goal: "3-70", hxg: 2.2, hxga: 0.9, axg: 0.8, axga: 2.1, turf: false, low: true },
-            { id: 5, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "ဘုန်းမောက်", homeEn: "Bournemouth", awayMy: "စတမ်းဂရုစ်", awayEn: "Sturm Graz", time: "1:30", upper: "home", body: "2-30", goal: "3-", hxg: 2.2, hxga: 0.9, axg: 0.8, axga: 2.0, turf: false, low: true },
-            { id: 6, leagueMy: "UEFA ယူရိုပါလိဂ်", leagueEn: "UEFA Europa League", homeMy: "ဆယ်တာဗီဂို", homeEn: "Celta Vigo", awayMy: "ဂျူဗင်တပ်", awayEn: "Juventus", time: "1:30", upper: "away", body: "=-80", goal: "2+50", hxg: 1.2, hxga: 1.3, axg: 1.5, axga: 1.1, turf: false, low: true },
-            { id: 7, leagueMy: "UEFA ကွန်းဖရန့်လိဂ်", leagueEn: "UEFA Conference League", homeMy: "KUPS", homeEn: "KuPS Kuopio", awayMy: "ထရာဇွန်စပွန်း", awayEn: "Trabzonspor", time: "11:15", upper: "away", body: "1-40", goal: "3-40", hxg: 1.1, hxga: 1.7, axg: 1.8, axga: 1.1, turf: true, low: false },
-            { id: 8, leagueMy: "UEFA ကွန်းဖရန့်လိဂ်", leagueEn: "UEFA Conference League", homeMy: "အတ္တလန်တာ", homeEn: "Atalanta", awayMy: "ပါဖို့စ်", awayEn: "Paphos FC", time: "1:30", upper: "home", body: "2+90", goal: "3-30", hxg: 2.3, hxga: 0.9, axg: 0.8, axga: 2.2, turf: false, low: true }
-        ];
-        const DEFAULT_MATCHDATA = JSON.parse(JSON.stringify(matchData));
+        // Slip matches come only from a real uploaded slip (OCR). No bundled
+        // sample fixtures: the old samples carried invented numbers
+        // and were displayed as if they were real predictions.
+        let matchData = [];
+        const DEFAULT_MATCHDATA = [];
 
         let predictionRecords = [];
         let favorites = [];
@@ -1163,25 +1156,86 @@
             }).join('');
         }
 
-        // ================= POISSON ENGINE =================
-        function factorial(n) { if (n <= 1) return 1; let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; }
-        function poisson(k, lambda) { return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k); }
+        // ================= MODEL LINK (real predictions only) =================
+        // Slip predictions come ONLY from the app's real Poisson model
+        // output (data/predictions_<CODE>.json). A slip match that cannot
+        // be matched to a model prediction returns null and the UI shows
+        // an honest "no model data" state. The previous flow asked the OCR
+        // model to invent xG values and predicted from those — every
+        // number it produced was fabricated, so it was removed entirely.
+        let modelPredIndex = null;
+        let modelPredLoading = false;
+        const TEAM_ALIAS = {
+            "man city": "manchester city", "man utd": "manchester united",
+            "man united": "manchester united", "spurs": "tottenham hotspur",
+            "wolves": "wolverhampton wanderers", "psg": "paris saint germain",
+            "athletic bilbao": "athletic", "atletico": "atletico madrid",
+            "atl madrid": "atletico madrid", "dortmund": "borussia dortmund",
+            "bayern": "bayern munchen", "bayern munich": "bayern munchen",
+            "inter": "internazionale milano", "sporting": "sporting portugal",
+            "sporting lisbon": "sporting portugal", "qpr": "queens park rangers",
+            "west brom": "west bromwich albion", "sheff utd": "sheffield united",
+            "sheff wed": "sheffield wednesday", "leeds": "leeds united",
+            "newcastle": "newcastle united", "leicester": "leicester city",
+            "forest": "nottingham forest", "villa": "aston villa",
+            "brighton": "brighton and hove albion", "west ham": "west ham united"
+        };
+        function normTeamKey(s) {
+            let x = (s || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+            x = x.replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+            x = x.replace(/\b(fc|afc|cf|sc|ac|as|fk|sk|kv|osc|club|de|la|el|the|1899|1901|1904|1907|04|05)\b/g, " ").replace(/\s+/g, " ").trim();
+            return TEAM_ALIAS[x] || x;
+        }
+        function buildModelIndex() {
+            if (modelPredIndex || modelPredLoading) return;
+            if (typeof COMP_CODES === "undefined") return;
+            modelPredLoading = true;
+            Promise.all(COMP_CODES.map(c => fetch("data/predictions_" + c + ".json").then(r => r.ok ? r.json() : null).catch(() => null)))
+                .then(datas => {
+                    const idx = {};
+                    datas.forEach(d => {
+                        if (!d || !Array.isArray(d.predictions)) return;
+                        d.predictions.forEach(p => {
+                            if (!p.home_team || !p.away_team) return;
+                            idx[normTeamKey(p.home_team.name) + "|" + normTeamKey(p.away_team.name)] = p;
+                        });
+                    });
+                    modelPredIndex = idx;
+                    modelPredLoading = false;
+                    parlaySelection = [];
+                    try { renderAllMatches(); } catch (e) {}
+                    try { renderTopPicks(); } catch (e) {}
+                    try { renderParlay(); } catch (e) {}
+                })
+                .catch(() => { modelPredLoading = false; });
+        }
         function matchProbs(m) {
-            let expHome = ((m.hxg + m.axga) / 2) * 1.08;
-            let expAway = ((m.axg + m.hxga) / 2) * 0.95;
-            if (m.turf) { expHome += 0.25; expAway -= 0.35; }
-            if (m.low) { expHome *= 0.83; expAway *= 0.83; }
-            let hW = 0, dr = 0, aW = 0, ov = 0, bestScore = "1 - 1", maxP = 0;
-            for (let h = 0; h <= 6; h++) for (let a = 0; a <= 6; a++) {
-                const p = poisson(h, expHome) * poisson(a, expAway);
-                if (h > a) hW += p; else if (h === a) dr += p; else aW += p;
-                if ((h + a) > 2.5) ov += p;
-                if (p > maxP) { maxP = p; bestScore = h + " - " + a; }
+            if (!modelPredIndex) { buildModelIndex(); return null; }
+            const hk = normTeamKey(m.homeEn), ak = normTeamKey(m.awayEn);
+            let p = modelPredIndex[hk + "|" + ak];
+            if (!p && hk.length >= 4 && ak.length >= 4) {
+                const keys = Object.keys(modelPredIndex);
+                for (let i = 0; i < keys.length; i++) {
+                    const parts = keys[i].split("|");
+                    if ((parts[0].indexOf(hk) !== -1 || hk.indexOf(parts[0]) !== -1) &&
+                        (parts[1].indexOf(ak) !== -1 || ak.indexOf(parts[1]) !== -1)) { p = modelPredIndex[keys[i]]; break; }
+                }
             }
-            return { hW: hW * 100, dr: dr * 100, aW: aW * 100, ov: ov * 100, un: 100 - ov * 100, bestScore: bestScore, expHome: expHome, expAway: expAway };
+            if (!p || !p.markets) return null;
+            const m12 = p.markets["1x2"] || {};
+            const ou25 = (p.markets["ou"] || {})["2.5"] || {};
+            const cs = (p.markets.correct_scores || [])[0];
+            return {
+                hW: (m12.home || 0) * 100, dr: (m12.draw || 0) * 100, aW: (m12.away || 0) * 100,
+                ov: (ou25.over || 0) * 100, un: (ou25.under || 0) * 100,
+                bestScore: cs ? cs.score.replace("-", " - ") : "—",
+                expHome: p.xg ? p.xg.home : 0, expAway: p.xg ? p.xg.away : 0,
+                model: true
+            };
         }
         function matchPickStats(m) {
             const p = matchProbs(m);
+            if (!p) return { label: "—", prob: -1 };
             const home = currentLang === 'en' ? m.homeEn : m.homeMy;
             const away = currentLang === 'en' ? m.awayEn : m.awayMy;
             const t = translations[currentLang];
@@ -1633,7 +1687,7 @@
                     (homeFilter === 'fav'
                         ? (currentLang === 'en' ? 'No favorites yet — tap ☆ on any match card.' : 'အကြိုက်ဆုံး မရှိသေးပါ — ကတ်ပေါ်က ☆ နှိပ်ပါ။')
                         : (currentLang === 'en' ? 'No fixtures — upload a slip in AI Predictor.' : 'ပွဲမရှိသေးပါ — AI Predictor မှာ စာရွက်တင်ပါ။')) +
-                    '<br><button onclick="restoreSamples()" class="mt-3 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold py-2 px-4 rounded-xl border border-slate-700">🔄 ' + (currentLang === 'en' ? 'Restore sample matches' : 'နမူနာပွဲများ ပြန်ယူမည်') + '</button></div>';
+                    '</div>';
                 return;
             }
             const leagues = [...new Set(list.map(m => m.leagueEn))];
@@ -1701,9 +1755,8 @@
                         "\"homeMy\":\"home team in Burmese as shown\",\"homeEn\":\"home team transliterated to English\"," +
                         "\"awayMy\":\"away team in Burmese as shown\",\"awayEn\":\"away team transliterated to English\"," +
                         "\"time\":\"kickoff time as shown\",\"upper\":\"home\" or \"away\" (side giving handicap, marked with up arrow)," +
-                        "\"body\":\"body odds as shown\",\"goal\":\"goal O/U odds as shown\"," +
-                        "\"hxg\":1.0-2.5,\"hxga\":0.5-2.5,\"axg\":0.5-2.5,\"axga\":0.5-2.5 (your xG estimates)," +
-                        "\"turf\":false,\"low\":false}. Output ONLY the raw JSON array.";
+                        "\"body\":\"body odds as shown\",\"goal\":\"goal O/U odds as shown\"}. " +
+                        "Extract ONLY what is printed on the slip. Never estimate, guess or invent any statistic. Output ONLY the raw JSON array.";
                     let text = "";
                     if (useProxy) {
                         const presp = await fetch(PROXY_URL, {
@@ -1807,6 +1860,22 @@
             const home = currentLang === 'en' ? m.homeEn : m.homeMy;
             const away = currentLang === 'en' ? m.awayEn : m.awayMy;
             const t = translations[currentLang];
+            if (!p) {
+                const favN = isFav(m);
+                return '<div id="card-' + m.id + '" class="card-border rounded-2xl p-4 shadow-lg border border-slate-800/90">' +
+                    '<div class="flex justify-between items-center text-[11px] text-slate-400 mb-1 border-b border-slate-800/60 pb-1.5">' +
+                    '<span class="text-amber-400 font-semibold">' + (currentLang === 'en' ? m.leagueEn : m.leagueMy) + '</span>' +
+                    '<span class="flex items-center gap-2"><span>⏰ ' + m.time + '</span>' +
+                    '<button onclick="toggleFavorite(' + m.id + ')" class="text-base ' + (favN ? 'text-amber-400' : 'text-slate-600') + '" title="Favorite">' + (favN ? '★' : '☆') + '</button></span></div>' +
+                    '<div class="text-center my-2"><h4 class="text-base md:text-lg font-bold text-white tracking-wide">' +
+                    (m.upper === 'home' ? '<span class="text-amber-400">↑</span> ' : '') + esc(home) +
+                    '<span class="text-slate-500 font-normal mx-1">—</span>' +
+                    (m.upper === 'away' ? '<span class="text-amber-400">↑</span> ' : '') + esc(away) + '</h4>' +
+                    '<p class="text-xs text-slate-400 mt-1">' + t.body_label + ': <span class="text-amber-300 font-medium">' + m.body + '</span> | ' +
+                    t.goal_label + ': <span class="text-amber-300 font-medium">' + m.goal + '</span></p></div>' +
+                    '<div class="text-[11px] text-slate-400 text-center bg-slate-900/60 py-2 px-2 rounded-lg border border-slate-800/60">⚠️ ' +
+                    (currentLang === 'en' ? 'No model data for this match — no prediction is shown rather than a guessed one.' : 'ဒီပွဲအတွက် model data မရှိပါ — ခန့်မှန်းထွင် မပြပါ။') + '</div></div>';
+            }
             const hW = p.hW.toFixed(0), dr = p.dr.toFixed(0), aW = p.aW.toFixed(0), ov = p.ov.toFixed(0);
             const isOver = p.ov >= 52 && (p.expHome + p.expAway) >= 2.6;
             const goalVerdict = isOver ? t.over_text : t.under_text;
@@ -1817,9 +1886,7 @@
             else if (p.aW === maxOutcome && (p.aW - p.hW) > 6) winnerVerdict = away + " " + t.win_text;
             const conf = maxOutcome >= 56 ? t.conf_high : (maxOutcome >= 44 ? t.conf_med : t.conf_low);
             const confColor = maxOutcome >= 56 ? 'text-amber-400' : (maxOutcome >= 44 ? 'text-white' : 'text-slate-400');
-            let badge = t.badge_open;
-            if (m.turf) badge = t.badge_turf;
-            else if (m.low) badge = t.badge_low;
+            let badge = currentLang === 'en' ? '📊 Real model data' : '📊 Model data အစစ်';
             const fav = isFav(m);
             return '<div id="card-' + m.id + '" class="card-border rounded-2xl p-4 shadow-lg border border-slate-800/90">' +
                 '<div class="flex justify-between items-center text-[11px] text-slate-400 mb-1 border-b border-slate-800/60 pb-1.5">' +
@@ -1890,6 +1957,7 @@
             const list = document.getElementById('topPicksList');
             if (!list) return;
             const ranked = matchData.map(m => ({ m: m, pick: matchPickStats(m) }))
+                .filter(r => r.pick.prob >= 0)
                 .sort((a, b) => b.pick.prob - a.pick.prob).slice(0, 3);
             const medals = currentLang === 'en' ? ['1.', '2.', '3.'] : ['၁။', '၂။', '၃။'];
             if (!ranked.length) { list.innerHTML = '<div class="text-slate-500 text-center py-2">—</div>'; return; }
@@ -1909,6 +1977,10 @@
             if (!m) return;
             const pick = matchPickStats(m);
             const probs = matchProbs(m);
+            if (!probs) {
+                alert(currentLang === 'en' ? 'No model data for this match — nothing was saved.' : 'ဒီပွဲအတွက် model data မရှိလို့ မှတ်တမ်း မသိမ်းပါ။');
+                return;
+            }
             const goalPick = probs.ov >= 50
                 ? { label: translations[currentLang].over_text, prob: probs.ov }
                 : { label: translations[currentLang].under_text, prob: probs.un };
@@ -2025,6 +2097,7 @@
             const pickList = document.getElementById('parlayPickList');
             if (!topList || !pickList) return;
             const ranked = matchData.map(m => ({ m: m, pick: matchPickStats(m) }))
+                .filter(r => r.pick.prob >= 0)
                 .sort((a, b) => b.pick.prob - a.pick.prob);
             const medals = currentLang === 'en' ? ['1.', '2.', '3.'] : ['၁။', '၂။', '၃။'];
             topList.innerHTML = ranked.slice(0, 3).map((r, i) => {
@@ -2209,6 +2282,7 @@
         // ================= INIT =================
         window.onload = function() {
             loadPersisted();
+            buildModelIndex();
             document.getElementById('langToggle').checked = currentLang === 'en';
             document.getElementById('langLabel').innerText = currentLang === 'en' ? 'EN' : 'MM';
             document.querySelectorAll('[data-i18n]').forEach(el => {

@@ -56,6 +56,12 @@ MIN_EDGE = {
     "correct_score": 0.12,
 }
 
+# 1X2 away selections face a higher bar (2026-10-20 audit of 201 graded
+# matches): away picks below 0.65 hit only ~32% (0.45-0.55: 35%,
+# 0.55-0.65: 25%), while home picks are sound from 0.45 (51-68%).
+# Applying this bar to stored history lifts pick hit rate 52% -> 60%.
+MIN_EDGE_1X2_AWAY = 0.65
+
 ASIAN_HANDICAP_LINES = (-1.5, -1.0, -0.5, 0.5, 1.0, 1.5)
 OVER_UNDER_LINES = (1.5, 2.5, 3.5)
 

@@ -118,6 +118,20 @@ def _pick_ah(ah_markets: dict) -> dict | None:
     return {"line": line, "side": f"home_{side}", "prob": prob}
 
 
+def _pick_1x2(probs: dict[str, float]) -> dict | None:
+    """1X2 pick with an asymmetric bar: an away selection must clear
+    MIN_EDGE_1X2_AWAY (0.65); home/draw use the standard MIN_EDGE.
+    Graded history showed away picks under 0.65 are noise (~32% hit)."""
+    if not probs:
+        return None
+    selection, prob = max(probs.items(), key=lambda kv: kv[1])
+    threshold = (config.MIN_EDGE_1X2_AWAY if selection == "away"
+                 else config.MIN_EDGE["1x2"])
+    if prob >= threshold:
+        return {"selection": selection, "prob": prob}
+    return None
+
+
 def _picks(markets: dict) -> dict:
     ou25 = markets["ou"]["2.5"]
     btts = markets["btts"]
@@ -126,7 +140,7 @@ def _picks(markets: dict) -> dict:
     ah_pick = _pick_ah(markets["ah"])
     top_cs = markets["correct_scores"][0] if markets["correct_scores"] else None
     return {
-        "1x2": _choose_pick(markets["1x2"], config.MIN_EDGE["1x2"]),
+        "1x2": _pick_1x2(markets["1x2"]),
         "ou25": _choose_pick(ou25, config.MIN_EDGE["ou25"]),
         "btts": _choose_pick(btts, config.MIN_EDGE["btts"]),
         "ah": ah_pick,
@@ -150,6 +164,19 @@ def predict_all(codes: list[str]) -> dict:
         payload = json.loads(path.read_text(encoding="utf-8"))
         matches = payload.get("matches", [])
         finished = [m for m in matches if m.get("status") == "FINISHED"]
+        # Multi-season seed (2026-10-20): last season's finished matches,
+        # fetched once by fetch_seed.py, join strength training. They carry
+        # real team ids and real dates, so the recency weighting in
+        # build_team_stats decays them naturally (~0.14x at 170 days).
+        seed_path = config.DATA_DIR / f"seed_{code}.json"
+        if seed_path.exists():
+            seed = json.loads(seed_path.read_text(encoding="utf-8"))
+            seed_finished = [m for m in seed.get("matches", [])
+                             if m.get("status") == "FINISHED"]
+            if seed_finished:
+                print(f"[predict] {code}: +{len(seed_finished)} seed matches "
+                      f"(last season)", flush=True)
+                finished = finished + seed_finished
         now = datetime.now(timezone.utc)
         # Drop fixtures whose kickoff already passed: the API sometimes leaves
         # old matches as TIMED for days, which would surface as stale "upcoming"
