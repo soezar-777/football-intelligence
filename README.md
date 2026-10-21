@@ -17,8 +17,8 @@
 ```
 
 - **Backend:** Python (stdlib + `requests` only) — `backend/`
-- **Frontend:** static HTML/CSS/JS, no framework, no build step — `frontend/`
-- **Data sync:** scheduled job, twice daily (06:00 & 18:00 Yangon) — data sync လုပ်ပြီး `frontend/data/` ကို update လုပ်တယ်
+- **Frontend:** static HTML/CSS/JS, no framework, no build step — `docs/` (single-file PWA, `docs/index.html`)
+- **Data sync:** scheduled job, twice daily (06:00 & 18:00 Yangon) — data sync လုပ်ပြီး `docs/data/` ကို update လုပ်တယ်
 - **Hosting:** GitHub Pages (free)
 - **Database:** none — JSON files (`data/*.json` published to `docs/data/` for GitHub Pages)
 
@@ -38,8 +38,8 @@ export FOOTBALL_DATA_API_KEY="your_key_here"   # သို့မဟုတ် 600
 python3 backend/run_daily.py --competitions PL  # စမ်းရန်: PL တစ်ခုတည်း
 python3 -m pytest tests/ -q
 # frontend ကို ကြည့်ရန်:
-cp data/*.json frontend/data/   # သို့မဟုတ် samples သုံးမည်
-python3 -m http.server -d frontend 8000
+cp data/*.json docs/data/   # သို့မဟုတ် samples သုံးမည်
+python3 -m http.server -d docs 8000
 # → http://localhost:8000
 ```
 
@@ -55,10 +55,10 @@ football-intelligence/
 │   ├── verify.py        # grade picks vs actual results
 │   ├── performance.py   # hit rates, rolling-30, Brier score
 │   └── run_daily.py     # orchestrator: fetch → predict → verify → performance
-├── frontend/
-│   ├── index.html / style.css / app.js   # mobile-first dashboard, no libs
+├── docs/
+│   ├── index.html       # single-file PWA app (GitHub Pages root)
 │   ├── i18n/my.json / en.json           # Burmese default, EN toggle
-│   └── data/            # published JSON (filled by CI)
+│   └── data/            # published JSON (filled by the sync jobs)
 ├── data/samples/        # tiny samples so UI renders before first sync
 └── tests/               # pytest: model math + verification grading
 ```

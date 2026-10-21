@@ -1077,6 +1077,22 @@
             if (pk.btts) {
                 line.push('BTTS ' + (pk.btts.selection === 'yes' ? (currentLang === 'en' ? 'Yes' : 'ရှိ') : (currentLang === 'en' ? 'No' : 'မရှိ')) + ' ' + Math.round(pk.btts.prob * 100) + '%');
             }
+            if (pk.ah && pk.ah.line != null && pk.ah.side) {
+                // AH pick: side names the team whose cover outcome the model backs.
+                // A "not_cover" pick is shown as the OTHER team at the mirrored line
+                // (betting against home -1.0 == taking away +1.0; probabilities are
+                // identical because the push outcome is excluded on both sides).
+                const ahL = parseFloat(pk.ah.line);
+                let ahTeam = null, ahLine = ahL;
+                if (pk.ah.side === 'home_cover') { ahTeam = p.home_team.name; }
+                else if (pk.ah.side === 'away_cover') { ahTeam = p.away_team.name; }
+                else if (pk.ah.side === 'home_not_cover') { ahTeam = p.away_team.name; ahLine = -ahL; }
+                else if (pk.ah.side === 'away_not_cover') { ahTeam = p.home_team.name; ahLine = -ahL; }
+                if (ahTeam && isFinite(ahLine)) {
+                    const ahLs = (ahLine > 0 ? '+' : '') + (Number.isInteger(ahLine) ? ahLine.toFixed(1) : String(ahLine));
+                    line.push('AH ' + esc(teamName(ahTeam)) + ' ' + ahLs + ' ' + Math.round(pk.ah.prob * 100) + '%');
+                }
+            }
             let cs = '';
             try {
                 if (p.markets && p.markets.correct_scores && p.markets.correct_scores.length) {
@@ -1111,8 +1127,17 @@
             catch (e) { box.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">⚠️</div>'; return; }
             const meta = document.getElementById('aipredMeta');
             if (meta) {
+                let freshBadge = '';
+                if (data.generatedAt) {
+                    const ageH = (Date.now() - new Date(data.generatedAt).getTime()) / 3600000;
+                    if (isFinite(ageH) && ageH > 26) {
+                        freshBadge = ' <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded px-1.5 py-0.5 font-bold">⚠️ ဒေတာ ဟောင်းနေပြီ</span>';
+                    } else if (isFinite(ageH)) {
+                        freshBadge = ' <span class="text-emerald-400">● ဒေတာ အသစ်</span>';
+                    }
+                }
                 meta.innerHTML = '🔄 ' + esc(T.aipred_data) + ': ' + esc(data.generatedAt ? myanmarTime(data.generatedAt) : '—') +
-                    ' <span class="text-slate-600">(' + data.matches.length + ' ' + esc(T.aipred_matches) + ')</span>';
+                    ' <span class="text-slate-600">(' + data.matches.length + ' ' + esc(T.aipred_matches) + ')</span>' + freshBadge;
             }
             const accBox = document.getElementById('aipredAccuracy');
             if (accBox) {

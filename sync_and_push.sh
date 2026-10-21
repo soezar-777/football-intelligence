@@ -13,6 +13,13 @@ cd "$PROJ"
 PY="$PROJ/.venv/bin/python3"
 [ -x "$PY" ] || PY="python3"
 
+echo "[sync] test gate: running pytest before the pipeline..."
+if ! "$PY" -m pytest tests/ -q; then
+  echo "[sync] ERROR: test suite FAILED -- aborting sync. Nothing was fetched, published or pushed. Fix the failing tests first." >&2
+  exit 1
+fi
+echo "[sync] test gate passed."
+
 echo "[sync] running daily pipeline..."
 $PY backend/run_daily.py
 
