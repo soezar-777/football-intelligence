@@ -221,25 +221,6 @@
         {
           "position": 11,
           "team": {
-            "id": 1782,
-            "name": "EC Vitória",
-            "shortName": "Vitória",
-            "tla": "VIT",
-            "crest": "https://crests.football-data.org/1782.png"
-          },
-          "playedGames": 31,
-          "form": null,
-          "won": 11,
-          "draw": 6,
-          "lost": 14,
-          "points": 39,
-          "goalsFor": 34,
-          "goalsAgainst": 44,
-          "goalDifference": -10
-        },
-        {
-          "position": 12,
-          "team": {
             "id": 1770,
             "name": "Botafogo FR",
             "shortName": "Botafogo",
@@ -257,7 +238,7 @@
           "goalDifference": -4
         },
         {
-          "position": 13,
+          "position": 12,
           "team": {
             "id": 4241,
             "name": "Coritiba FBC",
@@ -273,6 +254,25 @@
           "points": 39,
           "goalsFor": 38,
           "goalsAgainst": 49,
+          "goalDifference": -11
+        },
+        {
+          "position": 13,
+          "team": {
+            "id": 1782,
+            "name": "EC Vitória",
+            "shortName": "Vitória",
+            "tla": "VIT",
+            "crest": "https://crests.football-data.org/1782.png"
+          },
+          "playedGames": 31,
+          "form": null,
+          "won": 10,
+          "draw": 7,
+          "lost": 14,
+          "points": 37,
+          "goalsFor": 34,
+          "goalsAgainst": 45,
           "goalDifference": -11
         },
         {
@@ -325,12 +325,12 @@
           "playedGames": 31,
           "form": null,
           "won": 8,
-          "draw": 8,
-          "lost": 15,
-          "points": 32,
-          "goalsFor": 31,
+          "draw": 9,
+          "lost": 14,
+          "points": 33,
+          "goalsFor": 32,
           "goalsAgainst": 39,
-          "goalDifference": -8
+          "goalDifference": -7
         },
         {
           "position": 17,
