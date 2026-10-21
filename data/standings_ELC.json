@@ -19,7 +19,7 @@
     "id": 2509,
     "startDate": "2026-08-14",
     "endDate": "2027-05-01",
-    "currentMatchday": 11,
+    "currentMatchday": 12,
     "winner": null
   },
   "standings": [
@@ -145,6 +145,25 @@
         {
           "position": 7,
           "team": {
+            "id": 76,
+            "name": "Wolverhampton Wanderers FC",
+            "shortName": "Wolverhampton",
+            "tla": "WOL",
+            "crest": "https://crests.football-data.org/76.png"
+          },
+          "playedGames": 11,
+          "form": null,
+          "won": 5,
+          "draw": 3,
+          "lost": 3,
+          "points": 18,
+          "goalsFor": 19,
+          "goalsAgainst": 16,
+          "goalDifference": 3
+        },
+        {
+          "position": 8,
+          "team": {
             "id": 340,
             "name": "Southampton FC",
             "shortName": "Southampton",
@@ -160,25 +179,6 @@
           "goalsFor": 21,
           "goalsAgainst": 10,
           "goalDifference": 11
-        },
-        {
-          "position": 8,
-          "team": {
-            "id": 76,
-            "name": "Wolverhampton Wanderers FC",
-            "shortName": "Wolverhampton",
-            "tla": "WOL",
-            "crest": "https://crests.football-data.org/76.png"
-          },
-          "playedGames": 10,
-          "form": null,
-          "won": 5,
-          "draw": 2,
-          "lost": 3,
-          "points": 17,
-          "goalsFor": 18,
-          "goalsAgainst": 15,
-          "goalDifference": 3
         },
         {
           "position": 9,
@@ -265,14 +265,14 @@
             "tla": "POR",
             "crest": "https://crests.football-data.org/325.png"
           },
-          "playedGames": 10,
+          "playedGames": 11,
           "form": null,
           "won": 4,
-          "draw": 2,
+          "draw": 3,
           "lost": 4,
-          "points": 14,
-          "goalsFor": 13,
-          "goalsAgainst": 13,
+          "points": 15,
+          "goalsFor": 14,
+          "goalsAgainst": 14,
           "goalDifference": 0
         },
         {
