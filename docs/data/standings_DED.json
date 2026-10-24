@@ -164,6 +164,25 @@
         {
           "position": 8,
           "team": {
+            "id": 718,
+            "name": "Go Ahead Eagles",
+            "shortName": "Go Ahead",
+            "tla": "GOA",
+            "crest": "https://crests.football-data.org/718.png"
+          },
+          "playedGames": 10,
+          "form": null,
+          "won": 3,
+          "draw": 5,
+          "lost": 2,
+          "points": 14,
+          "goalsFor": 23,
+          "goalsAgainst": 23,
+          "goalDifference": 0
+        },
+        {
+          "position": 9,
+          "team": {
             "id": 673,
             "name": "SC Heerenveen",
             "shortName": "Heerenveen",
@@ -179,25 +198,6 @@
           "goalsFor": 15,
           "goalsAgainst": 11,
           "goalDifference": 4
-        },
-        {
-          "position": 9,
-          "team": {
-            "id": 718,
-            "name": "Go Ahead Eagles",
-            "shortName": "Go Ahead",
-            "tla": "GOA",
-            "crest": "https://crests.football-data.org/718.png"
-          },
-          "playedGames": 9,
-          "form": null,
-          "won": 2,
-          "draw": 5,
-          "lost": 2,
-          "points": 11,
-          "goalsFor": 20,
-          "goalsAgainst": 21,
-          "goalDifference": -1
         },
         {
           "position": 10,
@@ -322,15 +322,15 @@
             "tla": "TEL",
             "crest": "https://crests.football-data.org/1912.png"
           },
-          "playedGames": 9,
+          "playedGames": 10,
           "form": null,
           "won": 1,
           "draw": 3,
-          "lost": 5,
+          "lost": 6,
           "points": 6,
-          "goalsFor": 10,
-          "goalsAgainst": 18,
-          "goalDifference": -8
+          "goalsFor": 12,
+          "goalsAgainst": 21,
+          "goalDifference": -9
         },
         {
           "position": 17,

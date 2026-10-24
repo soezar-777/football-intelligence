@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-23T12:24:33.394995+00:00",
+  "generated_at": "2026-10-24T00:43:29.450397+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 222,
+  "graded_count": 232,
   "matches": [
     {
       "fixture_id": 560593,
@@ -7772,33 +7772,383 @@
           "hit": null
         }
       }
+    },
+    {
+      "fixture_id": 2083648,
+      "competition": "BL2",
+      "home_team": "SV Darmstadt 98",
+      "away_team": "FC St. Pauli",
+      "kickoff": "2026-10-23T16:30:00+00:00",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.4814,
+        "draw": 0.2398,
+        "away": 0.2788
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083655,
+      "competition": "BL2",
+      "home_team": "VfL Bochum",
+      "away_team": "VfL Wolfsburg",
+      "kickoff": "2026-10-23T16:30:00+00:00",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3283,
+        "draw": 0.2394,
+        "away": 0.4323
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558863,
+      "competition": "DED",
+      "home_team": "Go Ahead Eagles",
+      "away_team": "Telstar 1963",
+      "kickoff": "2026-10-23T18:00:00Z",
+      "actual": "3-2",
+      "probs_1x2": {
+        "home": 0.4683,
+        "draw": 0.2351,
+        "away": 0.2966
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565833,
+      "competition": "BL1",
+      "home_team": "VfB Stuttgart",
+      "away_team": "Borussia Mönchengladbach",
+      "kickoff": "2026-10-23T18:30:00Z",
+      "actual": "2-3",
+      "probs_1x2": {
+        "home": 0.6669,
+        "draw": 0.1823,
+        "away": 0.1508
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558567,
+      "competition": "SA",
+      "home_team": "Torino FC",
+      "away_team": "AC Monza",
+      "kickoff": "2026-10-23T18:45:00Z",
+      "actual": "3-2",
+      "probs_1x2": {
+        "home": 0.4785,
+        "draw": 0.2281,
+        "away": 0.2934
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559654,
+      "competition": "FL1",
+      "home_team": "Stade Brestois 29",
+      "away_team": "OGC Nice",
+      "kickoff": "2026-10-23T18:45:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.581,
+        "draw": 0.2144,
+        "away": 0.2046
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560620,
+      "competition": "PL",
+      "home_team": "Ipswich Town FC",
+      "away_team": "Nottingham Forest FC",
+      "kickoff": "2026-10-23T19:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.4284,
+        "draw": 0.2361,
+        "away": 0.3355
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564719,
+      "competition": "PD",
+      "home_team": "Deportivo Alavés",
+      "away_team": "Málaga CF",
+      "kickoff": "2026-10-23T19:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.5547,
+        "draw": 0.2341,
+        "away": 0.2112
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561894,
+      "competition": "ELC",
+      "home_team": "Bolton Wanderers FC",
+      "away_team": "Middlesbrough FC",
+      "kickoff": "2026-10-23T19:00:00Z",
+      "actual": "1-5",
+      "probs_1x2": {
+        "home": 0.3201,
+        "draw": 0.2424,
+        "away": 0.4375
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567329,
+      "competition": "PPL",
+      "home_team": "Vitória SC",
+      "away_team": "CS Marítimo",
+      "kickoff": "2026-10-23T19:45:00Z",
+      "actual": "5-0",
+      "probs_1x2": {
+        "home": 0.3873,
+        "draw": 0.2852,
+        "away": 0.3275
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 158,
-      "hit": 84,
-      "hit_rate": 0.5316
+      "graded": 164,
+      "hit": 86,
+      "hit_rate": 0.5244
     },
     "ou25": {
-      "graded": 184,
-      "hit": 109,
-      "hit_rate": 0.5924
+      "graded": 193,
+      "hit": 114,
+      "hit_rate": 0.5907
     },
     "btts": {
-      "graded": 167,
-      "hit": 96,
-      "hit_rate": 0.5749
+      "graded": 175,
+      "hit": 103,
+      "hit_rate": 0.5886
     },
     "ah": {
-      "graded": 212,
-      "hit": 142,
-      "hit_rate": 0.6698
+      "graded": 222,
+      "hit": 148,
+      "hit_rate": 0.6667
     },
     "correct_score": {
-      "graded": 74,
+      "graded": 75,
       "hit": 9,
-      "hit_rate": 0.1216
+      "hit_rate": 0.12
     }
   }
 }

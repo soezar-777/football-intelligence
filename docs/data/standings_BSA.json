@@ -69,6 +69,25 @@
         {
           "position": 3,
           "team": {
+            "id": 1771,
+            "name": "Cruzeiro EC",
+            "shortName": "Cruzeiro",
+            "tla": "CRU",
+            "crest": "https://crests.football-data.org/1771.png"
+          },
+          "playedGames": 32,
+          "form": null,
+          "won": 16,
+          "draw": 6,
+          "lost": 10,
+          "points": 54,
+          "goalsFor": 51,
+          "goalsAgainst": 46,
+          "goalDifference": 5
+        },
+        {
+          "position": 4,
+          "team": {
             "id": 1768,
             "name": "CA Paranaense",
             "shortName": "Paranaense",
@@ -84,25 +103,6 @@
           "goalsFor": 49,
           "goalsAgainst": 37,
           "goalDifference": 12
-        },
-        {
-          "position": 4,
-          "team": {
-            "id": 1771,
-            "name": "Cruzeiro EC",
-            "shortName": "Cruzeiro",
-            "tla": "CRU",
-            "crest": "https://crests.football-data.org/1771.png"
-          },
-          "playedGames": 31,
-          "form": null,
-          "won": 15,
-          "draw": 6,
-          "lost": 10,
-          "points": 51,
-          "goalsFor": 50,
-          "goalsAgainst": 46,
-          "goalDifference": 4
         },
         {
           "position": 5,
@@ -379,15 +379,15 @@
             "tla": "CRE",
             "crest": "https://crests.football-data.org/4287.png"
           },
-          "playedGames": 31,
+          "playedGames": 32,
           "form": null,
           "won": 5,
           "draw": 11,
-          "lost": 15,
+          "lost": 16,
           "points": 26,
           "goalsFor": 34,
-          "goalsAgainst": 49,
-          "goalDifference": -15
+          "goalsAgainst": 50,
+          "goalDifference": -16
         },
         {
           "position": 20,
