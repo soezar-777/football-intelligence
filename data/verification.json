@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-24T12:23:21.430329+00:00",
+  "generated_at": "2026-10-25T00:23:07.732086+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 233,
+  "graded_count": 241,
   "matches": [
     {
       "fixture_id": 560593,
@@ -8157,33 +8157,313 @@
           "hit": true
         }
       }
+    },
+    {
+      "fixture_id": 2083645,
+      "competition": "BL2",
+      "home_team": "1. FC Heidenheim 1846",
+      "away_team": "Energie Cottbus",
+      "kickoff": "2026-10-24T11:00:00+00:00",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.5246,
+        "draw": 0.2122,
+        "away": 0.2632
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083650,
+      "competition": "BL2",
+      "home_team": "Hertha BSC",
+      "away_team": "DSC Arminia Bielefeld",
+      "kickoff": "2026-10-24T11:00:00+00:00",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.5577,
+        "draw": 0.2259,
+        "away": 0.2164
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083659,
+      "competition": "BL2",
+      "home_team": "1. FC Magdeburg",
+      "away_team": "Karlsruher SC",
+      "kickoff": "2026-10-24T11:00:00+00:00",
+      "actual": "6-1",
+      "probs_1x2": {
+        "home": 0.5754,
+        "draw": 0.2228,
+        "away": 0.2018
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567337,
+      "competition": "PPL",
+      "home_team": "CF Estrela da Amadora",
+      "away_team": "Casa Pia AC",
+      "kickoff": "2026-10-24T14:30:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.3933,
+        "draw": 0.2732,
+        "away": 0.3335
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 567333,
+      "competition": "PPL",
+      "home_team": "FC Alverca",
+      "away_team": "FC Arouca",
+      "kickoff": "2026-10-24T17:00:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.3874,
+        "draw": 0.272,
+        "away": 0.3406
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 2083652,
+      "competition": "BL2",
+      "home_team": "1. FC Nürnberg",
+      "away_team": "1. FC Kaiserslautern",
+      "kickoff": "2026-10-24T18:30:00+00:00",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.5693,
+        "draw": 0.2224,
+        "away": 0.2083
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559652,
+      "competition": "FL1",
+      "home_team": "Racing Club de Lens",
+      "away_team": "Paris FC",
+      "kickoff": "2026-10-24T18:45:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.4623,
+        "draw": 0.2465,
+        "away": 0.2912
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567335,
+      "competition": "PPL",
+      "home_team": "Gil Vicente FC",
+      "away_team": "FC Porto",
+      "kickoff": "2026-10-24T19:30:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.2511,
+        "draw": 0.2538,
+        "away": 0.4951
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "1.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 165,
-      "hit": 87,
-      "hit_rate": 0.5273
+      "graded": 170,
+      "hit": 90,
+      "hit_rate": 0.5294
     },
     "ou25": {
-      "graded": 194,
-      "hit": 115,
-      "hit_rate": 0.5928
+      "graded": 200,
+      "hit": 118,
+      "hit_rate": 0.59
     },
     "btts": {
-      "graded": 175,
-      "hit": 103,
-      "hit_rate": 0.5886
+      "graded": 179,
+      "hit": 105,
+      "hit_rate": 0.5866
     },
     "ah": {
-      "graded": 223,
-      "hit": 149,
-      "hit_rate": 0.6682
+      "graded": 231,
+      "hit": 156,
+      "hit_rate": 0.6753
     },
     "correct_score": {
-      "graded": 76,
+      "graded": 79,
       "hit": 10,
-      "hit_rate": 0.1316
+      "hit_rate": 0.1266
     }
   }
 }

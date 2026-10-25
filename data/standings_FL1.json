@@ -69,25 +69,6 @@
         {
           "position": 3,
           "team": {
-            "id": 1045,
-            "name": "Paris FC",
-            "shortName": "Paris FC",
-            "tla": "PFC",
-            "crest": "https://crests.football-data.org/1045.png"
-          },
-          "playedGames": 7,
-          "form": null,
-          "won": 4,
-          "draw": 2,
-          "lost": 1,
-          "points": 14,
-          "goalsFor": 12,
-          "goalsAgainst": 7,
-          "goalDifference": 5
-        },
-        {
-          "position": 4,
-          "team": {
             "id": 521,
             "name": "Lille OSC",
             "shortName": "Lille",
@@ -103,6 +84,25 @@
           "goalsFor": 10,
           "goalsAgainst": 5,
           "goalDifference": 5
+        },
+        {
+          "position": 4,
+          "team": {
+            "id": 1045,
+            "name": "Paris FC",
+            "shortName": "Paris FC",
+            "tla": "PFC",
+            "crest": "https://crests.football-data.org/1045.png"
+          },
+          "playedGames": 8,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 2,
+          "points": 14,
+          "goalsFor": 13,
+          "goalsAgainst": 9,
+          "goalDifference": 4
         },
         {
           "position": 5,
@@ -126,6 +126,25 @@
         {
           "position": 6,
           "team": {
+            "id": 546,
+            "name": "Racing Club de Lens",
+            "shortName": "RC Lens",
+            "tla": "RCL",
+            "crest": "https://crests.football-data.org/546.png"
+          },
+          "playedGames": 8,
+          "form": null,
+          "won": 4,
+          "draw": 1,
+          "lost": 3,
+          "points": 13,
+          "goalsFor": 16,
+          "goalsAgainst": 12,
+          "goalDifference": 4
+        },
+        {
+          "position": 7,
+          "team": {
             "id": 529,
             "name": "Stade Rennais FC 1901",
             "shortName": "Stade Rennais",
@@ -143,7 +162,7 @@
           "goalDifference": 1
         },
         {
-          "position": 7,
+          "position": 8,
           "team": {
             "id": 525,
             "name": "FC Lorient",
@@ -162,7 +181,7 @@
           "goalDifference": 1
         },
         {
-          "position": 8,
+          "position": 9,
           "team": {
             "id": 522,
             "name": "OGC Nice",
@@ -179,25 +198,6 @@
           "goalsFor": 8,
           "goalsAgainst": 10,
           "goalDifference": -2
-        },
-        {
-          "position": 9,
-          "team": {
-            "id": 546,
-            "name": "Racing Club de Lens",
-            "shortName": "RC Lens",
-            "tla": "RCL",
-            "crest": "https://crests.football-data.org/546.png"
-          },
-          "playedGames": 7,
-          "form": null,
-          "won": 3,
-          "draw": 1,
-          "lost": 3,
-          "points": 10,
-          "goalsFor": 14,
-          "goalsAgainst": 11,
-          "goalDifference": 3
         },
         {
           "position": 10,
