@@ -37,15 +37,15 @@
             "tla": "FCP",
             "crest": "https://crests.football-data.org/503.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
-          "won": 8,
+          "won": 9,
           "draw": 0,
           "lost": 0,
-          "points": 24,
-          "goalsFor": 20,
+          "points": 27,
+          "goalsFor": 21,
           "goalsAgainst": 4,
-          "goalDifference": 16
+          "goalDifference": 17
         },
         {
           "position": 2,
@@ -113,37 +113,18 @@
             "tla": "FCA",
             "crest": "https://crests.football-data.org/712.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
-          "won": 4,
+          "won": 5,
           "draw": 2,
           "lost": 2,
-          "points": 14,
-          "goalsFor": 11,
+          "points": 17,
+          "goalsFor": 12,
           "goalsAgainst": 7,
-          "goalDifference": 4
+          "goalDifference": 5
         },
         {
           "position": 6,
-          "team": {
-            "id": 5533,
-            "name": "Gil Vicente FC",
-            "shortName": "Gil Vicente",
-            "tla": "GIL",
-            "crest": "https://crests.football-data.org/5533.png"
-          },
-          "playedGames": 8,
-          "form": null,
-          "won": 4,
-          "draw": 2,
-          "lost": 2,
-          "points": 14,
-          "goalsFor": 8,
-          "goalsAgainst": 6,
-          "goalDifference": 2
-        },
-        {
-          "position": 7,
           "team": {
             "id": 5527,
             "name": "Académico de Viseu FC",
@@ -162,6 +143,25 @@
           "goalDifference": 1
         },
         {
+          "position": 7,
+          "team": {
+            "id": 5533,
+            "name": "Gil Vicente FC",
+            "shortName": "Gil Vicente",
+            "tla": "GIL",
+            "crest": "https://crests.football-data.org/5533.png"
+          },
+          "playedGames": 9,
+          "form": null,
+          "won": 4,
+          "draw": 2,
+          "lost": 3,
+          "points": 14,
+          "goalsFor": 8,
+          "goalsAgainst": 7,
+          "goalDifference": 1
+        },
+        {
           "position": 8,
           "team": {
             "id": 7822,
@@ -170,15 +170,15 @@
             "tla": "ALV",
             "crest": "https://crests.football-data.org/7822.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
           "won": 3,
           "draw": 2,
-          "lost": 3,
+          "lost": 4,
           "points": 11,
           "goalsFor": 13,
-          "goalsAgainst": 12,
-          "goalDifference": 1
+          "goalsAgainst": 13,
+          "goalDifference": 0
         },
         {
           "position": 9,
@@ -208,15 +208,15 @@
             "tla": "AMA",
             "crest": "https://crests.football-data.org/9136.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
           "won": 2,
           "draw": 4,
-          "lost": 2,
+          "lost": 3,
           "points": 10,
           "goalsFor": 14,
-          "goalsAgainst": 15,
-          "goalDifference": -1
+          "goalsAgainst": 17,
+          "goalDifference": -3
         },
         {
           "position": 11,
@@ -316,6 +316,25 @@
         {
           "position": 16,
           "team": {
+            "id": 6618,
+            "name": "Casa Pia AC",
+            "shortName": "Casa Pia",
+            "tla": "CAS",
+            "crest": "https://crests.football-data.org/6618.png"
+          },
+          "playedGames": 9,
+          "form": null,
+          "won": 2,
+          "draw": 1,
+          "lost": 6,
+          "points": 7,
+          "goalsFor": 5,
+          "goalsAgainst": 17,
+          "goalDifference": -12
+        },
+        {
+          "position": 17,
+          "team": {
             "id": 5529,
             "name": "CD Nacional",
             "shortName": "CD Nacional",
@@ -331,25 +350,6 @@
           "goalsFor": 9,
           "goalsAgainst": 18,
           "goalDifference": -9
-        },
-        {
-          "position": 17,
-          "team": {
-            "id": 6618,
-            "name": "Casa Pia AC",
-            "shortName": "Casa Pia",
-            "tla": "CAS",
-            "crest": "https://crests.football-data.org/6618.png"
-          },
-          "playedGames": 8,
-          "form": null,
-          "won": 1,
-          "draw": 1,
-          "lost": 6,
-          "points": 4,
-          "goalsFor": 3,
-          "goalsAgainst": 17,
-          "goalDifference": -14
         },
         {
           "position": 18,
