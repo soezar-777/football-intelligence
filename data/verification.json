@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-25T00:23:07.732086+00:00",
+  "generated_at": "2026-10-26T12:23:21.865056+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 241,
+  "graded_count": 314,
   "matches": [
     {
       "fixture_id": 560593,
@@ -8264,6 +8264,846 @@
       }
     },
     {
+      "fixture_id": 560614,
+      "competition": "PL",
+      "home_team": "Aston Villa FC",
+      "away_team": "Manchester City FC",
+      "kickoff": "2026-10-24T11:30:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.2367,
+        "draw": 0.2241,
+        "away": 0.5392
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "1.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561895,
+      "competition": "ELC",
+      "home_team": "Sheffield United FC",
+      "away_team": "Derby County FC",
+      "kickoff": "2026-10-24T11:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.5116,
+        "draw": 0.232,
+        "away": 0.2564
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561901,
+      "competition": "ELC",
+      "home_team": "Charlton Athletic FC",
+      "away_team": "Norwich City FC",
+      "kickoff": "2026-10-24T11:30:00Z",
+      "actual": "1-3",
+      "probs_1x2": {
+        "home": 0.4324,
+        "draw": 0.2744,
+        "away": 0.2932
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 561904,
+      "competition": "ELC",
+      "home_team": "Portsmouth FC",
+      "away_team": "Millwall FC",
+      "kickoff": "2026-10-24T11:30:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.4155,
+        "draw": 0.2352,
+        "away": 0.3493
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564718,
+      "competition": "PD",
+      "home_team": "Rayo Vallecano de Madrid",
+      "away_team": "Elche CF",
+      "kickoff": "2026-10-24T12:00:00Z",
+      "actual": "0-3",
+      "probs_1x2": {
+        "home": 0.4487,
+        "draw": 0.2509,
+        "away": 0.3004
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558560,
+      "competition": "SA",
+      "home_team": "Cagliari Calcio",
+      "away_team": "Bologna FC 1909",
+      "kickoff": "2026-10-24T13:00:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.3696,
+        "draw": 0.2873,
+        "away": 0.3431
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558561,
+      "competition": "SA",
+      "home_team": "Como 1907",
+      "away_team": "US Sassuolo Calcio",
+      "kickoff": "2026-10-24T13:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.5135,
+        "draw": 0.2373,
+        "away": 0.2492
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565830,
+      "competition": "BL1",
+      "home_team": "1. FSV Mainz 05",
+      "away_team": "SV Werder Bremen",
+      "kickoff": "2026-10-24T13:30:00Z",
+      "actual": "2-3",
+      "probs_1x2": {
+        "home": 0.4313,
+        "draw": 0.2168,
+        "away": 0.3519
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565831,
+      "competition": "BL1",
+      "home_team": "1. FC Köln",
+      "away_team": "FC Schalke 04",
+      "kickoff": "2026-10-24T13:30:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.5104,
+        "draw": 0.2151,
+        "away": 0.2745
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565832,
+      "competition": "BL1",
+      "home_team": "RB Leipzig",
+      "away_team": "SV 07 Elversberg",
+      "kickoff": "2026-10-24T13:30:00Z",
+      "actual": "4-0",
+      "probs_1x2": {
+        "home": 0.7101,
+        "draw": 0.1646,
+        "away": 0.1253
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565834,
+      "competition": "BL1",
+      "home_team": "SC Paderborn 07",
+      "away_team": "Hamburger SV",
+      "kickoff": "2026-10-24T13:30:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.5216,
+        "draw": 0.2158,
+        "away": 0.2626
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565838,
+      "competition": "BL1",
+      "home_team": "FC Augsburg",
+      "away_team": "1. FC Union Berlin",
+      "kickoff": "2026-10-24T13:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.6782,
+        "draw": 0.167,
+        "away": 0.1548
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560616,
+      "competition": "PL",
+      "home_team": "Arsenal FC",
+      "away_team": "Everton FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.509,
+        "draw": 0.2468,
+        "away": 0.2442
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560618,
+      "competition": "PL",
+      "home_team": "Coventry City FC",
+      "away_team": "Fulham FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.4448,
+        "draw": 0.2554,
+        "away": 0.2998
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 561893,
+      "competition": "ELC",
+      "home_team": "Cardiff City FC",
+      "away_team": "Birmingham City FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.4765,
+        "draw": 0.2461,
+        "away": 0.2774
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561896,
+      "competition": "ELC",
+      "home_team": "Queens Park Rangers FC",
+      "away_team": "Swansea City AFC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "5-0",
+      "probs_1x2": {
+        "home": 0.3757,
+        "draw": 0.2502,
+        "away": 0.3741
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561897,
+      "competition": "ELC",
+      "home_team": "Stoke City FC",
+      "away_team": "Bristol City FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.4434,
+        "draw": 0.2293,
+        "away": 0.3273
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561898,
+      "competition": "ELC",
+      "home_team": "Preston North End FC",
+      "away_team": "West Bromwich Albion FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.274,
+        "draw": 0.2706,
+        "away": 0.4554
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": true
+        }
+      }
+    },
+    {
+      "fixture_id": 561899,
+      "competition": "ELC",
+      "home_team": "Lincoln City FC",
+      "away_team": "Burnley FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "4-1",
+      "probs_1x2": {
+        "home": 0.2176,
+        "draw": 0.2037,
+        "away": 0.5787
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561900,
+      "competition": "ELC",
+      "home_team": "West Ham United FC",
+      "away_team": "Southampton FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "2-3",
+      "probs_1x2": {
+        "home": 0.5225,
+        "draw": 0.2328,
+        "away": 0.2447
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561902,
+      "competition": "ELC",
+      "home_team": "Blackburn Rovers FC",
+      "away_team": "Wrexham AFC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.4779,
+        "draw": 0.2452,
+        "away": 0.2769
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 561903,
+      "competition": "ELC",
+      "home_team": "Wolverhampton Wanderers FC",
+      "away_team": "Watford FC",
+      "kickoff": "2026-10-24T14:00:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.5971,
+        "draw": 0.217,
+        "away": 0.1859
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564727,
+      "competition": "PD",
+      "home_team": "Real Racing Club de Santander",
+      "away_team": "RCD Espanyol de Barcelona",
+      "kickoff": "2026-10-24T14:15:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.449,
+        "draw": 0.2356,
+        "away": 0.3154
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": null
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558862,
+      "competition": "DED",
+      "home_team": "FC Utrecht",
+      "away_team": "PEC Zwolle",
+      "kickoff": "2026-10-24T14:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.4432,
+        "draw": 0.2049,
+        "away": 0.3519
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
       "fixture_id": 567337,
       "competition": "PPL",
       "home_team": "CF Estrela da Amadora",
@@ -8295,6 +9135,181 @@
         "correct_score": {
           "pick": "1-1",
           "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558564,
+      "competition": "SA",
+      "home_team": "SSC Napoli",
+      "away_team": "AS Roma",
+      "kickoff": "2026-10-24T16:00:00Z",
+      "actual": "3-3",
+      "probs_1x2": {
+        "home": 0.3609,
+        "draw": 0.2756,
+        "away": 0.3635
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 560617,
+      "competition": "PL",
+      "home_team": "Chelsea FC",
+      "away_team": "Tottenham Hotspur FC",
+      "kickoff": "2026-10-24T16:30:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.5481,
+        "draw": 0.2192,
+        "away": 0.2327
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 565837,
+      "competition": "BL1",
+      "home_team": "Borussia Dortmund",
+      "away_team": "Eintracht Frankfurt",
+      "kickoff": "2026-10-24T16:30:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.6531,
+        "draw": 0.1722,
+        "away": 0.1747
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564722,
+      "competition": "PD",
+      "home_team": "Valencia CF",
+      "away_team": "Villarreal CF",
+      "kickoff": "2026-10-24T16:30:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.2795,
+        "draw": 0.2619,
+        "away": 0.4586
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558861,
+      "competition": "DED",
+      "home_team": "Willem II Tilburg",
+      "away_team": "SC Cambuur-Leeuwarden",
+      "kickoff": "2026-10-24T16:45:00Z",
+      "actual": "1-6",
+      "probs_1x2": {
+        "home": 0.296,
+        "draw": 0.23,
+        "away": 0.474
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
         }
       }
     },
@@ -8369,6 +9384,41 @@
       }
     },
     {
+      "fixture_id": 558565,
+      "competition": "SA",
+      "home_team": "SS Lazio",
+      "away_team": "Parma Calcio 1913",
+      "kickoff": "2026-10-24T18:45:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.5819,
+        "draw": 0.224,
+        "away": 0.1941
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
       "fixture_id": 559652,
       "competition": "FL1",
       "home_team": "Racing Club de Lens",
@@ -8396,6 +9446,76 @@
         "ah": {
           "pick": "0.5:home_cover",
           "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564724,
+      "competition": "PD",
+      "home_team": "Club Atlético de Madrid",
+      "away_team": "RC Deportivo La Coruña",
+      "kickoff": "2026-10-24T19:00:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.5472,
+        "draw": 0.2145,
+        "away": 0.2383
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558860,
+      "competition": "DED",
+      "home_team": "ADO Den Haag",
+      "away_team": "SC Heerenveen",
+      "kickoff": "2026-10-24T19:00:00Z",
+      "actual": "2-3",
+      "probs_1x2": {
+        "home": 0.3507,
+        "draw": 0.2202,
+        "away": 0.4291
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
         },
         "correct_score": {
           "pick": null,
@@ -8437,33 +9557,1468 @@
           "hit": false
         }
       }
+    },
+    {
+      "fixture_id": 555054,
+      "competition": "BSA",
+      "home_team": "SC Internacional",
+      "away_team": "Botafogo FR",
+      "kickoff": "2026-10-24T19:30:00Z",
+      "actual": "3-0",
+      "probs_1x2": {
+        "home": 0.4928,
+        "draw": 0.2669,
+        "away": 0.2403
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 555055,
+      "competition": "BSA",
+      "home_team": "Mirassol FC",
+      "away_team": "São Paulo FC",
+      "kickoff": "2026-10-24T19:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.5577,
+        "draw": 0.2425,
+        "away": 0.1998
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 555059,
+      "competition": "BSA",
+      "home_team": "EC Vitória",
+      "away_team": "CA Paranaense",
+      "kickoff": "2026-10-24T19:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3327,
+        "draw": 0.2265,
+        "away": 0.4408
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 555056,
+      "competition": "BSA",
+      "home_team": "SE Palmeiras",
+      "away_team": "RB Bragantino",
+      "kickoff": "2026-10-24T21:30:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.5951,
+        "draw": 0.2385,
+        "away": 0.1664
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": "no",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 555058,
+      "competition": "BSA",
+      "home_team": "CR Vasco da Gama",
+      "away_team": "SC Corinthians Paulista",
+      "kickoff": "2026-10-24T21:30:00Z",
+      "actual": "3-2",
+      "probs_1x2": {
+        "home": 0.5947,
+        "draw": 0.2151,
+        "away": 0.1902
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 555050,
+      "competition": "BSA",
+      "home_team": "Chapecoense AF",
+      "away_team": "Fluminense FC",
+      "kickoff": "2026-10-24T22:30:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.343,
+        "draw": 0.2302,
+        "away": 0.4268
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 555057,
+      "competition": "BSA",
+      "home_team": "Santos FC",
+      "away_team": "EC Bahia",
+      "kickoff": "2026-10-25T01:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3884,
+        "draw": 0.2519,
+        "away": 0.3597
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558859,
+      "competition": "DED",
+      "home_team": "Fortuna Sittard",
+      "away_team": "SBV Excelsior",
+      "kickoff": "2026-10-25T11:15:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.3365,
+        "draw": 0.2143,
+        "away": 0.4492
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558563,
+      "competition": "SA",
+      "home_team": "FC Internazionale Milano",
+      "away_team": "ACF Fiorentina",
+      "kickoff": "2026-10-25T11:30:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.6568,
+        "draw": 0.1698,
+        "away": 0.1734
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083658,
+      "competition": "BL2",
+      "home_team": "Holstein Kiel",
+      "away_team": "Dynamo Dresden",
+      "kickoff": "2026-10-25T12:30:00+00:00",
+      "actual": "3-0",
+      "probs_1x2": {
+        "home": 0.4731,
+        "draw": 0.2393,
+        "away": 0.2876
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083660,
+      "competition": "BL2",
+      "home_team": "Eintracht Braunschweig",
+      "away_team": "Hannover 96",
+      "kickoff": "2026-10-25T12:30:00+00:00",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.4768,
+        "draw": 0.2406,
+        "away": 0.2826
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 2083661,
+      "competition": "BL2",
+      "home_team": "VfL Osnabrück",
+      "away_team": "SpVgg Greuther Fürth",
+      "kickoff": "2026-10-25T12:30:00+00:00",
+      "actual": "3-0",
+      "probs_1x2": {
+        "home": 0.3978,
+        "draw": 0.2349,
+        "away": 0.3673
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564720,
+      "competition": "PD",
+      "home_team": "Athletic Club",
+      "away_team": "Getafe CF",
+      "kickoff": "2026-10-25T13:00:00Z",
+      "actual": "4-0",
+      "probs_1x2": {
+        "home": 0.5478,
+        "draw": 0.2625,
+        "away": 0.1897
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": "no",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558857,
+      "competition": "DED",
+      "home_team": "NEC",
+      "away_team": "FC Groningen",
+      "kickoff": "2026-10-25T13:30:00Z",
+      "actual": "2-2",
+      "probs_1x2": {
+        "home": 0.2984,
+        "draw": 0.2066,
+        "away": 0.495
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558858,
+      "competition": "DED",
+      "home_team": "PSV",
+      "away_team": "Feyenoord Rotterdam",
+      "kickoff": "2026-10-25T13:30:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3871,
+        "draw": 0.1979,
+        "away": 0.415
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560612,
+      "competition": "PL",
+      "home_team": "Liverpool FC",
+      "away_team": "Brighton & Hove Albion FC",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.2451,
+        "draw": 0.2278,
+        "away": 0.5271
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "1.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560613,
+      "competition": "PL",
+      "home_team": "Crystal Palace FC",
+      "away_team": "Newcastle United FC",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.5046,
+        "draw": 0.2142,
+        "away": 0.2812
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560615,
+      "competition": "PL",
+      "home_team": "Manchester United FC",
+      "away_team": "AFC Bournemouth",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "0-3",
+      "probs_1x2": {
+        "home": 0.5578,
+        "draw": 0.208,
+        "away": 0.2342
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560619,
+      "competition": "PL",
+      "home_team": "Hull City AFC",
+      "away_team": "Brentford FC",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.4458,
+        "draw": 0.2514,
+        "away": 0.3028
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558562,
+      "competition": "SA",
+      "home_team": "Atalanta BC",
+      "away_team": "Frosinone Calcio",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "4-4",
+      "probs_1x2": {
+        "home": 0.4797,
+        "draw": 0.2479,
+        "away": 0.2724
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "1.0:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558568,
+      "competition": "SA",
+      "home_team": "Genoa CFC",
+      "away_team": "Venezia FC",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.428,
+        "draw": 0.2368,
+        "away": 0.3352
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": null
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559650,
+      "competition": "FL1",
+      "home_team": "AS Monaco FC",
+      "away_team": "Lille OSC",
+      "kickoff": "2026-10-25T14:00:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.3968,
+        "draw": 0.2545,
+        "away": 0.3487
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": true
+        }
+      }
+    },
+    {
+      "fixture_id": 565835,
+      "competition": "BL1",
+      "home_team": "TSG 1899 Hoffenheim",
+      "away_team": "Bayer 04 Leverkusen",
+      "kickoff": "2026-10-25T14:30:00Z",
+      "actual": "3-0",
+      "probs_1x2": {
+        "home": 0.4214,
+        "draw": 0.2013,
+        "away": 0.3773
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564725,
+      "competition": "PD",
+      "home_team": "RC Celta de Vigo",
+      "away_team": "Real Betis Balompié",
+      "kickoff": "2026-10-25T15:15:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.5005,
+        "draw": 0.2284,
+        "away": 0.2711
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567336,
+      "competition": "PPL",
+      "home_team": "GD Estoril Praia",
+      "away_team": "Moreirense FC",
+      "kickoff": "2026-10-25T15:30:00Z",
+      "actual": "1-3",
+      "probs_1x2": {
+        "home": 0.3666,
+        "draw": 0.2757,
+        "away": 0.3577
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": false
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 558856,
+      "competition": "DED",
+      "home_team": "Sparta Rotterdam",
+      "away_team": "AFC Ajax",
+      "kickoff": "2026-10-25T15:45:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.1758,
+        "draw": 0.1631,
+        "away": 0.6611
+      },
+      "grades": {
+        "1x2": {
+          "pick": "away",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559655,
+      "competition": "FL1",
+      "home_team": "Toulouse FC",
+      "away_team": "ES Troyes AC",
+      "kickoff": "2026-10-25T16:15:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.4211,
+        "draw": 0.2513,
+        "away": 0.3276
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559649,
+      "competition": "FL1",
+      "home_team": "Olympique de Marseille",
+      "away_team": "Le Havre AC",
+      "kickoff": "2026-10-25T16:15:00Z",
+      "actual": "4-3",
+      "probs_1x2": {
+        "home": 0.4741,
+        "draw": 0.2354,
+        "away": 0.2905
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "1.0:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559651,
+      "competition": "FL1",
+      "home_team": "Stade Rennais FC 1901",
+      "away_team": "RC Strasbourg Alsace",
+      "kickoff": "2026-10-25T16:15:00Z",
+      "actual": "3-0",
+      "probs_1x2": {
+        "home": 0.5384,
+        "draw": 0.2037,
+        "away": 0.2579
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559653,
+      "competition": "FL1",
+      "home_team": "Angers SCO",
+      "away_team": "FC Lorient",
+      "kickoff": "2026-10-25T16:15:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.3123,
+        "draw": 0.2438,
+        "away": 0.4439
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559656,
+      "competition": "FL1",
+      "home_team": "AJ Auxerre",
+      "away_team": "Le Mans FC",
+      "kickoff": "2026-10-25T16:15:00Z",
+      "actual": "1-1",
+      "probs_1x2": {
+        "home": 0.476,
+        "draw": 0.2342,
+        "away": 0.2898
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 560621,
+      "competition": "PL",
+      "home_team": "Sunderland AFC",
+      "away_team": "Leeds United FC",
+      "kickoff": "2026-10-25T16:30:00Z",
+      "actual": "0-0",
+      "probs_1x2": {
+        "home": 0.3155,
+        "draw": 0.2794,
+        "away": 0.4051
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "under",
+          "hit": true
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 565836,
+      "competition": "BL1",
+      "home_team": "SC Freiburg",
+      "away_team": "FC Bayern München",
+      "kickoff": "2026-10-25T16:30:00Z",
+      "actual": "1-3",
+      "probs_1x2": {
+        "home": 0.555,
+        "draw": 0.208,
+        "away": 0.237
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558566,
+      "competition": "SA",
+      "home_team": "US Lecce",
+      "away_team": "Juventus FC",
+      "kickoff": "2026-10-25T17:00:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.3049,
+        "draw": 0.2428,
+        "away": 0.4523
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564726,
+      "competition": "PD",
+      "home_team": "Real Sociedad de Fútbol",
+      "away_team": "Levante UD",
+      "kickoff": "2026-10-25T17:30:00Z",
+      "actual": "2-1",
+      "probs_1x2": {
+        "home": 0.4911,
+        "draw": 0.2494,
+        "away": 0.2595
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567330,
+      "competition": "PPL",
+      "home_team": "Rio Ave FC",
+      "away_team": "FC Famalicão",
+      "kickoff": "2026-10-25T18:00:00Z",
+      "actual": "0-4",
+      "probs_1x2": {
+        "home": 0.2496,
+        "draw": 0.2208,
+        "away": 0.5296
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "1.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567334,
+      "competition": "PPL",
+      "home_team": "CD Nacional",
+      "away_team": "Sporting Clube de Braga",
+      "kickoff": "2026-10-25T18:00:00Z",
+      "actual": "1-0",
+      "probs_1x2": {
+        "home": 0.2958,
+        "draw": 0.2471,
+        "away": 0.4571
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": null
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558855,
+      "competition": "DED",
+      "home_team": "AZ",
+      "away_team": "FC Twente '65",
+      "kickoff": "2026-10-25T19:00:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.44,
+        "draw": 0.2274,
+        "away": 0.3326
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 558559,
+      "competition": "SA",
+      "home_team": "Udinese Calcio",
+      "away_team": "AC Milan",
+      "kickoff": "2026-10-25T19:45:00Z",
+      "actual": "0-2",
+      "probs_1x2": {
+        "home": 0.2573,
+        "draw": 0.2613,
+        "away": 0.4814
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-1",
+          "hit": false
+        }
+      }
+    },
+    {
+      "fixture_id": 564723,
+      "competition": "PD",
+      "home_team": "FC Barcelona",
+      "away_team": "Real Madrid CF",
+      "kickoff": "2026-10-25T20:00:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.6483,
+        "draw": 0.183,
+        "away": 0.1687
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 567332,
+      "competition": "PPL",
+      "home_team": "Sporting Clube de Portugal",
+      "away_team": "Académico de Viseu FC",
+      "kickoff": "2026-10-25T20:30:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.4328,
+        "draw": 0.242,
+        "away": 0.3252
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": true
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 170,
-      "hit": 90,
-      "hit_rate": 0.5294
+      "graded": 204,
+      "hit": 111,
+      "hit_rate": 0.5441
     },
     "ou25": {
-      "graded": 200,
-      "hit": 118,
-      "hit_rate": 0.59
+      "graded": 255,
+      "hit": 146,
+      "hit_rate": 0.5725
     },
     "btts": {
-      "graded": 179,
-      "hit": 105,
-      "hit_rate": 0.5866
+      "graded": 235,
+      "hit": 132,
+      "hit_rate": 0.5617
     },
     "ah": {
-      "graded": 231,
-      "hit": 156,
-      "hit_rate": 0.6753
+      "graded": 301,
+      "hit": 210,
+      "hit_rate": 0.6977
     },
     "correct_score": {
-      "graded": 79,
-      "hit": 10,
-      "hit_rate": 0.1266
+      "graded": 93,
+      "hit": 12,
+      "hit_rate": 0.129
     }
   }
 }

@@ -31,6 +31,25 @@
         {
           "position": 1,
           "team": {
+            "id": 5,
+            "name": "FC Bayern München",
+            "shortName": "Bayern",
+            "tla": "FCB",
+            "crest": "https://crests.football-data.org/5.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 5,
+          "draw": 2,
+          "lost": 0,
+          "points": 17,
+          "goalsFor": 25,
+          "goalsAgainst": 6,
+          "goalDifference": 19
+        },
+        {
+          "position": 2,
+          "team": {
             "id": 4,
             "name": "Borussia Dortmund",
             "shortName": "Dortmund",
@@ -48,25 +67,6 @@
           "goalDifference": 8
         },
         {
-          "position": 2,
-          "team": {
-            "id": 5,
-            "name": "FC Bayern München",
-            "shortName": "Bayern",
-            "tla": "FCB",
-            "crest": "https://crests.football-data.org/5.png"
-          },
-          "playedGames": 6,
-          "form": null,
-          "won": 4,
-          "draw": 2,
-          "lost": 0,
-          "points": 14,
-          "goalsFor": 22,
-          "goalsAgainst": 5,
-          "goalDifference": 17
-        },
-        {
           "position": 3,
           "team": {
             "id": 17,
@@ -75,15 +75,15 @@
             "tla": "SCF",
             "crest": "https://crests.football-data.org/17.png"
           },
-          "playedGames": 6,
+          "playedGames": 7,
           "form": null,
           "won": 4,
           "draw": 1,
-          "lost": 1,
+          "lost": 2,
           "points": 13,
-          "goalsFor": 15,
-          "goalsAgainst": 6,
-          "goalDifference": 9
+          "goalsFor": 16,
+          "goalsAgainst": 9,
+          "goalDifference": 7
         },
         {
           "position": 4,
@@ -94,15 +94,15 @@
             "tla": "B04",
             "crest": "https://crests.football-data.org/3.png"
           },
-          "playedGames": 6,
+          "playedGames": 7,
           "form": null,
           "won": 4,
           "draw": 1,
-          "lost": 1,
+          "lost": 2,
           "points": 13,
           "goalsFor": 16,
-          "goalsAgainst": 9,
-          "goalDifference": 7
+          "goalsAgainst": 12,
+          "goalDifference": 4
         },
         {
           "position": 5,
@@ -202,6 +202,25 @@
         {
           "position": 10,
           "team": {
+            "id": 2,
+            "name": "TSG 1899 Hoffenheim",
+            "shortName": "Hoffenheim",
+            "tla": "TSG",
+            "crest": "https://crests.football-data.org/2.png"
+          },
+          "playedGames": 7,
+          "form": null,
+          "won": 3,
+          "draw": 0,
+          "lost": 4,
+          "points": 9,
+          "goalsFor": 14,
+          "goalsAgainst": 14,
+          "goalDifference": 0
+        },
+        {
+          "position": 11,
+          "team": {
             "id": 7,
             "name": "Hamburger SV",
             "shortName": "HSV",
@@ -219,7 +238,7 @@
           "goalDifference": -10
         },
         {
-          "position": 11,
+          "position": 12,
           "team": {
             "id": 1,
             "name": "1. FC Köln",
@@ -238,7 +257,7 @@
           "goalDifference": -3
         },
         {
-          "position": 12,
+          "position": 13,
           "team": {
             "id": 29,
             "name": "SC Paderborn 07",
@@ -257,7 +276,7 @@
           "goalDifference": -3
         },
         {
-          "position": 13,
+          "position": 14,
           "team": {
             "id": 19,
             "name": "Eintracht Frankfurt",
@@ -274,25 +293,6 @@
           "goalsFor": 10,
           "goalsAgainst": 17,
           "goalDifference": -7
-        },
-        {
-          "position": 14,
-          "team": {
-            "id": 2,
-            "name": "TSG 1899 Hoffenheim",
-            "shortName": "Hoffenheim",
-            "tla": "TSG",
-            "crest": "https://crests.football-data.org/2.png"
-          },
-          "playedGames": 6,
-          "form": null,
-          "won": 2,
-          "draw": 0,
-          "lost": 4,
-          "points": 6,
-          "goalsFor": 11,
-          "goalsAgainst": 14,
-          "goalDifference": -3
         },
         {
           "position": 15,

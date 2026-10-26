@@ -151,14 +151,14 @@
             "tla": "BAH",
             "crest": "https://crests.football-data.org/1777.png"
           },
-          "playedGames": 31,
+          "playedGames": 32,
           "form": null,
           "won": 13,
-          "draw": 10,
+          "draw": 11,
           "lost": 8,
-          "points": 49,
-          "goalsFor": 44,
-          "goalsAgainst": 39,
+          "points": 50,
+          "goalsFor": 45,
+          "goalsAgainst": 40,
           "goalDifference": 5
         },
         {
@@ -170,14 +170,14 @@
             "tla": "SAN",
             "crest": "https://crests.football-data.org/6685.png"
           },
-          "playedGames": 31,
+          "playedGames": 32,
           "form": null,
           "won": 12,
-          "draw": 9,
+          "draw": 10,
           "lost": 10,
-          "points": 45,
-          "goalsFor": 48,
-          "goalsAgainst": 46,
+          "points": 46,
+          "goalsFor": 49,
+          "goalsAgainst": 47,
           "goalDifference": 2
         },
         {
