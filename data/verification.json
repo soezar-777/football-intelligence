@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-26T12:23:21.865056+00:00",
+  "generated_at": "2026-10-27T12:23:12.129278+00:00",
   "model_version": "poisson-v1",
-  "graded_count": 314,
+  "graded_count": 319,
   "matches": [
     {
       "fixture_id": 560593,
@@ -10992,33 +10992,208 @@
           "hit": null
         }
       }
+    },
+    {
+      "fixture_id": 567331,
+      "competition": "PPL",
+      "home_team": "CD Santa Clara",
+      "away_team": "Sport Lisboa e Benfica",
+      "kickoff": "2026-10-26T18:45:00Z",
+      "actual": "1-2",
+      "probs_1x2": {
+        "home": 0.2906,
+        "draw": 0.2456,
+        "away": 0.4638
+      },
+      "grades": {
+        "1x2": {
+          "pick": null,
+          "hit": null
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": true
+        },
+        "ah": {
+          "pick": "-1.0:home_not_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 559648,
+      "competition": "FL1",
+      "home_team": "Paris Saint-Germain FC",
+      "away_team": "Olympique Lyonnais",
+      "kickoff": "2026-10-26T19:30:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.4508,
+        "draw": 0.2481,
+        "away": 0.3011
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 564721,
+      "competition": "PD",
+      "home_team": "Sevilla FC",
+      "away_team": "CA Osasuna",
+      "kickoff": "2026-10-26T20:00:00Z",
+      "actual": "2-0",
+      "probs_1x2": {
+        "home": 0.5291,
+        "draw": 0.2106,
+        "away": 0.2603
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": "over",
+          "hit": false
+        },
+        "btts": {
+          "pick": "yes",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-1.5:home_not_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 555051,
+      "competition": "BSA",
+      "home_team": "Coritiba FBC",
+      "away_team": "Grêmio FBPA",
+      "kickoff": "2026-10-26T22:30:00Z",
+      "actual": "0-1",
+      "probs_1x2": {
+        "home": 0.4869,
+        "draw": 0.2474,
+        "away": 0.2657
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": false
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": null,
+          "hit": null
+        },
+        "ah": {
+          "pick": "0.5:home_cover",
+          "hit": false
+        },
+        "correct_score": {
+          "pick": null,
+          "hit": null
+        }
+      }
+    },
+    {
+      "fixture_id": 555053,
+      "competition": "BSA",
+      "home_team": "CR Flamengo",
+      "away_team": "CA Mineiro",
+      "kickoff": "2026-10-26T23:00:00Z",
+      "actual": "3-2",
+      "probs_1x2": {
+        "home": 0.5988,
+        "draw": 0.2345,
+        "away": 0.1667
+      },
+      "grades": {
+        "1x2": {
+          "pick": "home",
+          "hit": true
+        },
+        "ou25": {
+          "pick": null,
+          "hit": null
+        },
+        "btts": {
+          "pick": "no",
+          "hit": false
+        },
+        "ah": {
+          "pick": "-0.5:home_cover",
+          "hit": true
+        },
+        "correct_score": {
+          "pick": "1-0",
+          "hit": false
+        }
+      }
     }
   ],
   "summary": {
     "1x2": {
-      "graded": 204,
-      "hit": 111,
-      "hit_rate": 0.5441
+      "graded": 208,
+      "hit": 114,
+      "hit_rate": 0.5481
     },
     "ou25": {
-      "graded": 255,
+      "graded": 256,
       "hit": 146,
-      "hit_rate": 0.5725
+      "hit_rate": 0.5703
     },
     "btts": {
-      "graded": 235,
-      "hit": 132,
-      "hit_rate": 0.5617
+      "graded": 239,
+      "hit": 133,
+      "hit_rate": 0.5565
     },
     "ah": {
-      "graded": 301,
-      "hit": 210,
-      "hit_rate": 0.6977
+      "graded": 306,
+      "hit": 213,
+      "hit_rate": 0.6961
     },
     "correct_score": {
-      "graded": 93,
+      "graded": 94,
       "hit": 12,
-      "hit_rate": 0.129
+      "hit_rate": 0.1277
     }
   }
 }

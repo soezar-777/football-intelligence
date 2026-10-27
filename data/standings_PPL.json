@@ -56,15 +56,15 @@
             "tla": "BEN",
             "crest": "https://crests.football-data.org/1903.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
-          "won": 6,
+          "won": 7,
           "draw": 1,
           "lost": 1,
-          "points": 19,
-          "goalsFor": 24,
-          "goalsAgainst": 7,
-          "goalDifference": 17
+          "points": 22,
+          "goalsFor": 26,
+          "goalsAgainst": 8,
+          "goalDifference": 18
         },
         {
           "position": 3,
@@ -94,15 +94,15 @@
             "tla": "CD ",
             "crest": "https://crests.football-data.org/5530.png"
           },
-          "playedGames": 8,
+          "playedGames": 9,
           "form": null,
           "won": 5,
           "draw": 3,
-          "lost": 0,
+          "lost": 1,
           "points": 18,
-          "goalsFor": 12,
-          "goalsAgainst": 4,
-          "goalDifference": 8
+          "goalsFor": 13,
+          "goalsAgainst": 6,
+          "goalDifference": 7
         },
         {
           "position": 5,
