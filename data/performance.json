@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-10-27T12:23:12.187927+00:00",
+  "generated_at": "2026-10-28T00:23:08.388397+00:00",
   "model_version": "poisson-v1",
-  "graded_total": 319,
+  "graded_total": 322,
   "overall": {
     "1x2": {
-      "graded": 208,
-      "hit": 114,
-      "hit_rate": 0.5481
+      "graded": 209,
+      "hit": 115,
+      "hit_rate": 0.5502
     },
     "ou25": {
-      "graded": 256,
-      "hit": 146,
-      "hit_rate": 0.5703
+      "graded": 257,
+      "hit": 147,
+      "hit_rate": 0.572
     },
     "btts": {
-      "graded": 239,
-      "hit": 133,
-      "hit_rate": 0.5565
+      "graded": 240,
+      "hit": 134,
+      "hit_rate": 0.5583
     },
     "ah": {
-      "graded": 306,
-      "hit": 213,
-      "hit_rate": 0.6961
+      "graded": 309,
+      "hit": 216,
+      "hit_rate": 0.699
     },
     "correct_score": {
       "graded": 94,
@@ -302,24 +302,24 @@
     },
     "SA": {
       "1x2": {
+        "graded": 18,
+        "hit": 12,
+        "hit_rate": 0.6667
+      },
+      "ou25": {
+        "graded": 21,
+        "hit": 11,
+        "hit_rate": 0.5238
+      },
+      "btts": {
         "graded": 17,
         "hit": 11,
         "hit_rate": 0.6471
       },
-      "ou25": {
-        "graded": 20,
-        "hit": 10,
-        "hit_rate": 0.5
-      },
-      "btts": {
-        "graded": 16,
-        "hit": 10,
-        "hit_rate": 0.625
-      },
       "ah": {
-        "graded": 29,
-        "hit": 21,
-        "hit_rate": 0.7241
+        "graded": 32,
+        "hit": 24,
+        "hit_rate": 0.75
       },
       "correct_score": {
         "graded": 12,
@@ -330,24 +330,24 @@
   },
   "rolling_last_30": {
     "1x2": {
-      "graded": 15,
-      "hit": 7,
-      "hit_rate": 0.4667
+      "graded": 14,
+      "hit": 8,
+      "hit_rate": 0.5714
     },
     "ou25": {
-      "graded": 19,
+      "graded": 18,
       "hit": 10,
-      "hit_rate": 0.5263
+      "hit_rate": 0.5556
     },
     "btts": {
-      "graded": 24,
+      "graded": 22,
       "hit": 9,
-      "hit_rate": 0.375
+      "hit_rate": 0.4091
     },
     "ah": {
       "graded": 28,
-      "hit": 21,
-      "hit_rate": 0.75
+      "hit": 22,
+      "hit_rate": 0.7857
     },
     "correct_score": {
       "graded": 5,
@@ -355,5 +355,5 @@
       "hit_rate": 0.2
     }
   },
-  "brier_1x2": 0.6219
+  "brier_1x2": 0.6195
 }
