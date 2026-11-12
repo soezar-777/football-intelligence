@@ -65,6 +65,17 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
 .hint{text-align:center;color:#5a6a8a;margin:10px 0;font-size:14px}
 #shareBtn{width:100%;background:#166534;color:#fff;border:none;border-radius:12px;padding:17px;font-size:19px;font-weight:700;cursor:pointer}
 #dlBtn{width:100%;margin-top:10px;background:#fffef9;border:2px solid #166534;color:#166534;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer}
+#sigSheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:85;align-items:flex-end;justify-content:center}
+#sigSheet.open{display:flex}
+#sigClose{background:#eee7d2;border:none;border-radius:8px;width:38px;height:38px;font-size:17px;cursor:pointer}
+.sigLabel{font-size:13px;color:#5a6a8a;margin:8px 0 6px}
+#sigPrevWrap{display:none;margin-bottom:6px}
+#sigPrev{display:block;max-width:100%;max-height:120px;border:1px solid #d8d2bd;border-radius:8px;background-color:#fffef9;background-image:repeating-conic-gradient(#e9e3cf 0% 25%,#fffef9 0% 50%);background-size:16px 16px}
+#sigPad{display:block;width:100%;height:220px;border:1.5px solid #b9ac8c;border-radius:10px;background-color:#fffef9;background-image:linear-gradient(to bottom,rgba(0,0,0,0) 168px,#ddd5ba 168px,#ddd5ba 169px,rgba(0,0,0,0) 169px);touch-action:none}
+.sigBtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sigBtns button{flex:1;min-width:70px;border-radius:10px;padding:13px 6px;font-size:16px;cursor:pointer;background:#fffef9;border:1.5px solid #b9ac8c;color:#1d2a4a}
+#sigSave{background:#166534;border-color:#166534;color:#fff;font-weight:700}
+#sigDelete{color:#b91c1c;border-color:#d8a7a7}
 #datePick,#timePick{position:fixed;left:8px;bottom:8px;width:28px;height:28px;opacity:.01;border:none;z-index:70;pointer-events:none;padding:0}
 #bootFail{position:fixed;inset:0;background:#fffef9;display:none;z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-size:18px}
 #bootFail button{background:#166534;color:#fff;border:none;border-radius:12px;padding:14px 22px;font-size:17px;cursor:pointer}
@@ -83,6 +94,7 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
       <button id="zoomIn">＋</button>
       <button id="zoomReset">ပုံမှန်</button>
       <button id="chipsToggle">👥 နာမည်များ</button>
+      <button id="sigBtn" title="လက်မှတ်">✍️ လက်မှတ်</button>
     </div>
   </div>
   <div id="chipsPanel">
@@ -122,6 +134,20 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
     <div class="hint">ပုံကို ဖိထားပြီး Save လုပ်လို့လည်း ရတယ်</div>
     <button id="shareBtn">📤 Share — Viber နဲ့ ပို့မယ်</button>
     <button id="dlBtn">⬇ Download — သိမ်းမယ်</button>
+  </div>
+</div>
+<div id="sigSheet">
+  <div class="sheetBox">
+    <div class="sheetHead"><b>လက်မှတ်</b><button id="sigClose">✕</button></div>
+    <div id="sigPrevWrap"><div class="sigLabel">သိမ်းထားတဲ့ လက်မှတ်</div><img id="sigPrev" alt="signature"></div>
+    <div class="sigLabel">လက်မှတ် ရေးဆွဲရန်</div>
+    <canvas id="sigPad"></canvas>
+    <div class="sigBtns">
+      <button id="sigClear">ရှင်းမယ်</button>
+      <button id="sigDelete">🗑 ဖျက်မယ်</button>
+      <button id="sigSave">သိမ်းမယ်</button>
+      <button id="sigCloseBtn">ပိတ်မယ်</button>
+    </div>
   </div>
 </div>
 <input type="date" id="datePick">
@@ -415,6 +441,100 @@ if(!window.PointerEvent){
   area.addEventListener('touchend',function(e){ if(e.touches.length<2) tGes=null; });
 }
 
+/* ---------- signature ---------- */
+var SIGK='lunkhrunre_signature_v1';
+var sigImg=null;
+function sigData(){ return store.get(SIGK); }
+function fmtSigDate(s){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0].slice(2); }
+function loadSigImg(cb){
+  var url=sigData();
+  if(!url){ sigImg=null; if(cb) cb(); return; }
+  var im=new Image();
+  im.onload=function(){ sigImg=im; if(cb) cb(); };
+  im.onerror=function(){ sigImg=null; if(cb) cb(); };
+  im.src=url;
+}
+var sigPadEl=$('sigPad'), padCtx=sigPadEl.getContext('2d');
+var padDraw=false, padPts=[], padMid=null, padBox=null, padDirty=false;
+function sizePad(){
+  var r=sigPadEl.getBoundingClientRect(); if(r.width<10) return;
+  var dpr=window.devicePixelRatio||1;
+  sigPadEl.width=Math.round(r.width*dpr); sigPadEl.height=Math.round(r.height*dpr);
+  padCtx.setTransform(dpr,0,0,dpr,0,0);
+  padCtx.lineWidth=3.5; padCtx.lineCap='round'; padCtx.lineJoin='round';
+  padCtx.strokeStyle='#14213d'; padCtx.fillStyle='#14213d';
+  padPts=[]; padMid=null; padBox=null; padDirty=false; padDraw=false;
+}
+function clearPad(){
+  padCtx.save(); padCtx.setTransform(1,0,0,1,0,0);
+  padCtx.clearRect(0,0,sigPadEl.width,sigPadEl.height); padCtx.restore();
+  padPts=[]; padMid=null; padBox=null; padDirty=false; padDraw=false;
+}
+function padPos(e){ var r=sigPadEl.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function padTrack(p){
+  if(!padBox) padBox={x0:p.x,y0:p.y,x1:p.x,y1:p.y};
+  else{ padBox.x0=Math.min(padBox.x0,p.x); padBox.y0=Math.min(padBox.y0,p.y); padBox.x1=Math.max(padBox.x1,p.x); padBox.y1=Math.max(padBox.y1,p.y); }
+}
+sigPadEl.addEventListener('pointerdown',function(e){
+  e.preventDefault();
+  try{ sigPadEl.setPointerCapture(e.pointerId); }catch(err){}
+  padDraw=true; var p=padPos(e); padPts=[p]; padMid=p; padTrack(p);
+  padCtx.beginPath(); padCtx.arc(p.x,p.y,1.75,0,7); padCtx.fill();
+  padDirty=true;
+});
+sigPadEl.addEventListener('pointermove',function(e){
+  if(!padDraw) return;
+  e.preventDefault();
+  var p=padPos(e); padTrack(p);
+  var prev=padPts[padPts.length-1]; padPts.push(p);
+  var mid={x:(prev.x+p.x)/2,y:(prev.y+p.y)/2};
+  padCtx.beginPath(); padCtx.moveTo(padMid.x,padMid.y);
+  padCtx.quadraticCurveTo(prev.x,prev.y,mid.x,mid.y); padCtx.stroke();
+  padMid=mid;
+});
+function padEnd(){
+  if(!padDraw) return;
+  padDraw=false;
+  var last=padPts[padPts.length-1];
+  if(last&&padMid&&(last.x!==padMid.x||last.y!==padMid.y)){
+    padCtx.beginPath(); padCtx.moveTo(padMid.x,padMid.y); padCtx.lineTo(last.x,last.y); padCtx.stroke();
+  }
+  padPts=[];
+}
+sigPadEl.addEventListener('pointerup',padEnd);
+sigPadEl.addEventListener('pointercancel',padEnd);
+function updateSigUI(){
+  var url=sigData();
+  if(url){ $('sigPrev').src=url; $('sigPrevWrap').style.display='block'; $('sigDelete').style.display='block'; }
+  else{ $('sigPrevWrap').style.display='none'; $('sigDelete').style.display='none'; }
+}
+function openSigSheet(){ $('sigSheet').classList.add('open'); updateSigUI(); sizePad(); }
+function closeSigSheet(){ $('sigSheet').classList.remove('open'); }
+$('sigBtn').addEventListener('click',openSigSheet);
+$('sigClose').addEventListener('click',closeSigSheet);
+$('sigCloseBtn').addEventListener('click',closeSigSheet);
+$('sigSheet').addEventListener('click',function(e){ if(e.target===this) closeSigSheet(); });
+$('sigClear').addEventListener('click',clearPad);
+$('sigDelete').addEventListener('click',function(){
+  store.set(SIGK,'');
+  try{ localStorage.removeItem(SIGK); }catch(e){}
+  sigImg=null; updateSigUI(); clearPad();
+});
+$('sigSave').addEventListener('click',function(){
+  if(padDirty&&padBox){
+    var dpr=window.devicePixelRatio||1, pd=8;
+    var x0=Math.max(0,Math.floor((padBox.x0-pd)*dpr)), y0=Math.max(0,Math.floor((padBox.y0-pd)*dpr));
+    var x1=Math.min(sigPadEl.width,Math.ceil((padBox.x1+pd)*dpr)), y1=Math.min(sigPadEl.height,Math.ceil((padBox.y1+pd)*dpr));
+    if(x1>x0&&y1>y0){
+      var out=document.createElement('canvas'); out.width=x1-x0; out.height=y1-y0;
+      out.getContext('2d').drawImage(sigPadEl,x0,y0,x1-x0,y1-y0,0,0,x1-x0,y1-y0);
+      try{ store.set(SIGK,out.toDataURL('image/png')); }catch(e){}
+    }
+  }
+  loadSigImg(); closeSigSheet();
+});
+loadSigImg();
+
 /* ---------- photo export ---------- */
 function graphemes(text){
   if(window.Intl&&Intl.Segmenter){ try{ return Array.from(new Intl.Segmenter('my',{granularity:'grapheme'}).segment(String(text)),function(s){ return s.segment; }); }catch(e){} }
@@ -507,6 +627,15 @@ function buildPhoto(){
   infos.forEach(function(inf){ gy+=inf.h; hline(gy); });
   for(var b=0;b<6;b++){ gy+=46; hline(gy); }
   ctx.strokeStyle='#a9b6cc'; ctx.strokeRect(PAD,tTop,CW,tBot-tTop);
+  /* signature — bottom-right inside the table, page date under it */
+  if(sigImg&&sigImg.complete&&sigImg.naturalWidth){
+    var sH=92, sW=sH*sigImg.naturalWidth/sigImg.naturalHeight;
+    if(sW>340){ sW=340; sH=Math.round(sW*sigImg.naturalHeight/sigImg.naturalWidth); }
+    var sX=(W-PAD)-28-sW, sY=tBot-12-(sH+8+34);
+    ctx.drawImage(sigImg,sX,sY,sW,sH);
+    ctx.fillStyle='#14213d'; ctx.font='27px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(fmtSigDate(cur),sX+sW/2,sY+sH+35);
+  }
   /* footer */
   ctx.font='24px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#43536e';
   ctx.fillText('- စာမျက်နှာ '+toMy(pageNum(cur))+' -',W/2,tBot+36);
@@ -514,6 +643,9 @@ function buildPhoto(){
 }
 var pending=null;
 $('photoBtn').addEventListener('click',function(){
+  if(sigData()&&!sigImg){ loadSigImg(doPhoto); } else { doPhoto(); }
+});
+function doPhoto(){
   var cv=buildPhoto(); var fname='log-'+cur+'.png';
   pending={canvas:cv,fname:fname,file:null};
   $('sheetImg').src=cv.toDataURL('image/png');
@@ -529,7 +661,7 @@ $('photoBtn').addEventListener('click',function(){
     },'image/png');
   }
   $('sheet').classList.add('open');
-});
+}
 $('shareBtn').addEventListener('click',function(){
   if(pending&&pending.file&&navigator.share){ navigator.share({files:[pending.file]}).catch(function(){}); }
 });
