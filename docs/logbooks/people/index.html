@@ -27,6 +27,10 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 .chipAdd{display:flex;gap:8px;flex-wrap:wrap}
 .chipAdd input{flex:1;min-width:140px;font-size:16px;padding:9px 10px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fff}
 .chipAdd button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer}
+#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5;padding:6px 8px;gap:8px;overflow-x:auto;flex-wrap:nowrap;align-items:center}
+#sugStrip.open{display:flex}
+.sugChip{flex:0 0 auto;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap}
+td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;display:block;line-height:1.35}
 #pageArea{flex:1;overflow:auto;touch-action:none;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch}
 #sizer{position:relative;margin:0 auto}
 #scaler{position:absolute;top:0;left:0;transform-origin:0 0}
@@ -124,6 +128,7 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
       </div>
     </div>
   </div>
+  <div id="sugStrip"></div>
   <div id="bottomBar"><button id="photoBtn">📷 Photo ထုတ်မယ်</button></div>
 </div>
 <div id="undoBar"><span>ဖျက်လိုက်ပါပြီ</span><button id="undoBtn">ပြန်ယူမယ်</button></div>
@@ -208,7 +213,7 @@ function rowHtml(r,i,scratch){
   h+='<td><input class="cell" data-f="name" value="'+esc(scratch?'':r.name)+'" autocomplete="off"></td>';
   h+='<td class="tcell" data-t="in"><span class="tl'+((scratch||!r.timeIn)?' empty':'')+'">'+((!scratch&&r.timeIn)?fmtTime(r.timeIn):'—')+'</span></td>';
   h+='<td class="tcell" data-t="out"><span class="tl'+((scratch||!r.timeOut)?' empty':'')+'">'+((!scratch&&r.timeOut)?fmtTime(r.timeOut):'—')+'</span></td>';
-  h+='<td class="dc"><input class="cell" data-f="detail" value="'+esc(scratch?'':r.detail)+'" autocomplete="off">';
+  h+='<td class="dc"><textarea class="cell" data-f="detail" rows="1">'+esc(scratch?'':r.detail)+'</textarea>';
   if(!scratch) h+='<button class="del" title="ဖျက်">✕</button>';
   h+='</td></tr>';
   return h;
@@ -220,6 +225,8 @@ function render(){
   for(var i=0;i<list.length;i++) html+=rowHtml(list[i],i,false);
   html+=rowHtml(null,list.length,true);
   tbody.innerHTML=html;
+  growDetails();
+  hideSug();
   requestAnimationFrame(applyZoom);
 }
 function rowOfTr(tr){ var id=tr.getAttribute('data-id'); if(!id) return null; var list=rows(); for(var i=0;i<list.length;i++) if(list[i].id===id) return list[i]; return null; }
@@ -237,6 +244,8 @@ tbody.addEventListener('input',function(e){
   var tr=inp.closest('tr'); if(!tr) return;
   var r=rowOfTr(tr); if(!r) r=adopt(tr);
   r[inp.getAttribute('data-f')]=inp.value; save();
+  if(inp.tagName==='TEXTAREA'){ growTa(inp); applyZoom(); }
+  if(sugTarget&&inp===sugTarget.inp) renderSug();
 });
 tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='name') learnName(inp.value.trim());
@@ -277,14 +286,38 @@ $('addRow').addEventListener('click',function(){
 });
 
 /* ---------- names chips ---------- */
-function learnName(nm){ if(nm && names.indexOf(nm)<0){ names.push(nm); saveNames(); renderChips(); } }
+var hiddenNames=loadJSON(NAMEK+'_hidden',[]);
+function saveHiddenNames(){ store.set(NAMEK+'_hidden', JSON.stringify(hiddenNames)); }
+function histValues(field){
+  var seen={}, out=[];
+  Object.keys(log).sort().reverse().forEach(function(d){
+    var list=log[d]||[];
+    for(var i=list.length-1;i>=0;i--){
+      var v=String(list[i][field]||'').trim();
+      if(v&&!seen[v]){ seen[v]=1; out.push(v); }
+    }
+  });
+  return out;
+}
+function displayNames(){
+  var seen={}, out=[];
+  histValues('name').forEach(function(v){ seen[v]=1; out.push(v); });
+  names.forEach(function(v){ if(v&&!seen[v]){ seen[v]=1; out.push(v); } });
+  return out.filter(function(v){ return hiddenNames.indexOf(v)<0; });
+}
+function learnName(nm){
+  if(!nm) return;
+  var hi=hiddenNames.indexOf(nm); if(hi>=0){ hiddenNames.splice(hi,1); saveHiddenNames(); }
+  var ni=names.indexOf(nm); if(ni>=0) names.splice(ni,1);
+  names.unshift(nm); saveNames(); renderChips();
+}
 function renderChips(){
   var box=$('chips'); box.innerHTML='';
-  names.forEach(function(nm){
+  displayNames().forEach(function(nm){
     var b=document.createElement('button'); b.className='chip';
     b.innerHTML=esc(nm)+(editNames?'<span class="cx">✕</span>':'');
     b.addEventListener('click',function(){
-      if(editNames){ names=names.filter(function(x){ return x!==nm; }); saveNames(); renderChips(); }
+      if(editNames){ names=names.filter(function(x){ return x!==nm; }); saveNames(); if(hiddenNames.indexOf(nm)<0){ hiddenNames.push(nm); saveHiddenNames(); } renderChips(); }
       else chipAdd(nm);
     });
     box.appendChild(b);
@@ -297,7 +330,7 @@ function chipAdd(nm){
   save(); render();
   setTimeout(function(){ area.scrollTop=sizer.offsetHeight; },60);
 }
-$('chipsToggle').addEventListener('click',function(){ $('chipsPanel').classList.toggle('open'); });
+$('chipsToggle').addEventListener('click',function(){ var p=$('chipsPanel'); p.classList.toggle('open'); if(p.classList.contains('open')) renderChips(); });
 $('addName').addEventListener('click',function(){
   var v=$('newName').value.trim(); if(!v) return;
   learnName(v); $('newName').value='';
@@ -305,12 +338,52 @@ $('addName').addEventListener('click',function(){
 $('editNames').addEventListener('click',function(){
   editNames=!editNames; $('editNames').textContent=editNames?'ပြီး':'ပြင်'; renderChips();
 });
-(function seedNames(){
-  if(names.length) return;
-  var seen={};
-  Object.keys(log).forEach(function(d){ (log[d]||[]).forEach(function(r){ if(r.name&&!seen[r.name]){ seen[r.name]=1; names.push(r.name); } }); });
-  if(names.length) saveNames();
-})();
+/* names are derived live from the ENTIRE saved log (see displayNames) + the stored manual list */
+
+/* ---------- detail textarea auto-grow ---------- */
+function growTa(ta){ if(!ta) return; ta.style.height='auto'; ta.style.height=(ta.scrollHeight+2)+'px'; }
+function growDetails(){ var tas=tbody.querySelectorAll('textarea.cell'); for(var i=0;i<tas.length;i++) growTa(tas[i]); }
+
+/* ---------- typing suggestions ---------- */
+var SUGF={'name':1};
+var sugTarget=null;
+function sugSource(field){ return displayNames(); }
+function renderSug(){
+  var strip=$('sugStrip');
+  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; return; }
+  var q=(sugTarget.inp.value||'').trim().toLowerCase();
+  var all=sugSource(sugTarget.field);
+  var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
+  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; return; }
+  strip.innerHTML='';
+  vals.forEach(function(v){
+    var b=document.createElement('button'); b.type='button'; b.className='sugChip'; b.textContent=v;
+    b.addEventListener('pointerdown',function(e){ e.preventDefault(); pickSug(v); });
+    strip.appendChild(b);
+  });
+  strip.classList.add('open');
+}
+function hideSug(){ sugTarget=null; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } }
+function pickSug(v){
+  if(!sugTarget) return;
+  var inp=sugTarget.inp, field=sugTarget.field;
+  inp.value=v;
+  var tr=inp.closest('tr');
+  if(tr){ var r=rowOfTr(tr); if(!r) r=adopt(tr); if(r){ r[field]=v; save(); } }
+  learnName(v);
+  hideSug();
+}
+tbody.addEventListener('focusin',function(e){
+  var inp=e.target;
+  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; renderSug(); }
+  else hideSug();
+});
+tbody.addEventListener('focusout',function(){
+  setTimeout(function(){
+    var ae=document.activeElement;
+    if(!ae||!tbody.contains(ae)||!(ae.classList&&ae.classList.contains('cell')&&SUGF[ae.getAttribute('data-f')])) hideSug();
+  },0);
+});
 
 /* ---------- day navigation ---------- */
 function turn(dir){
