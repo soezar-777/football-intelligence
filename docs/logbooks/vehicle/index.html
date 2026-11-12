@@ -737,14 +737,14 @@ function buildPhoto(){
   infos.forEach(function(inf){ gy+=inf.h; hline(gy); });
   for(var b=0;b<6;b++){ gy+=46; hline(gy); }
   ctx.strokeStyle='#a9b6cc'; ctx.strokeRect(PAD,tTop,CW,tBot-tTop);
-  /* signature — bottom-right inside the table, page date under it */
+  /* signature — bottom-right inside the table, name under it */
   if(sigImg&&sigImg.complete&&sigImg.naturalWidth){
     var sH=96, sW=sH*sigImg.naturalWidth/sigImg.naturalHeight;
     if(sW>340){ sW=340; sH=Math.round(sW*sigImg.naturalHeight/sigImg.naturalWidth); }
     var sX=(W-PAD)-28-sW, sY=tBot-12-(sH+8+34);
     ctx.drawImage(sigImg,sX,sY,sW,sH);
     ctx.fillStyle='#14213d'; ctx.font='27px sans-serif'; ctx.textAlign='center';
-    ctx.fillText(fmtSigDate(cur),sX+sW/2,sY+sH+35);
+    ctx.fillText('Soe Yar Zar',sX+sW/2,sY+sH+35);
   }
   return cv;
 }
