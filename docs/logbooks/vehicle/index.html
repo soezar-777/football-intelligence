@@ -12,13 +12,17 @@
 html,body{margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#ddd5bd;color:#1d2a4a;-webkit-text-size-adjust:100%}
 #app{display:flex;flex-direction:column;height:100dvh}
-.strip{background:#f7f3e8;border-bottom:1px solid #c9bfa5;padding:6px 8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;z-index:5}
-.strip button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:8px 10px;font-size:16px;color:#1d2a4a;cursor:pointer}
+.strip{background:#f7f3e8;border-bottom:1px solid #c9bfa5;padding:4px 6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;z-index:5}
+.strip button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:5px 8px;font-size:13.5px;line-height:1.3;white-space:nowrap;color:#1d2a4a;cursor:pointer}
 .strip button:active{background:#efe8d2}
-#dateBtn{font-weight:700;min-width:118px}
-.zoomctl{margin-left:auto;display:flex;gap:6px;align-items:center}
-#zoomOut,#zoomIn{min-width:44px;font-size:19px;font-weight:700}
-#zoomPct{min-width:58px;text-align:center;font-weight:700}
+#dateBtn{font-weight:700;min-width:98px}
+.zoomctl{margin-left:auto;display:flex;gap:5px;align-items:center;flex:1 1 auto;min-width:0}
+#zoomSlider{flex:1 1 120px;min-width:100px;max-width:180px;height:28px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+#zoomSlider::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#b9ac8c}
+#zoomSlider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35);margin-top:-9px}
+#zoomSlider::-moz-range-track{height:4px;border-radius:2px;background:#b9ac8c}
+#zoomSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+#zoomPct{min-width:42px;text-align:center;font-weight:700;font-size:13.5px;padding:6px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
 #chipsPanel{background:#f7f3e8;border-bottom:1px solid #c9bfa5;padding:8px;display:none}
 #chipsPanel.open{display:block}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
@@ -95,10 +99,8 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
     <button id="todayBtn">ဒီနေ့</button>
     <button id="nextDay">နောက် ›</button>
     <div class="zoomctl">
-      <button id="zoomOut">−</button>
-      <button id="zoomPct">100%</button>
-      <button id="zoomIn">＋</button>
-      <button id="zoomReset">ပုံမှန်</button>
+      <input type="range" id="zoomSlider" min="10" max="200" step="1" value="100" aria-label="Zoom">
+      <span id="zoomPct" title="အပြည့်">100%</span>
       <button id="chipsToggle">🚗 ယာဉ်များ</button>
       <button id="sigBtn" title="လက်မှတ်">✍️ လက်မှတ်</button>
     </div>
@@ -460,6 +462,7 @@ function applyZoom(){
   sizer.style.width=(LW*zoom)+'px';
   sizer.style.height=(paper.offsetHeight*zoom)+'px';
   $('zoomPct').textContent=Math.round(zoom*100)+'%';
+  var zs=$('zoomSlider'); if(zs) zs.value=Math.round(zoom*100);
   store.set(ZOOMK,String(zoom));
 }
 function zoomAt(f,mx,my){
@@ -467,18 +470,14 @@ function zoomAt(f,mx,my){
   var cx=(area.scrollLeft+mx)/z0, cy=(area.scrollTop+my)/z0;
   applyZoom(); area.scrollLeft=cx*zoom-mx; area.scrollTop=cy*zoom-my;
 }
-function zoomStep(f){ zoomAt(f, area.clientWidth/2, area.clientHeight/2); }
-function hold(btn,fn){
-  var t1=null,t2=null;
-  btn.addEventListener('pointerdown',function(e){ e.preventDefault(); fn(); t1=setTimeout(function(){ t2=setInterval(fn,90); },450); });
-  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ btn.addEventListener(ev,function(){ if(t1)clearTimeout(t1); if(t2)clearInterval(t2); t1=t2=null; }); });
-}
-hold($('zoomIn'),function(){ zoomStep(1.2); });
-hold($('zoomOut'),function(){ zoomStep(1/1.2); });
+var zoomSlider=$('zoomSlider');
+zoomSlider.addEventListener('input',function(){
+  var target=(parseFloat(zoomSlider.value)||100)/100;
+  if(target!==zoom) zoomAt(target/zoom, area.clientWidth/2, area.clientHeight/2);
+});
 $('zoomPct').addEventListener('click',function(){
   zoom=area.clientWidth/LW; applyZoom(); area.scrollLeft=0; area.scrollTop=0;
 });
-$('zoomReset').addEventListener('click',function(){ zoom=1; applyZoom(); });
 
 var ptrs=new Map(), ges=null;
 function pdist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
