@@ -35,6 +35,7 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 #sugStrip.open{display:flex}
 .sugChip{flex:0 0 auto;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap}
 td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;display:block;line-height:1.35}
+td textarea.cell[data-f="detail"]{font-size:18px;font-weight:700}
 #pageArea{flex:1;overflow:auto;touch-action:none;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch}
 #sizer{position:relative;margin:0 auto}
 #scaler{position:absolute;top:0;left:0;transform-origin:0 0}
@@ -51,7 +52,7 @@ td.ser{text-align:center;color:#43536e}
 tr.inside td{background:rgba(230,176,66,.20)}
 tr.inside td.ser{border-left:4px solid #d9a441}
 td.tcell{text-align:center;cursor:pointer}
-td.tcell .tl{font-weight:600;white-space:nowrap}
+td.tcell .tl{font-weight:600;white-space:nowrap;color:#1d4ed8}
 td.tcell .tl.empty{color:#9aa7bd;font-weight:400}
 td.dc{position:relative;padding-right:26px}
 td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);background:none;border:none;color:#c0392b;font-size:17px;cursor:pointer;padding:4px;line-height:1}
@@ -629,7 +630,7 @@ function buildPhoto(){
   var colX=[PAD]; for(var i=0;i<cols.length;i++) colX.push(colX[i]+cols[i]);
   var list=rows();
   var meas=document.createElement('canvas').getContext('2d');
-  var nameF='28px sans-serif', detF='26px sans-serif';
+  var nameF='28px sans-serif', detF='700 28px sans-serif';
   var infos=list.map(function(r){
     meas.font=nameF; var nl=wrapLines(meas,r.name,cols[1]-16);
     meas.font=detF; var dl=wrapLines(meas,r.detail,cols[4]-16);
@@ -681,9 +682,10 @@ function buildPhoto(){
     ctx.fillText(toMy(idx+1),colX[0]+cols[0]/2,y+h/2+10);
     ctx.textAlign='left'; ctx.font=nameF;
     drawLines(inf.nl,colX[1]+8,y,h);
-    ctx.font='600 30px sans-serif'; ctx.textAlign='center';
+    ctx.font='600 30px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#1d4ed8';
     if(r.timeIn) ctx.fillText(fmtTime(r.timeIn),colX[2]+cols[2]/2,y+h/2+11);
     if(r.timeOut) ctx.fillText(fmtTime(r.timeOut),colX[3]+cols[3]/2,y+h/2+11);
+    ctx.fillStyle='#1d2a4a';
     ctx.textAlign='left'; ctx.font=detF;
     drawLines(inf.dl,colX[4]+8,y,h);
     y+=h;
