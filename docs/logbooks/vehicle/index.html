@@ -320,18 +320,6 @@ function learnPlate(p){
   var pi=plates.indexOf(p); if(pi>=0) plates.splice(pi,1);
   plates.unshift(p); savePlates(); renderChips();
 }
-function mostFreqDriver(plate){
-  var counts={}, last={}, idx=0;
-  Object.keys(log).sort().forEach(function(d){
-    (log[d]||[]).forEach(function(r){
-      idx++;
-      if(r.plate===plate){ var dv=String(r.driver||'').trim(); if(dv){ counts[dv]=(counts[dv]||0)+1; last[dv]=idx; } }
-    });
-  });
-  var best='', bc=0, bl=-1;
-  Object.keys(counts).forEach(function(dv){ if(counts[dv]>bc||(counts[dv]===bc&&last[dv]>bl)){ best=dv; bc=counts[dv]; bl=last[dv]; } });
-  return best;
-}
 function renderChips(){
   var box=$('chips'); box.innerHTML='';
   displayPlates().forEach(function(p){
@@ -367,7 +355,7 @@ function driverChipAdd(dv){
 function chipAdd(p){
   cur=todayStr();
   if(!log[cur]) log[cur]=[];
-  log[cur].push({id:uid(),plate:p,driver:mostFreqDriver(p),timeIn:nowT(),timeOut:'',detail:''});
+  log[cur].push({id:uid(),plate:p,driver:'',timeIn:nowT(),timeOut:'',detail:''});
   save(); render();
   setTimeout(function(){ area.scrollTop=sizer.offsetHeight; },60);
 }
