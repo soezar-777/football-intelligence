@@ -31,10 +31,16 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 .chipAdd{display:flex;gap:8px;flex-wrap:wrap}
 .chipAdd input{flex:1;min-width:140px;font-size:16px;padding:9px 10px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fff}
 .chipAdd button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer}
-#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5;padding:6px 8px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none}
-#sugStrip::-webkit-scrollbar{display:none}
-#sugStrip.open{display:block}
+#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5}
+#sugStrip.open{display:flex}
 #sugStrip.kb{position:fixed;left:0;right:0;z-index:65;box-shadow:0 -3px 14px rgba(0,0,0,.25)}
+#sugScroll{flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none;padding:6px 8px}
+#sugScroll::-webkit-scrollbar{display:none}
+#sugScroll.editing .sugChip{border-color:#b45309;color:#92400e;border-style:dashed}
+#sugSide{flex:0 0 auto;display:none;align-items:center;padding:6px 8px 6px 0}
+#sugSide.on{display:flex}
+.sugModeBtn{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:7px 12px;font-size:15px;cursor:pointer;color:#1d2a4a;white-space:nowrap;touch-action:manipulation}
+.sugModeBtn.on{background:#b45309;border-color:#b45309;color:#fff;font-weight:700}
 .sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;touch-action:pan-x}
 .sugAct{display:inline-block;vertical-align:middle;white-space:nowrap}
 .sugActName{font-weight:700;font-size:16px;color:#14532d;margin-right:8px}
@@ -143,7 +149,7 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
       </div>
     </div>
   </div>
-  <div id="sugStrip"></div>
+  <div id="sugStrip"><div id="sugScroll"></div><div id="sugSide"></div></div>
   <div id="bottomBar"><button id="photoBtn">📷 Photo ထုတ်မယ်</button></div>
 </div>
 <div id="undoBar"><span>ဖျက်လိုက်ပါပြီ</span><button id="undoBtn">ပြန်ယူမယ်</button></div>
@@ -262,7 +268,7 @@ tbody.addEventListener('input',function(e){
   var r=rowOfTr(tr); if(!r) r=adopt(tr);
   r[inp.getAttribute('data-f')]=inp.value; save();
   if(inp.tagName==='TEXTAREA'){ growTa(inp); applyZoom(); }
-  if(sugTarget&&inp===sugTarget.inp){ sugFresh=false; if(sugAction||sugConfirm){ sugAction=null; sugConfirm=null; sugSig=''; } renderSug(); }
+  if(sugTarget&&inp===sugTarget.inp){ sugFresh=false; if(sugManageRow||sugEdit||sugConfirm){ sugManageRow=null; sugEdit=null; sugConfirm=null; sugSig=''; } renderSug(); }
 });
 tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='plate') learnPlate(inp.value.trim());
@@ -270,7 +276,7 @@ tbody.addEventListener('change',function(e){
 tbody.addEventListener('click',function(e){
   if(Date.now()<suppressClickUntil) return;
   var ci=e.target;
-  if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; renderSug(); }
+  if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; sugConfirm=null; sugManage=false; sugManageRow=null; sugEdit=null; sugModeRendered=''; renderSug(); }
   var del=e.target.closest? e.target.closest('.del'):null;
   if(del){ var trd=del.closest('tr'); var rd=rowOfTr(trd); if(rd) deleteRow(rd); return; }
   var td=e.target.closest? e.target.closest('.tcell'):null;
@@ -383,33 +389,58 @@ var sugFresh=false; /* driver cell just focused: show full list until he types *
 function sugSource(field){ return field==='plate'? displayPlates() : displayDrivers(); }
 var sugSig='';
 var sugConfirm=null;   /* {v, field} delete-confirm pending in the strip */
-var sugAction=null;    /* {v, inp, field} action row open for a tapped driver */
+var sugManage=false;   /* driver strip EDIT mode: chip taps manage a name, never insert */
+var sugManageRow=null; /* {v} management row open for a driver (edit mode only) */
 var sugEdit=null;      /* {v} inline rename editor open */
 var sugModeRendered=''; /* mode key currently rendered in the strip */
 function renderSug(){
-  var strip=$('sugStrip');
-  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugModeRendered=''; sugKbUpdate(); return; }
-  if(sugConfirm){ renderSugConfirm(strip); sugKbUpdate(); return; }
-  if(sugEdit){ renderSugEdit(strip); sugKbUpdate(); return; }
-  if(sugAction){ renderSugAction(strip); sugKbUpdate(); return; }
+  var strip=$('sugStrip'), sc=$('sugScroll');
+  if(!sugTarget){ strip.classList.remove('open'); sc.innerHTML=''; sugSig=''; sugModeRendered=''; renderSugSide(); sugKbUpdate(); return; }
+  if(sugConfirm){ renderSugConfirm(sc); renderSugSide(); sugKbUpdate(); return; }
+  if(sugEdit){ renderSugEdit(sc); renderSugSide(); sugKbUpdate(); return; }
+  if(sugManageRow){ renderSugManage(sc); renderSugSide(); sugKbUpdate(); return; }
   var q=sugFresh?'':(sugTarget.inp.value||'').trim().toLowerCase();
   var all=sugSource(sugTarget.field);
   var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
-  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugModeRendered=''; sugKbUpdate(); return; }
-  var sig=vals.join('\u0001');
-  if(sig===sugSig&&strip.classList.contains('open')){ sugKbUpdate(); return; }
-  var keepSL=strip.scrollLeft||0;
-  strip.innerHTML='';
+  if(!vals.length){ strip.classList.remove('open'); sc.innerHTML=''; sugSig=''; sugModeRendered=''; renderSugSide(); sugKbUpdate(); return; }
+  var sig=(sugManage?'M':'N')+vals.join('\u0001');
+  if(sig===sugSig&&strip.classList.contains('open')){ renderSugSide(); sugKbUpdate(); return; }
+  var keepSL=sc.scrollLeft||0;
+  sc.innerHTML='';
   sugModeRendered='chips';
+  sc.classList.toggle('editing', !!sugManage);
   vals.forEach(function(v){
     var b=document.createElement('button'); b.type='button'; b.className='sugChip'; b.textContent=v;
     addChipPress(b,v);
-    strip.appendChild(b);
+    sc.appendChild(b);
   });
   strip.classList.add('open');
-  strip.scrollLeft=keepSL;
+  sc.scrollLeft=keepSL;
   sugSig=sig;
+  renderSugSide();
   sugKbUpdate();
+}
+/* the strip's fixed last box: [ပြင်] toggles driver EDIT mode ([ပြီးပြီ] exits).
+   It lives in #sugSide, OUTSIDE the scrolling chip row, so it is always
+   visible while driver suggestions show. Plates never get it. Styled like
+   the panel's ပြင် button (same outlined look). */
+var sugModeBtn=null;
+function renderSugSide(){
+  var side=$('sugSide'), strip=$('sugStrip'); if(!side) return;
+  var show=!!(sugTarget&&sugTarget.field==='driver'&&strip.classList.contains('open'));
+  side.classList.toggle('on',show);
+  if(!show) return;
+  if(!sugModeBtn){
+    sugModeBtn=document.createElement('button'); sugModeBtn.type='button'; sugModeBtn.className='sugModeBtn';
+    addBtnTap(sugModeBtn,function(){
+      if(sugManage){ sugManage=false; sugManageRow=null; sugEdit=null; sugConfirm=null; }
+      else sugManage=true;
+      sugSig=''; sugModeRendered=''; renderSug();
+    });
+    side.appendChild(sugModeBtn);
+  }
+  sugModeBtn.textContent=sugManage?'ပြီးပြီ':'ပြင်';
+  sugModeBtn.classList.toggle('on',!!sugManage);
 }
 /* ---------- strip chip press: ONE canonical tap / swipe / long-press path ----------
    pointerdown records (x, y, strip.scrollLeft, target cell). pointerup acts ONLY
@@ -423,17 +454,17 @@ function chipPressClear(){ if(chipLpTimer){ clearTimeout(chipLpTimer); chipLpTim
 function addChipPress(b,v){
   b.addEventListener('pointerdown',function(e){
     e.preventDefault();
-    var strip=$('sugStrip');
-    chipPress={v:v, x:e.clientX, y:e.clientY, sl:strip?strip.scrollLeft:0,
+    var sc=$('sugScroll');
+    chipPress={v:v, x:e.clientX, y:e.clientY, sl:sc?sc.scrollLeft:0,
       inp:sugTarget?sugTarget.inp:null, field:sugTarget?sugTarget.field:null, lp:false};
     if(chipLpTimer) clearTimeout(chipLpTimer);
     chipLpTimer=setTimeout(function(){
       chipLpTimer=null;
       if(!chipPress||chipPress.v!==v||chipPress.lp) return;
-      var s=$('sugStrip'); if(!s) return;
+      var s=$('sugScroll'); if(!s) return;
       if(Math.abs(s.scrollLeft-chipPress.sl)>2) return;
       chipPress.lp=true;
-      sugAction=null; sugEdit=null;
+      sugManageRow=null; sugEdit=null;
       sugConfirm={v:v, field:chipPress.field||(sugTarget?sugTarget.field:null)};
       sugSig=''; sugModeRendered=''; renderSug();
     },550);
@@ -448,19 +479,21 @@ function addChipPress(b,v){
     if(!chipPress||chipPress.v!==v){ chipPressClear(); return; }
     var p=chipPress; chipPressClear();
     if(p.lp) return; /* long-press already opened the confirm */
-    var s=$('sugStrip');
+    var s=$('sugScroll');
     var dsl=s?Math.abs(s.scrollLeft-p.sl):0;
     if(Math.abs(e.clientX-p.x)<=10&&Math.abs(e.clientY-p.y)<=10&&dsl<=2) onChipTap(v,p);
   });
   b.addEventListener('pointercancel',function(){ chipPressClear(); });
 }
-/* VEHICLE strip: a tap on a DRIVER chip opens the labelled action row;
-   a tap on a plate chip picks directly into the cell captured at pointerdown. */
+/* VEHICLE strip: in NORMAL mode a chip tap picks directly into the cell
+   captured at pointerdown (drivers and plates alike). In EDIT mode —
+   driver strip only, toggled by the strip's end [ပြင်] button — a driver
+   chip tap opens that name's management row instead; it NEVER inserts. */
 function onChipTap(v,p){
   var field=p.field||(sugTarget?sugTarget.field:null);
-  if(field==='driver'){
+  if(field==='driver'&&sugManage){
     sugConfirm=null; sugEdit=null;
-    sugAction={v:v, inp:p.inp, field:field};
+    sugManageRow={v:v};
     sugSig=''; sugModeRendered=''; renderSug();
   } else {
     pickSug(v, {inp:p.inp, field:p.field});
@@ -482,65 +515,62 @@ function sugBtn(txt,cls,fn){
   addBtnTap(b,fn);
   return b;
 }
-function renderSugConfirm(strip){
+function renderSugConfirm(sc){
   var v=sugConfirm.v, mode='confirm:'+v;
-  if(sugModeRendered===mode&&strip.classList.contains('open')) return;
-  strip.innerHTML='';
+  if(sugModeRendered===mode&&$('sugStrip').classList.contains('open')) return;
+  sc.innerHTML='';
   var ask=document.createElement('span'); ask.className='sugAsk'; ask.textContent=v+' ဖျက်မလား?';
-  strip.appendChild(ask);
-  strip.appendChild(sugBtn('ဖျက်','danger sugDel',function(){
+  sc.appendChild(ask);
+  sc.appendChild(sugBtn('ဖျက်','danger sugDel',function(){
     blockSuggestion(sugConfirm?sugConfirm.field:null, v);
     sugConfirm=null; sugSig=''; sugModeRendered=''; renderSug();
   }));
-  strip.appendChild(sugBtn('မဖျက်တော့','ghost sugKeep',function(){
+  sc.appendChild(sugBtn('မဖျက်တော့','ghost sugKeep',function(){
     sugConfirm=null; sugSig=''; sugModeRendered=''; renderSug();
   }));
-  strip.classList.add('open');
+  $('sugStrip').classList.add('open');
   sugModeRendered=mode;
 }
-function renderSugAction(strip){
-  var v=sugAction.v, mode='action:'+v;
-  if(sugModeRendered===mode&&strip.classList.contains('open')) return;
-  strip.innerHTML='';
+/* EDIT mode management row for one driver name: rename or delete it.
+   Reachable only in edit mode; nothing here can insert into the cell. */
+function renderSugManage(sc){
+  var v=sugManageRow.v, mode='manage:'+v;
+  if(sugModeRendered===mode&&$('sugStrip').classList.contains('open')) return;
+  sc.innerHTML='';
   var wrap=document.createElement('span'); wrap.className='sugAct';
   var nm=document.createElement('span'); nm.className='sugActName'; nm.textContent=v;
   wrap.appendChild(nm);
-  wrap.appendChild(sugBtn('ထည့်မယ်','sugGo',function(){
-    var a=sugAction; sugAction=null;
-    pickSug(v, a?{inp:a.inp,field:a.field}:null);
-  }));
-  wrap.appendChild(sugBtn('ပြင်ရန်','alt sugEditBtn',function(){
-    sugEdit={v:v}; sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  wrap.appendChild(sugBtn('အမည်ပြင်','alt sugEditBtn',function(){
+    sugEdit={v:v}; sugManageRow=null; sugSig=''; sugModeRendered=''; renderSug();
   }));
   wrap.appendChild(sugBtn('ဖျက်','danger sugActDel',function(){
-    var a=sugAction;
-    sugConfirm={v:v, field:a?a.field:(sugTarget?sugTarget.field:null)};
-    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+    sugConfirm={v:v, field:'driver'};
+    sugManageRow=null; sugSig=''; sugModeRendered=''; renderSug();
   }));
   wrap.appendChild(sugBtn('ပိတ်','ghost sugCloseBtn',function(){
-    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+    sugManageRow=null; sugSig=''; sugModeRendered=''; renderSug();
   }));
-  strip.appendChild(wrap);
-  strip.classList.add('open');
+  sc.appendChild(wrap);
+  $('sugStrip').classList.add('open');
   sugModeRendered=mode;
 }
-function renderSugEdit(strip){
+function renderSugEdit(sc){
   var v=sugEdit.v, mode='edit:'+v;
-  if(sugModeRendered===mode&&strip.classList.contains('open')&&strip.querySelector('.sugEditIn')) return;
-  strip.innerHTML='';
+  if(sugModeRendered===mode&&$('sugStrip').classList.contains('open')&&sc.querySelector('.sugEditIn')) return;
+  sc.innerHTML='';
   var inp=document.createElement('input'); inp.type='text'; inp.className='sugEditIn'; inp.value=v;
   inp.setAttribute('autocomplete','off');
-  strip.appendChild(inp);
-  strip.appendChild(sugBtn('သိမ်း','sugSaveBtn',function(){
+  sc.appendChild(inp);
+  sc.appendChild(sugBtn('သိမ်း','sugSaveBtn',function(){
     if(renameDriver(v, inp.value)){ sugEdit=null; sugSig=''; sugModeRendered=''; renderSug(); }
     /* rejected (empty/duplicate): stay in the editor */
   }));
-  strip.appendChild(sugBtn('မပြင်တော့','ghost sugEditCancel',function(){
+  sc.appendChild(sugBtn('မပြင်တော့','ghost sugEditCancel',function(){
     sugEdit=null;
-    sugAction={v:v, inp:sugTarget?sugTarget.inp:null, field:sugTarget?sugTarget.field:null};
+    sugManageRow={v:v};
     sugSig=''; sugModeRendered=''; renderSug();
   }));
-  strip.classList.add('open');
+  $('sugStrip').classList.add('open');
   sugModeRendered=mode;
   try{ inp.focus({preventScroll:true}); }catch(e){ try{ inp.focus(); }catch(e2){} }
 }
@@ -568,7 +598,7 @@ function blockSuggestion(field,v){
     renderChips();
   }
 }
-function hideSug(){ sugTarget=null; sugFresh=false; sugSig=''; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; chipPressClear(); var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
+function hideSug(){ sugTarget=null; sugFresh=false; sugSig=''; sugConfirm=null; sugManage=false; sugManageRow=null; sugEdit=null; sugModeRendered=''; chipPressClear(); var s=$('sugStrip'); if(s){ s.classList.remove('open'); var sc=$('sugScroll'); if(sc){ sc.innerHTML=''; sc.classList.remove('editing'); } } renderSugSide(); sugKbReset(); }
 function pickSug(v,tgt){
   var t=(tgt&&tgt.inp)?tgt:sugTarget; if(!t||!t.inp||!document.contains(t.inp)) return;
   var inp=t.inp, field=t.field;
@@ -580,7 +610,7 @@ function pickSug(v,tgt){
 }
 tbody.addEventListener('focusin',function(e){
   var inp=e.target;
-  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugFresh=inp.getAttribute('data-f')==='driver'; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; renderSug(); }
+  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugFresh=inp.getAttribute('data-f')==='driver'; sugConfirm=null; sugManage=false; sugManageRow=null; sugEdit=null; sugModeRendered=''; renderSug(); }
   else hideSug();
 });
 tbody.addEventListener('focusout',function(){
