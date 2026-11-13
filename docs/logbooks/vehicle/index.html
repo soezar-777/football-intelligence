@@ -36,10 +36,14 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 #sugStrip.open{display:block}
 #sugStrip.kb{position:fixed;left:0;right:0;z-index:65;box-shadow:0 -3px 14px rgba(0,0,0,.25)}
 .sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;touch-action:pan-x}
+.sugAct{display:inline-block;vertical-align:middle;white-space:nowrap}
+.sugActName{font-weight:700;font-size:16px;color:#14532d;margin-right:8px}
 .sugBtn{display:inline-block;vertical-align:middle;margin-right:8px;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;border:1.5px solid #166534;background:#166534;color:#fff;font-weight:700;touch-action:manipulation}
+.sugBtn.alt{background:#fffef9;color:#14532d}
 .sugBtn.danger{background:#b91c1c;border-color:#b91c1c;color:#fff}
 .sugBtn.ghost{background:#fffef9;border-color:#b9ac8c;color:#1d2a4a;font-weight:400}
 .sugAsk{display:inline-block;vertical-align:middle;font-size:15px;font-weight:700;color:#7f1d1d;margin-right:8px;white-space:nowrap}
+.sugEditIn{display:inline-block;vertical-align:middle;font-size:16px;padding:7px 10px;border:1.5px solid #166534;border-radius:10px;background:#fff;margin-right:8px;width:170px}
 td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;display:block;line-height:1.35}
 td textarea.cell[data-f="detail"]{font-size:18px;font-weight:700;color:#1d4ed8}
 #pageArea{flex:1;overflow:auto;touch-action:none;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch}
@@ -258,7 +262,7 @@ tbody.addEventListener('input',function(e){
   var r=rowOfTr(tr); if(!r) r=adopt(tr);
   r[inp.getAttribute('data-f')]=inp.value; save();
   if(inp.tagName==='TEXTAREA'){ growTa(inp); applyZoom(); }
-  if(sugTarget&&inp===sugTarget.inp){ sugFresh=false; if(sugConfirm){ sugConfirm=null; sugSig=''; } renderSug(); }
+  if(sugTarget&&inp===sugTarget.inp){ sugFresh=false; if(sugAction||sugConfirm){ sugAction=null; sugConfirm=null; sugSig=''; } renderSug(); }
 });
 tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='plate') learnPlate(inp.value.trim());
@@ -266,7 +270,7 @@ tbody.addEventListener('change',function(e){
 tbody.addEventListener('click',function(e){
   if(Date.now()<suppressClickUntil) return;
   var ci=e.target;
-  if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; sugConfirm=null; sugModeRendered=''; renderSug(); }
+  if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; renderSug(); }
   var del=e.target.closest? e.target.closest('.del'):null;
   if(del){ var trd=del.closest('tr'); var rd=rowOfTr(trd); if(rd) deleteRow(rd); return; }
   var td=e.target.closest? e.target.closest('.tcell'):null;
@@ -307,6 +311,10 @@ function saveHiddenPlates(){ store.set(PLATEK+'_hidden', JSON.stringify(hiddenPl
 var DRVBLOCK='lunkhrunre_vehicle_drivers_blocked_v1';
 var blockedDrivers=loadJSON(DRVBLOCK,[]);
 function saveBlockedDrivers(){ store.set(DRVBLOCK, JSON.stringify(blockedDrivers)); }
+var DRVALIAS='lunkhrunre_vehicle_drivers_alias_v1';
+var driverAlias=loadJSON(DRVALIAS,{});
+function saveDriverAlias(){ store.set(DRVALIAS, JSON.stringify(driverAlias)); }
+function applyDriverAlias(v){ return driverAlias[v]||v; }
 function histValues(field){
   var seen={}, out=[];
   Object.keys(log).sort().reverse().forEach(function(d){
@@ -324,7 +332,11 @@ function displayPlates(){
   plates.forEach(function(v){ if(v&&!seen[v]){ seen[v]=1; out.push(v); } });
   return out.filter(function(v){ return hiddenPlates.indexOf(v)<0; });
 }
-function displayDrivers(){ return histValues('driver').filter(function(v){ return blockedDrivers.indexOf(v)<0; }); }
+function displayDrivers(){
+  var seen={}, out=[];
+  histValues('driver').forEach(function(v){ v=applyDriverAlias(v); if(!seen[v]){ seen[v]=1; out.push(v); } });
+  return out.filter(function(v){ return blockedDrivers.indexOf(v)<0; });
+}
 function learnPlate(p){
   if(!p) return;
   var hi=hiddenPlates.indexOf(p); if(hi>=0){ hiddenPlates.splice(hi,1); saveHiddenPlates(); }
@@ -371,11 +383,15 @@ var sugFresh=false; /* driver cell just focused: show full list until he types *
 function sugSource(field){ return field==='plate'? displayPlates() : displayDrivers(); }
 var sugSig='';
 var sugConfirm=null;   /* {v, field} delete-confirm pending in the strip */
+var sugAction=null;    /* {v, inp, field} action row open for a tapped driver */
+var sugEdit=null;      /* {v} inline rename editor open */
 var sugModeRendered=''; /* mode key currently rendered in the strip */
 function renderSug(){
   var strip=$('sugStrip');
   if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugModeRendered=''; sugKbUpdate(); return; }
   if(sugConfirm){ renderSugConfirm(strip); sugKbUpdate(); return; }
+  if(sugEdit){ renderSugEdit(strip); sugKbUpdate(); return; }
+  if(sugAction){ renderSugAction(strip); sugKbUpdate(); return; }
   var q=sugFresh?'':(sugTarget.inp.value||'').trim().toLowerCase();
   var all=sugSource(sugTarget.field);
   var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
@@ -417,6 +433,7 @@ function addChipPress(b,v){
       var s=$('sugStrip'); if(!s) return;
       if(Math.abs(s.scrollLeft-chipPress.sl)>2) return;
       chipPress.lp=true;
+      sugAction=null; sugEdit=null;
       sugConfirm={v:v, field:chipPress.field||(sugTarget?sugTarget.field:null)};
       sugSig=''; sugModeRendered=''; renderSug();
     },550);
@@ -437,8 +454,18 @@ function addChipPress(b,v){
   });
   b.addEventListener('pointercancel',function(){ chipPressClear(); });
 }
-/* VEHICLE strip: a tap picks directly into the cell captured at pointerdown. */
-function onChipTap(v,p){ pickSug(v, {inp:p.inp, field:p.field}); }
+/* VEHICLE strip: a tap on a DRIVER chip opens the labelled action row;
+   a tap on a plate chip picks directly into the cell captured at pointerdown. */
+function onChipTap(v,p){
+  var field=p.field||(sugTarget?sugTarget.field:null);
+  if(field==='driver'){
+    sugConfirm=null; sugEdit=null;
+    sugAction={v:v, inp:p.inp, field:field};
+    sugSig=''; sugModeRendered=''; renderSug();
+  } else {
+    pickSug(v, {inp:p.inp, field:p.field});
+  }
+}
 /* labelled strip buttons share the chips' deferred pointerup tap rule */
 function addBtnTap(b,fn){
   var bp=null;
@@ -471,6 +498,64 @@ function renderSugConfirm(strip){
   strip.classList.add('open');
   sugModeRendered=mode;
 }
+function renderSugAction(strip){
+  var v=sugAction.v, mode='action:'+v;
+  if(sugModeRendered===mode&&strip.classList.contains('open')) return;
+  strip.innerHTML='';
+  var wrap=document.createElement('span'); wrap.className='sugAct';
+  var nm=document.createElement('span'); nm.className='sugActName'; nm.textContent=v;
+  wrap.appendChild(nm);
+  wrap.appendChild(sugBtn('ထည့်မယ်','sugGo',function(){
+    var a=sugAction; sugAction=null;
+    pickSug(v, a?{inp:a.inp,field:a.field}:null);
+  }));
+  wrap.appendChild(sugBtn('ပြင်ရန်','alt sugEditBtn',function(){
+    sugEdit={v:v}; sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  wrap.appendChild(sugBtn('ဖျက်','danger sugActDel',function(){
+    var a=sugAction;
+    sugConfirm={v:v, field:a?a.field:(sugTarget?sugTarget.field:null)};
+    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  wrap.appendChild(sugBtn('ပိတ်','ghost sugCloseBtn',function(){
+    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.appendChild(wrap);
+  strip.classList.add('open');
+  sugModeRendered=mode;
+}
+function renderSugEdit(strip){
+  var v=sugEdit.v, mode='edit:'+v;
+  if(sugModeRendered===mode&&strip.classList.contains('open')&&strip.querySelector('.sugEditIn')) return;
+  strip.innerHTML='';
+  var inp=document.createElement('input'); inp.type='text'; inp.className='sugEditIn'; inp.value=v;
+  inp.setAttribute('autocomplete','off');
+  strip.appendChild(inp);
+  strip.appendChild(sugBtn('သိမ်း','sugSaveBtn',function(){
+    if(renameDriver(v, inp.value)){ sugEdit=null; sugSig=''; sugModeRendered=''; renderSug(); }
+    /* rejected (empty/duplicate): stay in the editor */
+  }));
+  strip.appendChild(sugBtn('မပြင်တော့','ghost sugEditCancel',function(){
+    sugEdit=null;
+    sugAction={v:v, inp:sugTarget?sugTarget.inp:null, field:sugTarget?sugTarget.field:null};
+    sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.classList.add('open');
+  sugModeRendered=mode;
+  try{ inp.focus({preventScroll:true}); }catch(e){ try{ inp.focus(); }catch(e2){} }
+}
+/* rename a driver suggestion: record an alias so history-derived
+   suggestions use the new spelling. Saved day rows never change. */
+function renameDriver(oldV,newV){
+  newV=(newV==null?'':String(newV)).trim();
+  if(!newV||newV===oldV) return false;
+  if(displayDrivers().indexOf(newV)>=0) return false;
+  var hi=blockedDrivers.indexOf(newV); if(hi>=0){ blockedDrivers.splice(hi,1); saveBlockedDrivers(); }
+  Object.keys(driverAlias).forEach(function(k){ if(driverAlias[k]===oldV) driverAlias[k]=newV; });
+  driverAlias[oldV]=newV;
+  saveDriverAlias();
+  return true;
+}
 /* block a value from every suggestion source. Saved day rows are never
    touched — only suggestions are filtered. Drivers use the blocked list;
    plates reuse the existing hiddenPlates mechanism (as the panel does). */
@@ -483,7 +568,7 @@ function blockSuggestion(field,v){
     renderChips();
   }
 }
-function hideSug(){ sugTarget=null; sugFresh=false; sugSig=''; sugConfirm=null; sugModeRendered=''; chipPressClear(); var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
+function hideSug(){ sugTarget=null; sugFresh=false; sugSig=''; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; chipPressClear(); var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
 function pickSug(v,tgt){
   var t=(tgt&&tgt.inp)?tgt:sugTarget; if(!t||!t.inp||!document.contains(t.inp)) return;
   var inp=t.inp, field=t.field;
@@ -495,12 +580,13 @@ function pickSug(v,tgt){
 }
 tbody.addEventListener('focusin',function(e){
   var inp=e.target;
-  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugFresh=inp.getAttribute('data-f')==='driver'; sugConfirm=null; sugModeRendered=''; renderSug(); }
+  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugFresh=inp.getAttribute('data-f')==='driver'; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; renderSug(); }
   else hideSug();
 });
 tbody.addEventListener('focusout',function(){
   setTimeout(function(){
     var ae=document.activeElement;
+    if(ae&&ae.closest&&ae.closest('#sugStrip')) return; /* the strip's rename editor keeps the strip alive */
     if(!ae||!tbody.contains(ae)||!(ae.classList&&ae.classList.contains('cell')&&SUGF[ae.getAttribute('data-f')])) hideSug();
   },0);
 });
