@@ -1,5 +1,5 @@
 /* Vehicle logbook — offline service worker */
-var CACHE = 'vehicle-logbook-v12';
+var CACHE = 'vehicle-logbook-v13';
 var SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', function (e) {

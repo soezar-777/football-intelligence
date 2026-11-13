@@ -35,7 +35,15 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 #sugStrip::-webkit-scrollbar{display:none}
 #sugStrip.open{display:block}
 #sugStrip.kb{position:fixed;left:0;right:0;z-index:65;box-shadow:0 -3px 14px rgba(0,0,0,.25)}
-.sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap}
+.sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;touch-action:pan-x}
+.sugAct{display:inline-block;vertical-align:middle;white-space:nowrap}
+.sugActName{font-weight:700;font-size:16px;color:#14532d;margin-right:8px}
+.sugBtn{display:inline-block;vertical-align:middle;margin-right:8px;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;border:1.5px solid #166534;background:#166534;color:#fff;font-weight:700;touch-action:manipulation}
+.sugBtn.alt{background:#fffef9;color:#14532d}
+.sugBtn.danger{background:#b91c1c;border-color:#b91c1c;color:#fff}
+.sugBtn.ghost{background:#fffef9;border-color:#b9ac8c;color:#1d2a4a;font-weight:400}
+.sugAsk{display:inline-block;vertical-align:middle;font-size:15px;font-weight:700;color:#7f1d1d;margin-right:8px;white-space:nowrap}
+.sugEditIn{display:inline-block;vertical-align:middle;font-size:16px;padding:7px 10px;border:1.5px solid #166534;border-radius:10px;background:#fff;margin-right:8px;width:170px}
 td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;display:block;line-height:1.35}
 td textarea.cell[data-f="detail"]{font-size:18px;font-weight:700;color:#1d4ed8}
 #pageArea{flex:1;overflow:auto;touch-action:none;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch}
@@ -250,7 +258,7 @@ tbody.addEventListener('input',function(e){
   var r=rowOfTr(tr); if(!r) r=adopt(tr);
   r[inp.getAttribute('data-f')]=inp.value; save();
   if(inp.tagName==='TEXTAREA'){ growTa(inp); applyZoom(); }
-  if(sugTarget&&inp===sugTarget.inp) renderSug();
+  if(sugTarget&&inp===sugTarget.inp){ if(sugAction||sugConfirm){ sugAction=null; sugConfirm=null; sugSig=''; } renderSug(); }
 });
 tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='name') learnName(inp.value.trim());
@@ -294,6 +302,10 @@ $('addRow').addEventListener('click',function(){
 /* ---------- names chips ---------- */
 var hiddenNames=loadJSON(NAMEK+'_hidden',[]);
 function saveHiddenNames(){ store.set(NAMEK+'_hidden', JSON.stringify(hiddenNames)); }
+var ALIASK='lunkhrunre_names_alias_v1';
+var nameAlias=loadJSON(ALIASK,{});
+function saveNameAlias(){ store.set(ALIASK, JSON.stringify(nameAlias)); }
+function applyAlias(v){ return nameAlias[v]||v; }
 function histValues(field){
   var seen={}, out=[];
   Object.keys(log).sort().reverse().forEach(function(d){
@@ -307,7 +319,7 @@ function histValues(field){
 }
 function displayNames(){
   var seen={}, out=[];
-  histValues('name').forEach(function(v){ seen[v]=1; out.push(v); });
+  histValues('name').forEach(function(v){ v=applyAlias(v); if(!seen[v]){ seen[v]=1; out.push(v); } });
   names.forEach(function(v){ if(v&&!seen[v]){ seen[v]=1; out.push(v); } });
   return out.filter(function(v){ return hiddenNames.indexOf(v)<0; });
 }
@@ -355,17 +367,25 @@ var SUGF={'name':1};
 var sugTarget=null;
 function sugSource(field){ return displayNames(); }
 var sugSig='';
+var sugConfirm=null;   /* {v, field} delete-confirm pending in the strip */
+var sugAction=null;    /* {v, inp, field} action row open for a tapped name */
+var sugEdit=null;      /* {v} inline rename editor open */
+var sugModeRendered=''; /* mode key currently rendered in the strip */
 function renderSug(){
   var strip=$('sugStrip');
-  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugKbUpdate(); return; }
+  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugModeRendered=''; sugKbUpdate(); return; }
+  if(sugConfirm){ renderSugConfirm(strip); sugKbUpdate(); return; }
+  if(sugEdit){ renderSugEdit(strip); sugKbUpdate(); return; }
+  if(sugAction){ renderSugAction(strip); sugKbUpdate(); return; }
   var q=(sugTarget.inp.value||'').trim().toLowerCase();
   var all=sugSource(sugTarget.field);
   var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
-  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugKbUpdate(); return; }
+  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugModeRendered=''; sugKbUpdate(); return; }
   var sig=vals.join('\u0001');
   if(sig===sugSig&&strip.classList.contains('open')){ sugKbUpdate(); return; }
   var keepSL=strip.scrollLeft||0;
   strip.innerHTML='';
+  sugModeRendered='chips';
   vals.forEach(function(v){
     var b=document.createElement('button'); b.type='button'; b.className='sugChip'; b.textContent=v;
     addChipPress(b,v);
@@ -376,22 +396,158 @@ function renderSug(){
   sugSig=sig;
   sugKbUpdate();
 }
-/* Chip pick fires on TAP only (pointerup after barely any movement), so a
-   sideways swipe across the chips scrolls the strip instead of picking. */
-var chipPress=null;
+/* ---------- strip chip press: ONE canonical tap / swipe / long-press path ----------
+   pointerdown records (x, y, strip.scrollLeft, target cell). pointerup acts ONLY
+   on a genuine tap: |dx|<=10 AND |dy|<=10 AND the strip scrolled <=2px during the
+   press. A sideways swipe either browser-scrolls the strip (pointercancel then
+   discards the press) or fails the movement/scroll checks — it can never pick.
+   A press held >=550ms with no movement and no strip scroll opens the
+   delete-confirm for that chip instead, and its pointerup is swallowed. */
+var chipPress=null, chipLpTimer=null;
+function chipPressClear(){ if(chipLpTimer){ clearTimeout(chipLpTimer); chipLpTimer=null; } chipPress=null; }
 function addChipPress(b,v){
-  b.addEventListener('pointerdown',function(e){ e.preventDefault(); chipPress={v:v,x:e.clientX,y:e.clientY}; });
-  b.addEventListener('pointerup',function(e){
-    if(!chipPress||chipPress.v!==v){ chipPress=null; return; }
-    var dx=e.clientX-chipPress.x, dy=e.clientY-chipPress.y; chipPress=null;
-    if(dx*dx+dy*dy<=144) pickSug(v);
+  b.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    var strip=$('sugStrip');
+    chipPress={v:v, x:e.clientX, y:e.clientY, sl:strip?strip.scrollLeft:0,
+      inp:sugTarget?sugTarget.inp:null, field:sugTarget?sugTarget.field:null, lp:false};
+    if(chipLpTimer) clearTimeout(chipLpTimer);
+    chipLpTimer=setTimeout(function(){
+      chipLpTimer=null;
+      if(!chipPress||chipPress.v!==v||chipPress.lp) return;
+      var s=$('sugStrip'); if(!s) return;
+      if(Math.abs(s.scrollLeft-chipPress.sl)>2) return;
+      chipPress.lp=true;
+      sugAction=null; sugEdit=null;
+      sugConfirm={v:v, field:chipPress.field||(sugTarget?sugTarget.field:null)};
+      sugSig=''; sugModeRendered=''; renderSug();
+    },550);
   });
-  b.addEventListener('pointercancel',function(){ chipPress=null; });
+  b.addEventListener('pointermove',function(e){
+    if(!chipPress||chipPress.v!==v) return;
+    if(Math.abs(e.clientX-chipPress.x)>10||Math.abs(e.clientY-chipPress.y)>10){
+      if(chipLpTimer){ clearTimeout(chipLpTimer); chipLpTimer=null; }
+    }
+  });
+  b.addEventListener('pointerup',function(e){
+    if(!chipPress||chipPress.v!==v){ chipPressClear(); return; }
+    var p=chipPress; chipPressClear();
+    if(p.lp) return; /* long-press already opened the confirm */
+    var s=$('sugStrip');
+    var dsl=s?Math.abs(s.scrollLeft-p.sl):0;
+    if(Math.abs(e.clientX-p.x)<=10&&Math.abs(e.clientY-p.y)<=10&&dsl<=2) onChipTap(v,p);
+  });
+  b.addEventListener('pointercancel',function(){ chipPressClear(); });
 }
-function hideSug(){ sugTarget=null; sugSig=''; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
-function pickSug(v){
-  if(!sugTarget) return;
-  var inp=sugTarget.inp, field=sugTarget.field;
+/* PEOPLE strip: a tap does NOT insert — it opens the labelled action row. */
+function onChipTap(v,p){
+  sugConfirm=null; sugEdit=null;
+  sugAction={v:v, inp:p.inp, field:p.field};
+  sugSig=''; sugModeRendered=''; renderSug();
+}
+/* labelled strip buttons share the chips' deferred pointerup tap rule */
+function addBtnTap(b,fn){
+  var bp=null;
+  b.addEventListener('pointerdown',function(e){ e.preventDefault(); bp={x:e.clientX,y:e.clientY}; });
+  b.addEventListener('pointerup',function(e){
+    if(!bp) return;
+    var dx=e.clientX-bp.x, dy=e.clientY-bp.y; bp=null;
+    if(Math.abs(dx)<=10&&Math.abs(dy)<=10) fn();
+  });
+  b.addEventListener('pointercancel',function(){ bp=null; });
+}
+function sugBtn(txt,cls,fn){
+  var b=document.createElement('button'); b.type='button'; b.className='sugBtn '+cls; b.textContent=txt;
+  addBtnTap(b,fn);
+  return b;
+}
+function renderSugConfirm(strip){
+  var v=sugConfirm.v, mode='confirm:'+v;
+  if(sugModeRendered===mode&&strip.classList.contains('open')) return;
+  strip.innerHTML='';
+  var ask=document.createElement('span'); ask.className='sugAsk'; ask.textContent=v+' ဖျက်မလား?';
+  strip.appendChild(ask);
+  strip.appendChild(sugBtn('ဖျက်','danger sugDel',function(){
+    blockSuggestion(sugConfirm?sugConfirm.field:null, v);
+    sugConfirm=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.appendChild(sugBtn('မဖျက်တော့','ghost sugKeep',function(){
+    sugConfirm=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.classList.add('open');
+  sugModeRendered=mode;
+}
+function renderSugAction(strip){
+  var v=sugAction.v, mode='action:'+v;
+  if(sugModeRendered===mode&&strip.classList.contains('open')) return;
+  strip.innerHTML='';
+  var wrap=document.createElement('span'); wrap.className='sugAct';
+  var nm=document.createElement('span'); nm.className='sugActName'; nm.textContent=v;
+  wrap.appendChild(nm);
+  wrap.appendChild(sugBtn('ထည့်မယ်','sugGo',function(){
+    var a=sugAction; sugAction=null;
+    pickSug(v, a?{inp:a.inp,field:a.field}:null);
+  }));
+  wrap.appendChild(sugBtn('ပြင်ရန်','alt sugEditBtn',function(){
+    sugEdit={v:v}; sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  wrap.appendChild(sugBtn('ဖျက်','danger sugActDel',function(){
+    var a=sugAction;
+    sugConfirm={v:v, field:a?a.field:(sugTarget?sugTarget.field:null)};
+    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  wrap.appendChild(sugBtn('ပိတ်','ghost sugCloseBtn',function(){
+    sugAction=null; sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.appendChild(wrap);
+  strip.classList.add('open');
+  sugModeRendered=mode;
+}
+function renderSugEdit(strip){
+  var v=sugEdit.v, mode='edit:'+v;
+  if(sugModeRendered===mode&&strip.classList.contains('open')&&strip.querySelector('.sugEditIn')) return;
+  strip.innerHTML='';
+  var inp=document.createElement('input'); inp.type='text'; inp.className='sugEditIn'; inp.value=v;
+  inp.setAttribute('autocomplete','off');
+  strip.appendChild(inp);
+  strip.appendChild(sugBtn('သိမ်း','sugSaveBtn',function(){
+    if(renameSuggestion(v, inp.value)){ sugEdit=null; sugSig=''; sugModeRendered=''; renderSug(); }
+    /* rejected (empty/duplicate): stay in the editor */
+  }));
+  strip.appendChild(sugBtn('မပြင်တော့','ghost sugEditCancel',function(){
+    sugEdit=null;
+    sugAction={v:v, inp:sugTarget?sugTarget.inp:null, field:sugTarget?sugTarget.field:null};
+    sugSig=''; sugModeRendered=''; renderSug();
+  }));
+  strip.classList.add('open');
+  sugModeRendered=mode;
+  try{ inp.focus({preventScroll:true}); }catch(e){ try{ inp.focus(); }catch(e2){} }
+}
+/* tombstone delete: hide the name from every suggestion source via the
+   existing hiddenNames mechanism (the same one the panel edit-mode uses) */
+function blockSuggestion(field,v){
+  names=names.filter(function(x){ return x!==v; }); saveNames();
+  if(hiddenNames.indexOf(v)<0){ hiddenNames.push(v); saveHiddenNames(); }
+  renderChips();
+}
+/* rename a suggestion: update the saved list entry + record an alias so
+   history-derived suggestions use the new spelling. Records never change. */
+function renameSuggestion(oldV,newV){
+  newV=(newV==null?'':String(newV)).trim();
+  if(!newV||newV===oldV) return false;
+  if(displayNames().indexOf(newV)>=0) return false;
+  var hi=hiddenNames.indexOf(newV); if(hi>=0){ hiddenNames.splice(hi,1); saveHiddenNames(); }
+  var ni=names.indexOf(oldV); if(ni>=0){ names[ni]=newV; saveNames(); }
+  Object.keys(nameAlias).forEach(function(k){ if(nameAlias[k]===oldV) nameAlias[k]=newV; });
+  nameAlias[oldV]=newV;
+  saveNameAlias();
+  renderChips();
+  return true;
+}
+function hideSug(){ sugTarget=null; sugSig=''; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; chipPressClear(); var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
+function pickSug(v,tgt){
+  var t=(tgt&&tgt.inp)?tgt:sugTarget; if(!t||!t.inp||!document.contains(t.inp)) return;
+  var inp=t.inp, field=t.field;
   inp.value=v;
   var tr=inp.closest('tr');
   if(tr){ var r=rowOfTr(tr); if(!r) r=adopt(tr); if(r){ r[field]=v; save(); } }
@@ -400,12 +556,13 @@ function pickSug(v){
 }
 tbody.addEventListener('focusin',function(e){
   var inp=e.target;
-  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; renderSug(); }
+  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugConfirm=null; sugAction=null; sugEdit=null; sugModeRendered=''; renderSug(); }
   else hideSug();
 });
 tbody.addEventListener('focusout',function(){
   setTimeout(function(){
     var ae=document.activeElement;
+    if(ae&&ae.closest&&ae.closest('#sugStrip')) return; /* the strip's rename editor keeps the strip alive */
     if(!ae||!tbody.contains(ae)||!(ae.classList&&ae.classList.contains('cell')&&SUGF[ae.getAttribute('data-f')])) hideSug();
   },0);
 });
@@ -497,6 +654,7 @@ $('zoomPct').addEventListener('click',function(){
 var ptrs=new Map(), ges=null, suppressClickUntil=0;
 function pdist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
 area.addEventListener('pointerdown',function(e){
+  if(e.target&&e.target.closest&&e.target.closest('#sugStrip')) return; /* strip gestures are never page gestures */
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(ptrs.size===1){
     var onInput=e.target.closest&&e.target.closest('input,textarea');
