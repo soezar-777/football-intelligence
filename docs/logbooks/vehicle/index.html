@@ -31,10 +31,11 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background
 .chipAdd{display:flex;gap:8px;flex-wrap:wrap}
 .chipAdd input{flex:1;min-width:140px;font-size:16px;padding:9px 10px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fff}
 .chipAdd button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer}
-#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5;padding:6px 8px;gap:8px;overflow-x:auto;flex-wrap:nowrap;align-items:center}
-#sugStrip.open{display:flex}
+#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5;padding:6px 8px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none}
+#sugStrip::-webkit-scrollbar{display:none}
+#sugStrip.open{display:block}
 #sugStrip.kb{position:fixed;left:0;right:0;z-index:65;box-shadow:0 -3px 14px rgba(0,0,0,.25)}
-.sugChip{flex:0 0 auto;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap}
+.sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap}
 td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;display:block;line-height:1.35}
 td textarea.cell[data-f="detail"]{font-size:18px;font-weight:700;color:#1d4ed8}
 #pageArea{flex:1;overflow:auto;touch-action:none;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch}
@@ -259,6 +260,7 @@ tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='plate') learnPlate(inp.value.trim());
 });
 tbody.addEventListener('click',function(e){
+  if(Date.now()<suppressClickUntil) return;
   var ci=e.target;
   if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; renderSug(); }
   var del=e.target.closest? e.target.closest('.del'):null;
@@ -360,23 +362,41 @@ var SUGF={'plate':1,'driver':1};
 var sugTarget=null;
 var sugFresh=false; /* driver cell just focused: show full list until he types */
 function sugSource(field){ return field==='plate'? displayPlates() : displayDrivers(); }
+var sugSig='';
 function renderSug(){
   var strip=$('sugStrip');
-  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugKbUpdate(); return; }
+  if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugKbUpdate(); return; }
   var q=sugFresh?'':(sugTarget.inp.value||'').trim().toLowerCase();
   var all=sugSource(sugTarget.field);
   var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
-  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; sugKbUpdate(); return; }
+  if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; sugSig=''; sugKbUpdate(); return; }
+  var sig=vals.join('\u0001');
+  if(sig===sugSig&&strip.classList.contains('open')){ sugKbUpdate(); return; }
+  var keepSL=strip.scrollLeft||0;
   strip.innerHTML='';
   vals.forEach(function(v){
     var b=document.createElement('button'); b.type='button'; b.className='sugChip'; b.textContent=v;
-    b.addEventListener('pointerdown',function(e){ e.preventDefault(); pickSug(v); });
+    addChipPress(b,v);
     strip.appendChild(b);
   });
   strip.classList.add('open');
+  strip.scrollLeft=keepSL;
+  sugSig=sig;
   sugKbUpdate();
 }
-function hideSug(){ sugTarget=null; sugFresh=false; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
+/* Chip pick fires on TAP only (pointerup after barely any movement), so a
+   sideways swipe across the chips scrolls the strip instead of picking. */
+var chipPress=null;
+function addChipPress(b,v){
+  b.addEventListener('pointerdown',function(e){ e.preventDefault(); chipPress={v:v,x:e.clientX,y:e.clientY}; });
+  b.addEventListener('pointerup',function(e){
+    if(!chipPress||chipPress.v!==v){ chipPress=null; return; }
+    var dx=e.clientX-chipPress.x, dy=e.clientY-chipPress.y; chipPress=null;
+    if(dx*dx+dy*dy<=144) pickSug(v);
+  });
+  b.addEventListener('pointercancel',function(){ chipPress=null; });
+}
+function hideSug(){ sugTarget=null; sugFresh=false; sugSig=''; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } sugKbReset(); }
 function pickSug(v){
   if(!sugTarget) return;
   var inp=sugTarget.inp, field=sugTarget.field;
@@ -482,13 +502,13 @@ $('zoomPct').addEventListener('click',function(){
   zoom=area.clientWidth/LW; applyZoom(); area.scrollLeft=0; area.scrollTop=0;
 });
 
-var ptrs=new Map(), ges=null;
+var ptrs=new Map(), ges=null, suppressClickUntil=0;
 function pdist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
 area.addEventListener('pointerdown',function(e){
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(ptrs.size===1){
     var onInput=e.target.closest&&e.target.closest('input,textarea');
-    ges={mode:onInput?'none':'pan', sx:e.clientX, sy:e.clientY, sl:area.scrollLeft, st:area.scrollTop, t:Date.now(), target:e.target};
+    ges={mode:onInput?'maybe':'pan', fromInput:!!onInput, sx:e.clientX, sy:e.clientY, sl:area.scrollLeft, st:area.scrollTop, t:Date.now(), target:e.target};
   } else if(ptrs.size===2){
     var p=Array.from(ptrs.values()); var rc=area.getBoundingClientRect();
     var mx=(p[0].x+p[1].x)/2-rc.left, my=(p[0].y+p[1].y)/2-rc.top;
@@ -504,6 +524,11 @@ area.addEventListener('pointermove',function(e){
     var mx=(p[0].x+p[1].x)/2-rc.left, my=(p[0].y+p[1].y)/2-rc.top;
     zoom=Math.min(2,Math.max(0.1, ges.z0*pdist(p[0],p[1])/ges.d0));
     applyZoom(); area.scrollLeft=ges.cx*zoom-mx; area.scrollTop=ges.cy*zoom-my;
+  } else if(ges.mode==='maybe'&&ptrs.size===1){
+    /* drag that started on a cell being edited: past a small threshold it
+       becomes a page pan, so the page scrolls even while the keyboard is up */
+    var mdx=e.clientX-ges.sx, mdy=e.clientY-ges.sy;
+    if(mdx*mdx+mdy*mdy>196){ ges.mode='pan'; area.scrollLeft=ges.sl-mdx; area.scrollTop=ges.st-mdy; }
   } else if(ges.mode==='pan'&&ptrs.size===1){
     area.scrollLeft=ges.sl-(e.clientX-ges.sx);
     area.scrollTop=ges.st-(e.clientY-ges.sy);
@@ -514,6 +539,7 @@ function pend(e){
   ptrs.delete(e.pointerId);
   if(ptrs.size<2&&g&&g.mode==='pinch') ges=null;
   if(ptrs.size===0){
+    if(g&&g.mode==='pan'&&g.fromInput) suppressClickUntil=Date.now()+400;
     if(g&&g.mode==='pan'){
       var dx=e.clientX-g.sx, dy=e.clientY-g.sy, dt=Date.now()-g.t;
       var ae=document.activeElement;
