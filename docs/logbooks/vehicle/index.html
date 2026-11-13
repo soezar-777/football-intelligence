@@ -909,10 +909,10 @@ function buildPhoto(){
   var meas=document.createElement('canvas').getContext('2d');
   var drvF='28px sans-serif', detF='700 28px sans-serif';
   var infos=list.map(function(r){
-    meas.font=drvF; var dl2=wrapLines(meas,r.driver,cols[2]-16);
-    meas.font=detF; var dtl=wrapLines(meas,r.detail,cols[5]-16);
+    meas.font=drvF; var dl2=wrapLines(meas,r.driver,cols[2]-32);
+    meas.font=detF; var dtl=wrapLines(meas,r.detail,cols[5]-32);
     var lines=Math.max(dl2.length,dtl.length);
-    return {r:r,drv:dl2,dtl:dtl,h:Math.max(52,lines*34+16)};
+    return {r:r,drv:dl2,dtl:dtl,h:Math.max(66,lines*40+26)};
   });
   var topH=104, theadH=92, blankH=46*6, footH=30;
   var sum=0; infos.forEach(function(x){ sum+=x.h; });
@@ -943,7 +943,7 @@ function buildPhoto(){
   ctx.fillText('ဝင်',colX[3]+cols[3]/2,tTop+theadH-15);
   ctx.fillText('ထွက်',colX[4]+cols[4]/2,tTop+theadH-15);
   function drawLines(lines,x,ry,h){
-    var lh=34, yy=ry+(h-lines.length*lh)/2+25;
+    var lh=40, yy=ry+(h-lines.length*lh)/2+26;
     for(var i=0;i<lines.length;i++){ ctx.fillText(lines[i],x,yy); yy+=lh; }
   }
   /* entry rows */
@@ -959,17 +959,17 @@ function buildPhoto(){
     ctx.fillText(toMy(idx+1),colX[0]+cols[0]/2,y+h/2+10);
     /* plate — single line, shrink to fit, never wraps */
     ctx.textAlign='left';
-    fitFont(ctx,r.plate||'',cols[1]-16,28,'600');
-    if(r.plate) ctx.fillText(r.plate,colX[1]+8,y+h/2+10);
+    fitFont(ctx,r.plate||'',cols[1]-32,28,'600');
+    if(r.plate) ctx.fillText(r.plate,colX[1]+16,y+h/2+10);
     ctx.font=drvF;
-    drawLines(inf.drv,colX[2]+8,y,h);
+    drawLines(inf.drv,colX[2]+16,y,h);
     /* times — always one line */
     ctx.font='29px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#1d2a4a';
     if(r.timeIn) ctx.fillText(fmtTime(r.timeIn),colX[3]+cols[3]/2,y+h/2+10);
     if(r.timeOut) ctx.fillText(fmtTime(r.timeOut),colX[4]+cols[4]/2,y+h/2+10);
     ctx.fillStyle='#1d4ed8';
     ctx.textAlign='left'; ctx.font=detF;
-    drawLines(inf.dtl,colX[5]+8,y,h);
+    drawLines(inf.dtl,colX[5]+16,y,h);
     y+=h;
   });
   /* grid */
