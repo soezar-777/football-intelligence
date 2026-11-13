@@ -108,8 +108,6 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
   </div>
   <div id="chipsPanel">
     <div class="chips" id="chips"></div>
-    <div class="sigLabel">ယာဉ်မောင်း</div>
-    <div class="chips" id="driverChips"></div>
     <div class="chipAdd">
       <input id="newPlate" placeholder="ယာဉ်အမှတ်အသစ်">
       <button id="addPlate">+ ထည့်မယ်</button>
@@ -254,12 +252,14 @@ tbody.addEventListener('input',function(e){
   var r=rowOfTr(tr); if(!r) r=adopt(tr);
   r[inp.getAttribute('data-f')]=inp.value; save();
   if(inp.tagName==='TEXTAREA'){ growTa(inp); applyZoom(); }
-  if(sugTarget&&inp===sugTarget.inp) renderSug();
+  if(sugTarget&&inp===sugTarget.inp){ sugFresh=false; renderSug(); }
 });
 tbody.addEventListener('change',function(e){
   var inp=e.target; if(inp.classList&&inp.classList.contains('cell')&&inp.getAttribute('data-f')==='plate') learnPlate(inp.value.trim());
 });
 tbody.addEventListener('click',function(e){
+  var ci=e.target;
+  if(ci.classList&&ci.classList.contains('cell')&&ci.getAttribute('data-f')==='driver'){ sugTarget={inp:ci,field:'driver'}; sugFresh=true; renderSug(); }
   var del=e.target.closest? e.target.closest('.del'):null;
   if(del){ var trd=del.closest('tr'); var rd=rowOfTr(trd); if(rd) deleteRow(rd); return; }
   var td=e.target.closest? e.target.closest('.tcell'):null;
@@ -332,26 +332,6 @@ function renderChips(){
     });
     box.appendChild(b);
   });
-  var dbox=$('driverChips'); dbox.innerHTML='';
-  displayDrivers().forEach(function(dv){
-    var b=document.createElement('button'); b.className='chip';
-    b.textContent=dv;
-    b.addEventListener('click',function(){ driverChipAdd(dv); });
-    dbox.appendChild(b);
-  });
-}
-function driverChipAdd(dv){
-  var tr=tbody.querySelector('tr[data-scratch]');
-  var inp=tr? tr.querySelector('input[data-f="driver"]'):null;
-  if(inp&&!inp.value.trim()){
-    var r=rowOfTr(tr); if(!r) r=adopt(tr);
-    r.driver=dv; if(!r.timeIn) r.timeIn=nowT(); save(); render();
-  } else {
-    if(!log[cur]) log[cur]=[];
-    log[cur].push({id:uid(),plate:'',driver:dv,timeIn:nowT(),timeOut:'',detail:''});
-    save(); render();
-  }
-  setTimeout(function(){ area.scrollTop=sizer.offsetHeight; },60);
 }
 function chipAdd(p){
   cur=todayStr();
@@ -377,11 +357,12 @@ function growDetails(){ var tas=tbody.querySelectorAll('textarea.cell'); for(var
 /* ---------- typing suggestions ---------- */
 var SUGF={'plate':1,'driver':1};
 var sugTarget=null;
+var sugFresh=false; /* driver cell just focused: show full list until he types */
 function sugSource(field){ return field==='plate'? displayPlates() : displayDrivers(); }
 function renderSug(){
   var strip=$('sugStrip');
   if(!sugTarget){ strip.classList.remove('open'); strip.innerHTML=''; return; }
-  var q=(sugTarget.inp.value||'').trim().toLowerCase();
+  var q=sugFresh?'':(sugTarget.inp.value||'').trim().toLowerCase();
   var all=sugSource(sugTarget.field);
   var vals=q? all.filter(function(v){ return v.toLowerCase().indexOf(q)>=0; }).slice(0,12) : all.slice(0,8);
   if(!vals.length){ strip.classList.remove('open'); strip.innerHTML=''; return; }
@@ -393,7 +374,7 @@ function renderSug(){
   });
   strip.classList.add('open');
 }
-function hideSug(){ sugTarget=null; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } }
+function hideSug(){ sugTarget=null; sugFresh=false; var s=$('sugStrip'); if(s){ s.classList.remove('open'); s.innerHTML=''; } }
 function pickSug(v){
   if(!sugTarget) return;
   var inp=sugTarget.inp, field=sugTarget.field;
@@ -405,7 +386,7 @@ function pickSug(v){
 }
 tbody.addEventListener('focusin',function(e){
   var inp=e.target;
-  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; renderSug(); }
+  if(inp.classList&&inp.classList.contains('cell')&&SUGF[inp.getAttribute('data-f')]){ sugTarget={inp:inp,field:inp.getAttribute('data-f')}; sugFresh=inp.getAttribute('data-f')==='driver'; renderSug(); }
   else hideSug();
 });
 tbody.addEventListener('focusout',function(){
