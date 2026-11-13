@@ -896,23 +896,24 @@ function wrapLines(ctx,text,maxW){
   lines.push(line);
   return lines.length?lines:[''];
 }
-function fitFont(ctx,text,maxW,start,weight){
-  var s=start;
+function fitFont(ctx,text,maxW,start,weight,min){
+  var s=start, floor=min||18;
   ctx.font=weight+' '+s+'px sans-serif';
-  while(s>18&&ctx.measureText(text).width>maxW){ s-=2; ctx.font=weight+' '+s+'px sans-serif'; }
+  while(s>floor&&ctx.measureText(text).width>maxW){ s-=2; ctx.font=weight+' '+s+'px sans-serif'; }
   return s;
 }
 function buildPhoto(){
-  var W=1240, PAD=36, CW=W-2*PAD, cols=[56,190,196,150,150,426];
+  var W=1240, PAD=36, CW=W-2*PAD, cols=[56,190,226,150,150,396];
   var colX=[PAD]; for(var i=0;i<cols.length;i++) colX.push(colX[i]+cols[i]);
   var list=rows();
   var meas=document.createElement('canvas').getContext('2d');
-  var drvF='28px sans-serif', detF='700 28px sans-serif';
+  var detF='700 28px sans-serif';
   var infos=list.map(function(r){
-    meas.font=drvF; var dl2=wrapLines(meas,r.driver,cols[2]-32);
+    /* driver — single line, shrink-to-fit, never wraps (min 20px) */
+    var drvSize=fitFont(meas,r.driver||'',cols[2]-32,28,'400',20);
     meas.font=detF; var dtl=wrapLines(meas,r.detail,cols[5]-32);
-    var lines=Math.max(dl2.length,dtl.length);
-    return {r:r,drv:dl2,dtl:dtl,h:Math.max(66,lines*40+26)};
+    var lines=Math.max(1,dtl.length);
+    return {r:r,drvSize:drvSize,dtl:dtl,h:Math.max(66,lines*40+26)};
   });
   var topH=104, theadH=92, blankH=46*6, footH=30;
   var sum=0; infos.forEach(function(x){ sum+=x.h; });
@@ -961,8 +962,9 @@ function buildPhoto(){
     ctx.textAlign='left';
     fitFont(ctx,r.plate||'',cols[1]-32,28,'600');
     if(r.plate) ctx.fillText(r.plate,colX[1]+16,y+h/2+10);
-    ctx.font=drvF;
-    drawLines(inf.drv,colX[2]+16,y,h);
+    /* driver — single line at its fitted size, vertically centred */
+    ctx.font='400 '+inf.drvSize+'px sans-serif'; ctx.textAlign='left';
+    if(r.driver) ctx.fillText(r.driver,colX[2]+16,y+h/2+Math.round(inf.drvSize*0.36));
     /* times — always one line */
     ctx.font='29px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#1d2a4a';
     if(r.timeIn) ctx.fillText(fmtTime(r.timeIn),colX[3]+cols[3]/2,y+h/2+10);
