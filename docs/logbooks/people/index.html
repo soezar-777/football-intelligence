@@ -90,6 +90,7 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
 .sigBtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .sigBtns button{flex:1;min-width:70px;border-radius:10px;padding:13px 6px;font-size:16px;cursor:pointer;background:#fffef9;border:1.5px solid #b9ac8c;color:#1d2a4a}
 #sigSave{background:#166534;border-color:#166534;color:#fff;font-weight:700}
+#sigName{width:100%;box-sizing:border-box;padding:11px 12px;font-size:17px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fffef9;color:#1d2a4a}
 #sigDelete{color:#b91c1c;border-color:#d8a7a7}
 #datePick,#timePick{position:fixed;left:8px;bottom:8px;width:28px;height:28px;opacity:.01;border:none;z-index:70;pointer-events:none;padding:0}
 #bootFail{position:fixed;inset:0;background:#fffef9;display:none;z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-size:18px}
@@ -156,6 +157,8 @@ td.dc .del{position:absolute;right:3px;top:50%;transform:translateY(-50%);backgr
     <div id="sigPrevWrap"><div class="sigLabel">သိမ်းထားတဲ့ လက်မှတ်</div><img id="sigPrev" alt="signature"></div>
     <div class="sigLabel">လက်မှတ် ရေးဆွဲရန်</div>
     <canvas id="sigPad"></canvas>
+    <div class="sigLabel">လက်မှတ်အောက်မှာ ပေါ်မယ့် နာမည်</div>
+    <input id="sigName" type="text" placeholder="U Soe Yar Zar" autocomplete="off">
     <div class="sigBtns">
       <button id="sigClear">ရှင်းမယ်</button>
       <button id="sigDelete">🗑 ဖျက်မယ်</button>
@@ -656,6 +659,8 @@ if(!window.PointerEvent){
 
 /* ---------- signature ---------- */
 var SIGK='lunkhrunre_signature_v1';
+var SIGNK='lunkhrunre_signame_v1';
+function sigName(){ var v=store.get(SIGNK); return (v===null||v===undefined)? 'U Soe Yar Zar' : v; }
 var sigImg=null;
 function sigData(){ return store.get(SIGK); }
 function fmtSigDate(s){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0].slice(2); }
@@ -717,6 +722,7 @@ function padEnd(){
 sigPadEl.addEventListener('pointerup',padEnd);
 sigPadEl.addEventListener('pointercancel',padEnd);
 function updateSigUI(){
+  var nmEl=$('sigName'); if(nmEl) nmEl.value=sigName();
   var url=sigData();
   if(url){ $('sigPrev').src=url; $('sigPrevWrap').style.display='block'; $('sigDelete').style.display='block'; }
   else{ $('sigPrevWrap').style.display='none'; $('sigDelete').style.display='none'; }
@@ -727,6 +733,7 @@ $('sigBtn').addEventListener('click',openSigSheet);
 $('sigClose').addEventListener('click',closeSigSheet);
 $('sigCloseBtn').addEventListener('click',closeSigSheet);
 $('sigSheet').addEventListener('click',function(e){ if(e.target===this) closeSigSheet(); });
+$('sigName').addEventListener('input',function(){ try{ store.set(SIGNK,this.value); }catch(e){} });
 $('sigClear').addEventListener('click',clearPad);
 $('sigDelete').addEventListener('click',function(){
   store.set(SIGK,'');
@@ -848,7 +855,7 @@ function buildPhoto(){
     var sX=(W-PAD)-28-sW, sY=tBot-12-(sH+8+34);
     ctx.drawImage(sigImg,sX,sY,sW,sH);
     ctx.fillStyle='#14213d'; ctx.font='27px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('U Soe Yar Zar',sX+sW/2,sY+sH+35);
+    var nm=String(sigName()||'').trim(); if(nm){ ctx.fillText(nm,sX+sW/2,sY+sH+35); }
   }
   /* footer */
   ctx.font='24px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#43536e';

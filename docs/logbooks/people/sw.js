@@ -1,5 +1,5 @@
 /* Myawzin-2 (people logbook) — offline service worker */
-var CACHE = 'myawzin2-cache-v14';
+var CACHE = 'myawzin2-cache-v15';
 var SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', function (e) {
