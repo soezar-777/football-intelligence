@@ -222,7 +222,7 @@ tr.hl td{background:rgba(230,176,66,.35)}
   <div id="colList"></div>
   <button class="ghostBtn" id="addColBtn">+ ကော်လံ ထည့်မယ်</button>
   <button class="primaryBtn" id="colsSave">သိမ်းမယ်</button>
-  <div class="hint">ကော်လံ ဖျက်ရင် အဲဒီကော်လံထဲက စာရင်းတွေ ပျက်မယ်</div>
+  <div class="hint">ခေါင်းစဉ် အုပ်စု — ကပ်လျက် ကော်လံ ၂ ခုအထက်မှာ နာမည်တူတူ ထည့်ရင် အပေါ်မှာ အုပ်စု ခေါင်းစဉ် တစ်ခု ဖြစ်သွားမယ် (ဥပမာ — ဝင် နဲ့ ထွက် အပေါ်မှာ "အချိန်")<br>ကော်လံ ဖျက်ရင် အဲဒီကော်လံထဲက စာရင်းတွေ ပျက်မယ်</div>
 </div></div>
 <!-- TIME PICKER SHEET -->
 <div class="sheetWrap" id="timeSheet"><div class="sheetBox">
@@ -383,7 +383,7 @@ function renderBook(){
   $('meta').textContent=b.name;
   $('metaSub').textContent='Date : '+fmtDMY(curDay)+' ('+wdName(curDay)+')';
   var cg=$('colgroup'); cg.innerHTML='<col style="width:38px">'+b.columns.map(function(c){ return '<col style="width:'+(+c.width||120)+'px">'; }).join('')+'<col style="width:52px">';
-  $('thead').innerHTML='<tr><th>စဉ်</th>'+b.columns.map(function(c){ return '<th>'+esc(c.name)+'</th>'; }).join('')+'<th></th></tr>';
+  $('thead').innerHTML=theadHtml(b);
   var tb=$('tbody'); tb.innerHTML='';
   var list=rowsOf(b,curDay);
   list.forEach(function(r,i){ tb.appendChild(rowEl(b,r,i)); });
@@ -402,6 +402,27 @@ function renderBook(){
   $('paper').style.width=paperWidth(b)+'px';
   growAll(); applyZoom();
   if(hlRowId){ var tr=tb.querySelector('tr[data-id="'+hlRowId+'"]'); if(tr){ tr.classList.add('hl'); tr.scrollIntoView({block:'center'}); } hlRowId=null; }
+}
+function colSegments(b){
+  var segs=[];
+  b.columns.forEach(function(c){
+    var g=(c.group||'').trim();
+    if(g && segs.length && segs[segs.length-1].group===g) segs[segs.length-1].cols.push(c);
+    else segs.push({group:g||null, cols:[c]});
+  });
+  return segs;
+}
+function hasGroups(b){ return b.columns.some(function(c){ return (c.group||'').trim(); }); }
+function theadHtml(b){
+  if(!hasGroups(b)) return '<tr><th>စဉ်</th>'+b.columns.map(function(c){ return '<th>'+esc(c.name)+'</th>'; }).join('')+'<th></th></tr>';
+  var segs=colSegments(b);
+  var r1='<tr><th rowspan="2">စဉ်</th>'+segs.map(function(s){
+    return s.group? '<th colspan="'+s.cols.length+'">'+esc(s.group)+'</th>' : '<th rowspan="2">'+esc(s.cols[0].name)+'</th>';
+  }).join('')+'<th rowspan="2"></th></tr>';
+  var r2='<tr>'+segs.filter(function(s){ return s.group; }).map(function(s){
+    return s.cols.map(function(c){ return '<th>'+esc(c.name)+'</th>'; }).join('');
+  }).join('')+'</tr>';
+  return r1+r2;
 }
 function rowEl(b,r,i){
   var tr=document.createElement('tr'); tr.setAttribute('data-id',r.id);
@@ -647,10 +668,12 @@ function renderColDraft(){
     var d=document.createElement('div'); d.className='colRow';
     var typeOpts=Object.keys(TYPE_NAMES).map(function(k){ return '<option value="'+k+'"'+(c.type===k?' selected':'')+'>'+TYPE_NAMES[k]+'</option>'; }).join('');
     d.innerHTML='<div class="r1"><input type="text" value="'+esc(c.name)+'" data-f="name"><select data-f="type">'+typeOpts+'</select></div>'+
+      '<div class="r2"><span style="font-size:13px;color:#5a6a8a">ခေါင်းစဉ် အုပ်စု</span><input type="text" data-f="group" value="'+esc(c.group||'')+'" placeholder="ဥပမာ — အချိန် (မထည့်လည်းရ)" style="flex:1;min-width:120px;padding:8px;font-size:15px;border:1.5px solid #b9ac8c;border-radius:8px"></div>'+
       '<div class="r2"><span style="font-size:13px;color:#5a6a8a">အကျယ်</span><input type="range" min="70" max="320" step="2" value="'+(+c.width||120)+'" data-f="width"><span data-f="wv" style="font-size:13px">'+toMy(+c.width||120)+'</span>'+
       '<button data-f="up">↑</button><button data-f="down">↓</button><button data-f="del" class="delC">✕ ဖျက်</button></div>'+
       (c.type==='choice'? '<textarea data-f="options" placeholder="ရွေးစရာတွေ — တစ်ကြောင်း တစ်ခု">'+esc((c.options||[]).join('\n'))+'</textarea>' : '');
     d.querySelector('[data-f="name"]').addEventListener('input',function(){ c.name=this.value; });
+    d.querySelector('[data-f="group"]').addEventListener('input',function(){ c.group=this.value; });
     d.querySelector('[data-f="type"]').addEventListener('change',function(){ c.type=this.value; renderColDraft(); });
     var rg=d.querySelector('[data-f="width"]');
     rg.addEventListener('input',function(){ c.width=+this.value; d.querySelector('[data-f="wv"]').textContent=toMy(c.width); });
@@ -797,7 +820,22 @@ function buildPhoto(){
   });
   var headLines=b.columns.map(function(c,i){ return wrapLines(mctx, c.name, colsW[i+1]-2*PADX); });
   function rowH(cellsLines){ var mx=1; cellsLines.forEach(function(l){ mx=Math.max(mx,l.length); }); return Math.max(66, mx*40+26); }
-  var headH=rowH(headLines);
+  var grouped=hasGroups(b), gH=0, cH=0, segsP=null, colLinesMap={};
+  var headH;
+  if(grouped){
+    segsP=colSegments(b).map(function(s){
+      var wsum=s.cols.reduce(function(a,c){ return a+colsW[b.columns.indexOf(c)+1]; },0);
+      return {group:s.group, cols:s.cols, w:wsum, labelLines:wrapLines(mctx, s.group||s.cols[0].name, wsum-2*PADX)};
+    });
+    var gMax=1; segsP.forEach(function(s){ if(s.group) gMax=Math.max(gMax, s.labelLines.length); });
+    gH=Math.max(56, gMax*40+16);
+    var cMax=1;
+    segsP.forEach(function(s){ if(s.group) s.cols.forEach(function(c){ var ll=wrapLines(mctx, c.name, colsW[b.columns.indexOf(c)+1]-2*PADX); colLinesMap[c.id]=ll; cMax=Math.max(cMax, ll.length); }); });
+    cH=Math.max(56, cMax*40+16);
+    headH=gH+cH;
+  } else {
+    headH=rowH(headLines);
+  }
   var bodyH=rowData.reduce(function(a,rl){ return a+rowH(rl); },0);
   var hasTot=b.columns.some(function(c){ return c.type==='num'||c.type==='money'; });
   var totH=hasTot? 60:0;
@@ -822,9 +860,41 @@ function buildPhoto(){
   }
   /* header */
   ctx.fillStyle='#f3ecd9'; ctx.fillRect(x0,y,W-32,headH);
-  hline(y); vlines(y,headH);
-  drawCell(['စဉ်'], x0, y, colsW[0], 'center', true);
-  b.columns.forEach(function(c,i){ drawCell(headLines[i], x0+colsW.slice(0,i+1).reduce(function(a,v){return a+v;},0), y, colsW[i+1], 'center', true); });
+  if(grouped){
+    function drawCellV(lines,cx,cy,cw,boxH){
+      ctx.fillStyle='#1d2a4a'; ctx.font='700 30px Padauk, sans-serif'; ctx.textAlign='center';
+      var base=cy+(boxH-lines.length*40)/2+34;
+      lines.forEach(function(ln,li){ ctx.fillText(ln, cx+cw/2, base+li*40); });
+    }
+    function vline(x,yy,hh){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); }
+    function hseg(x1,x2,yy){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,yy); ctx.lineTo(x2,yy); ctx.stroke(); }
+    hline(y);
+    var colX=[x0]; for(var ci2=0;ci2<colsW.length;ci2++) colX.push(colX[ci2]+colsW[ci2]);
+    vline(x0,y,headH); vline(x0+W-32,y,headH);
+    drawCellV(['စဉ်'], x0, y, colsW[0], headH);
+    var segX=x0+colsW[0];
+    segsP.forEach(function(s){
+      vline(segX+s.w, y, headH);
+      if(s.group){
+        hseg(segX, segX+s.w, y+gH);
+        drawCellV(s.labelLines, segX, y, s.w, gH);
+        var cx2=segX;
+        s.cols.forEach(function(c){
+          var cw2=colsW[b.columns.indexOf(c)+1];
+          if(cx2>segX) vline(cx2, y+gH, cH);
+          drawCellV(colLinesMap[c.id]||[c.name], cx2, y+gH, cw2, cH);
+          cx2+=cw2;
+        });
+      } else {
+        drawCellV(s.labelLines, segX, y, s.w, headH);
+      }
+      segX+=s.w;
+    });
+  } else {
+    hline(y); vlines(y,headH);
+    drawCell(['စဉ်'], x0, y, colsW[0], 'center', true);
+    b.columns.forEach(function(c,i){ drawCell(headLines[i], x0+colsW.slice(0,i+1).reduce(function(a,v){return a+v;},0), y, colsW[i+1], 'center', true); });
+  }
   y+=headH; hline(y);
   /* rows */
   rowData.forEach(function(rl,ri){

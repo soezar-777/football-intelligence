@@ -1,5 +1,5 @@
 /* Security record book (custom tables) — offline service worker */
-var CACHE = 'sectables-cache-v2';
+var CACHE = 'sectables-cache-v3';
 var SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', function (e) {
