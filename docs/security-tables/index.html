@@ -168,6 +168,10 @@ tr.hl td{background:rgba(230,176,66,.35)}
 .sheetHead b{font-size:16px}
 .xBtn{background:#eee7d2;border:none;border-radius:8px;width:38px;height:38px;font-size:17px;cursor:pointer}
 .hint{text-align:center;color:#5a6a8a;margin:10px 0;font-size:14px}
+.nameGroup{font-size:15px;font-weight:700;color:#166534;margin:14px 0 6px}
+.nameItem{display:block;width:100%;text-align:left;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin:0 0 6px;background:#fff;font-size:16px;color:var(--ink)}
+body.dark .nameGroup{color:#4ade80}
+body.dark .nameItem{background:#202a3a}
 #sheetImg{width:100%;height:auto;display:block;border:1px solid #d8d2bd;background:#fff}
 .primaryBtn{width:100%;background:#166534;color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;margin-top:8px}
 .ghostBtn{width:100%;margin-top:10px;background:#fffef9;border:2px solid #166534;color:#166534;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer}
@@ -243,7 +247,7 @@ tr.hl td{background:rgba(230,176,66,.35)}
   <div class="strip">
     <button id="colsBtn">⚙ ဇယားပြင် (ကော်လံ)</button>
     <button id="searchBtn">🔍 ရှာမယ်</button>
-    <button id="csvBtn">📄 CSV</button>
+    <button id="namesBtn">👥 နာမည်များ</button>
   </div>
   <div id="pageArea">
     <div id="sizer"><div id="scaler">
@@ -330,6 +334,11 @@ tr.hl td{background:rgba(230,176,66,.35)}
   <div class="sheetHead"><b>ရှာမယ်</b><button class="xBtn" data-close="searchSheet">✕</button></div>
   <input class="textIn" id="searchIn" type="text" placeholder="စာသား ရိုက်ရှာပါ" autocomplete="off">
   <div id="searchResults"></div>
+</div></div>
+<!-- NAMES SHEET -->
+<div class="sheetWrap" id="namesSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>👥 နာမည်များ</b><button class="xBtn" data-close="namesSheet">✕</button></div>
+  <div id="namesList"></div>
 </div></div>
 <!-- BACKUP SHEET -->
 <div class="sheetWrap" id="backupSheet"><div class="sheetBox">
@@ -540,7 +549,7 @@ tbody.addEventListener('input',function(e){
   var tr=el.closest('tr'); if(!tr) return;
   var b=book(); var r=findRow(b,tr.getAttribute('data-id')); if(!r) return;
   r.cells[colId]=el.value; save();
-  if(el.tagName==='TEXTAREA') growTa(el);
+  if(el.tagName==='TEXTAREA'){ growTa(el); showSug(el); }
   var col=findCol(b,colId);
   if(col && (col.type==='num'||col.type==='money')) renderTotalsOnly();
 });
@@ -650,6 +659,8 @@ function showSug(ta){
   var colId=ta.getAttribute('data-col'); var col=findCol(b,colId);
   if(!col || col.type!=='text'){ hideSug(); return; }
   var vals=sugValues(b,colId,ta.value.trim());
+  var q=ta.value.trim();
+  if(q) vals=vals.filter(function(v){ return v.indexOf(q)===0; });
   var s=$('sugStrip');
   if(!vals.length){ hideSug(); return; }
   sugTarget={ta:ta, colId:colId};
@@ -924,21 +935,60 @@ function download(name, text, mime){
   a.href='data:'+(mime||'text/plain')+';charset=utf-8,'+encodeURIComponent(text);
   a.download=name; document.body.appendChild(a); a.click(); a.remove();
 }
-$('csvBtn').addEventListener('click',function(){
-  var b=book(); if(!b) return;
-  var lines=[['ရက်စွဲ'].concat(b.columns.map(function(c){ return c.name; })).join(',')];
-  var days=Object.keys(b.days||{}).sort();
-  days.forEach(function(d){
-    b.days[d].forEach(function(r){
-      var cells=b.columns.map(function(c){
-        var v=cellDisplay(c, r.cells[c.id]||'');
-        return '"'+String(v).replace(/"/g,'""')+'"';
-      });
-      lines.push([d].concat(cells).join(','));
+/* ===== names directory (👥 နာမည်များ — grouped by first letter, Myanmar order) ===== */
+var MY_ORDER=['က','ခ','ဂ','ဃ','င','စ','ဆ','ဇ','ဈ','ည','ဋ','ဌ','ဍ','ဎ','ဏ','တ','ထ','ဒ','ဓ','န','ပ','ဖ','ဗ','ဘ','မ','ယ','ရ','လ','ဝ','သ','ဟ','ဠ','အ','ဥ','ဧ'];
+function nameColOf(b){ return b.columns.filter(function(c){ return (c.name||'').trim()==='အမည်'; })[0] || null; }
+function allNames(b){
+  var col=nameColOf(b); if(!col) return [];
+  var seen={}, out=[];
+  Object.keys(b.days||{}).forEach(function(dk){
+    (b.days[dk]||[]).forEach(function(r){
+      var v=(r.cells[col.id]||'').trim();
+      if(v && !seen[v]){ seen[v]=1; out.push(v); }
     });
   });
-  download(b.name+'.csv', '﻿'+lines.join('\r\n'), 'text/csv');
-});
+  return out;
+}
+function nameGroupOf(n){
+  var ch=n.charAt(0);
+  if(ch==='ဦ') return 'ဥ';
+  return MY_ORDER.indexOf(ch)>=0? ch : 'အခြား';
+}
+function openNames(){
+  var b=book(); if(!b) return;
+  var list=$('namesList'); list.innerHTML='';
+  var names=allNames(b);
+  if(!names.length){
+    list.innerHTML='<div class="hint">အမည် ကော်လံမှာ နာမည်တွေ မမှတ်ရသေးဘူး။</div>';
+  } else {
+    names.sort(function(a,b2){ try{ return a.localeCompare(b2,'my'); }catch(e){ return a<b2? -1:1; } });
+    var groups={};
+    names.forEach(function(n){ var g=nameGroupOf(n); (groups[g]=groups[g]||[]).push(n); });
+    MY_ORDER.concat(['အခြား']).forEach(function(g){
+      if(!groups[g]) return;
+      var h=document.createElement('div'); h.className='nameGroup'; h.textContent=g; list.appendChild(h);
+      groups[g].forEach(function(n){
+        var btn=document.createElement('button'); btn.className='nameItem'; btn.textContent=n;
+        btn.addEventListener('click',function(){ pickName(n); });
+        list.appendChild(btn);
+      });
+    });
+  }
+  openSheet('namesSheet');
+}
+function pickName(n){
+  var b=book(); if(!b) return;
+  closeSheet('namesSheet');
+  var active=(document.activeElement && document.activeElement.tagName==='TEXTAREA')? document.activeElement : null;
+  if(active){
+    active.value=n; active.dispatchEvent(new Event('input',{bubbles:true})); growTa(active); active.focus();
+  } else {
+    var col=nameColOf(b); if(!col) return;
+    var nr={id:uid(), cells:{}}; nr.cells[col.id]=n;
+    ensureDay(b,curDay).push(nr); save(); renderBook();
+  }
+}
+$('namesBtn').addEventListener('click',openNames);
 
 /* ===== search ===== */
 $('searchBtn').addEventListener('click',function(){ $('searchIn').value=''; $('searchResults').innerHTML=''; openSheet('searchSheet'); setTimeout(function(){ $('searchIn').focus(); },250); });
