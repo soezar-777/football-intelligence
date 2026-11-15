@@ -25,7 +25,8 @@ button{font-family:inherit}
 #zoomSlider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35);margin-top:-9px}
 #zoomSlider::-moz-range-track{height:4px;border-radius:2px;background:#b9ac8c}
 #zoomSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35)}
-#zoomPct{min-width:42px;text-align:center;font-weight:700;font-size:13.5px;padding:6px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
+#dayCount{font-weight:700;font-size:14.5px;color:#166534;white-space:nowrap;padding:6px 2px}
+body.dark #dayCount{color:#4ade80}
 .themeBtn{margin-left:auto;font-size:16px;padding:5px 12px}
 #blueBtn{color:#5a6a8a}
 #blueBtn.on{color:#1d4ed8;border-color:#1d4ed8;font-weight:700}
@@ -244,8 +245,7 @@ body.dark .nameItem{background:#202a3a}
     <button id="todayBtn">ဒီနေ့</button>
     <button id="nextDay">နောက် ›</button>
     <div class="zoomctl">
-      <input type="range" id="zoomSlider" min="40" max="200" step="1" value="100" aria-label="Zoom">
-      <span id="zoomPct">100%</span>
+      <span id="dayCount">စုစုပေါင်း — ၀ ယောက်</span>
     </div>
   </div>
   <div class="strip">
@@ -468,9 +468,19 @@ function cellDisplay(col,val){
   if(col.type==='date' && val){ var p=val.split('-'); return (p.length===3)? toMy(p[2]+'/'+p[1]+'/'+p[0]) : val; }
   return val||'';
 }
+function updateDayCount(b){
+  var el=$('dayCount'); if(!el || !b) return;
+  var col=nameColOf(b); var n=0;
+  rowsOf(b,curDay).forEach(function(r){
+    if(col){ if(((r.cells[col.id]||'')+'').trim()) n++; }
+    else { for(var k in r.cells){ if(((r.cells[k]||'')+'').trim()){ n++; break; } } }
+  });
+  el.textContent='စုစုပေါင်း — '+toMy(n)+' ယောက်';
+}
 function renderBook(){
   var b=book(); if(!b){ showHome(); return; }
   $('bookTitle').textContent=b.name;
+  updateDayCount(b);
   $('dateBtn').textContent=fmtDMY(curDay);
   $('meta').textContent=b.name;
   $('metaSub').textContent='Date : '+fmtDMY(curDay)+' ('+wdName(curDay)+')';
@@ -558,7 +568,7 @@ tbody.addEventListener('input',function(e){
   var colId=el.getAttribute('data-col'); if(!colId) return;
   var tr=el.closest('tr'); if(!tr) return;
   var b=book(); var r=findRow(b,tr.getAttribute('data-id')); if(!r) return;
-  r.cells[colId]=el.value; save();
+  r.cells[colId]=el.value; save(); updateDayCount(b);
   if(el.tagName==='TEXTAREA'){ growTa(el); showSug(el); }
   var col=findCol(b,colId);
   if(col && (col.type==='num'||col.type==='money')) renderTotalsOnly();
@@ -721,7 +731,6 @@ function applyZoom(){
   var sc=$('scaler'); sc.style.transform='scale('+zoom+')';
   var pw=$('paper').offsetWidth, ph=$('paper').offsetHeight;
   var sz=$('sizer'); sz.style.width=(pw*zoom)+'px'; sz.style.height=(ph*zoom)+'px';
-  $('zoomSlider').value=Math.round(zoom*100); $('zoomPct').textContent=Math.round(zoom*100)+'%';
   store.set(ZOOMK,String(zoom));
 }
 function fitZoom(saveIt){
@@ -743,11 +752,6 @@ function zoomAt(f,mx,my){
   var nz=Math.max(0.4, Math.min(2, zoom*f)); if(nz===zoom) return;
   var a=anchorAt(mx,my); zoom=nz; applyZoom(); keepAnchor(a.x,a.y,mx,my);
 }
-$('zoomSlider').addEventListener('input',function(){
-  var t=(parseFloat(this.value)||100)/100; if(t===zoom) return;
-  var area=$('pageArea'); zoomAt(t/zoom, area.clientWidth/2, area.clientHeight/2);
-});
-$('zoomPct').addEventListener('click',function(){ fitZoom(true); });
 var ptrs=new Map(), ges=null, suppressClickUntil=0;
 function pdist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
 $('pageArea').addEventListener('pointerdown',function(e){
