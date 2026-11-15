@@ -548,6 +548,17 @@ function sugValues(b,colId,exclude){
   return out;
 }
 function hideSug(){ sugTarget=null; var s=$('sugStrip'); s.classList.remove('open'); s.classList.remove('kb'); s.innerHTML=''; }
+/* chips fire only on a clean tap — a sideways drag scrolls the strip and inserts nothing */
+function chipTap(el,fn){
+  var sx=0, sy=0, on=false;
+  el.addEventListener('pointerdown',function(e){ sx=e.clientX; sy=e.clientY; on=true; });
+  el.addEventListener('pointerup',function(e){
+    if(!on) return; on=false;
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(dx*dx+dy*dy<=144) fn();
+  });
+  el.addEventListener('pointercancel',function(){ on=false; });
+}
 function showSug(ta){
   var b=book(); if(!b) return;
   var colId=ta.getAttribute('data-col'); var col=findCol(b,colId);
@@ -559,11 +570,11 @@ function showSug(ta){
   s.innerHTML='';
   vals.forEach(function(v){
     var c=document.createElement('span'); c.className='sugChip'; c.textContent=v;
-    c.addEventListener('pointerdown',function(e){ e.preventDefault(); ta.value=v; ta.dispatchEvent(new Event('input',{bubbles:true})); growTa(ta); hideSug(); ta.blur(); });
+    chipTap(c,function(){ ta.value=v; ta.dispatchEvent(new Event('input',{bubbles:true})); growTa(ta); hideSug(); ta.blur(); });
     s.appendChild(c);
   });
   var x=document.createElement('span'); x.className='sugBtn ghost'; x.textContent='✕ ပိတ်';
-  x.addEventListener('pointerdown',function(e){ e.preventDefault(); hideSug(); });
+  chipTap(x,function(){ hideSug(); });
   s.appendChild(x);
   s.classList.add('open'); kbPlace();
 }
