@@ -245,7 +245,7 @@ body.dark .nameItem{background:#202a3a}
     <button id="todayBtn">ဒီနေ့</button>
     <button id="nextDay">နောက် ›</button>
     <div class="zoomctl">
-      <span id="dayCount">စုစုပေါင်း — ၀ ယောက်</span>
+      <span id="dayCount">စုစုပေါင်း — ၀ ဦး</span>
     </div>
   </div>
   <div class="strip">
@@ -471,11 +471,30 @@ function cellDisplay(col,val){
 function updateDayCount(b){
   var el=$('dayCount'); if(!el || !b) return;
   var col=nameColOf(b); var n=0;
-  rowsOf(b,curDay).forEach(function(r){
+  var list=rowsOf(b,curDay);
+  list.forEach(function(r){
     if(col){ if(((r.cells[col.id]||'')+'').trim()) n++; }
     else { for(var k in r.cells){ if(((r.cells[k]||'')+'').trim()){ n++; break; } } }
   });
-  el.textContent='စုစုပေါင်း — '+toMy(n)+' ယောက်';
+  var txt='စုစုပေါင်း — '+toMy(n)+' ဦး';
+  if(curDay===todayStr()){
+    var ic=null, oc=null;
+    b.columns.forEach(function(c){
+      if(c.type!=='time') return;
+      var nn=normName(c.name);
+      if(nn==='ဝင်') ic=c; else if(nn==='ထွက်') oc=c;
+    });
+    if(ic && oc){
+      var m=0;
+      list.forEach(function(r){
+        var hi=((r.cells[ic.id]||'')+'').trim()!=='';
+        var ho=((r.cells[oc.id]||'')+'').trim()!=='';
+        if(hi && !ho) m++;
+      });
+      txt+=' • ကျန်သူ '+toMy(m)+' ဦး';
+    }
+  }
+  el.textContent=txt;
 }
 function renderBook(){
   var b=book(); if(!b){ showHome(); return; }
