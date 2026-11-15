@@ -32,7 +32,14 @@ button{font-family:inherit}
 .bookCard .bi{font-size:26px}
 .bookCard .bn{font-size:18px;font-weight:700;flex:1;overflow-wrap:anywhere}
 .bookCard .bm{font-size:12.5px;color:#5a6a8a}
-.bookCard .menuBtn{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:8px 11px;font-size:16px;cursor:pointer}
+.bookCard .menuBtn{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:4px 15px;font-size:24px;font-weight:700;line-height:1.25;cursor:pointer;color:#1d2a4a}
+#bookMenuBack{position:fixed;inset:0;z-index:72;display:none}
+#bookMenuBack.open{display:block}
+#bookMenu{position:fixed;z-index:73;background:#fffef9;border:1.5px solid #b9ac8c;border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.32);padding:6px;display:none;min-width:200px}
+#bookMenu.open{display:block}
+#bookMenu button{display:block;width:100%;text-align:left;background:none;border:none;border-radius:8px;padding:13px 12px;font-size:16.5px;cursor:pointer;color:#1d2a4a}
+#bookMenu button:active{background:#f3ecd9}
+#bookMenu button.danger{color:#c0392b}
 .bigAdd{width:100%;background:#166534;color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;margin-top:4px}
 .homeFoot{margin-top:14px;display:flex;gap:8px}
 .homeFoot button{flex:1;background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:12px 6px;font-size:15px;cursor:pointer;color:#1d2a4a}
@@ -163,8 +170,6 @@ tr.hl td{background:rgba(230,176,66,.35)}
     <button id="colsBtn">⚙ ဇယားပြင် (ကော်လံ)</button>
     <button id="searchBtn">🔍 ရှာမယ်</button>
     <button id="csvBtn">📄 CSV</button>
-    <button id="renameBtn">✏ အမည်ပြောင်း</button>
-    <button id="delBookBtn">🗑 စာအုပ်ဖျက်</button>
   </div>
   <div id="pageArea">
     <div id="sizer"><div id="scaler">
@@ -184,6 +189,11 @@ tr.hl td{background:rgba(230,176,66,.35)}
   </div>
 </div>
 <div id="undoBar"><span>ဖျက်လိုက်ပါပြီ</span><button id="undoBtn">ပြန်ယူမယ်</button></div>
+<div id="bookMenuBack"></div>
+<div id="bookMenu">
+  <button id="bmRename">✏ အမည်ပြောင်း</button>
+  <button id="bmDelete" class="danger">🗑 စာအုပ်ဖျက်</button>
+</div>
 <!-- PHOTO SHEET -->
 <div class="sheetWrap" id="sheet"><div class="sheetBox">
   <div class="sheetHead"><b id="sheetName">photo.png</b><button class="xBtn" data-close="sheet">✕</button></div>
@@ -341,8 +351,10 @@ function renderHome(){
     var days=b.days? Object.keys(b.days).length:0;
     var total=0; if(b.days) for(var k in b.days) total+=b.days[k].length;
     var card=document.createElement('div'); card.className='bookCard';
-    card.innerHTML='<div class="bi">📗</div><div class="bn">'+esc(b.name)+'<div class="bm">ကော်လံ '+toMy(b.columns.length)+' ခု · မှတ်တမ်း '+toMy(total)+' ခု · ရက် '+toMy(days)+' ရက်</div></div><button class="menuBtn">ဖွင့်မယ် ›</button>';
+    card.innerHTML='<div class="bi">📗</div><div class="bn">'+esc(b.name)+'<div class="bm">ကော်လံ '+toMy(b.columns.length)+' ခု · မှတ်တမ်း '+toMy(total)+' ခု · ရက် '+toMy(days)+' ရက်</div></div><button class="menuBtn" aria-label="စာအုပ် မီနူး">⋮</button>';
     card.addEventListener('click',function(){ openBook(b.id); });
+    var mb=card.querySelector('.menuBtn');
+    mb.addEventListener('click',function(e){ e.stopPropagation(); openBookMenu(b.id, mb); });
     list.appendChild(card);
   });
 }
@@ -780,17 +792,30 @@ $('colsSave').addEventListener('click',function(){
   b.columns=colDraft; colDraft=null; save(); closeSheet('colsSheet'); renderBook(); fitZoom(false);
 });
 
-/* ===== book menu: rename / delete / csv ===== */
-$('renameBtn').addEventListener('click',function(){
-  var b=book(); if(!b) return;
+/* ===== book card ⋮ menu: rename / delete ===== */
+function findBook(id){ for(var i=0;i<db.books.length;i++) if(db.books[i].id===id) return db.books[i]; return null; }
+var menuBookId=null;
+function openBookMenu(id,btn){
+  menuBookId=id;
+  var m=$('bookMenu');
+  m.classList.add('open'); $('bookMenuBack').classList.add('open');
+  var r=btn.getBoundingClientRect();
+  m.style.top=(r.bottom+6)+'px';
+  m.style.right=Math.max(8, window.innerWidth-r.right)+'px';
+}
+function closeBookMenu(){ menuBookId=null; $('bookMenu').classList.remove('open'); $('bookMenuBack').classList.remove('open'); }
+$('bookMenuBack').addEventListener('click',closeBookMenu);
+$('bmRename').addEventListener('click',function(){
+  var b=findBook(menuBookId); closeBookMenu(); if(!b) return;
   var n=prompt('စာအုပ် နာမည်အသစ်', b.name);
-  if(n && n.trim()){ b.name=n.trim(); save(); renderBook(); }
+  if(n && n.trim()){ b.name=n.trim(); save(); renderHome(); if($('bookScreen').classList.contains('on') && db.active===b.id) renderBook(); }
 });
-$('delBookBtn').addEventListener('click',function(){
-  var b=book(); if(!b) return;
+$('bmDelete').addEventListener('click',function(){
+  var b=findBook(menuBookId); closeBookMenu(); if(!b) return;
   askConfirm('စာအုပ် ဖျက်မှာ သေချာပါသလား','"'+b.name+'" စာအုပ်နဲ့ အထဲက မှတ်တမ်းအားလုံး ပျက်မယ်။ ပြန်ယူလို့ မရဘူး။','ဖျက်မယ်',function(){
     db.books=db.books.filter(function(x){ return x.id!==b.id; });
-    db.active=db.books.length? db.books[0].id : null; save(); showHome();
+    if(db.active===b.id) db.active=db.books.length? db.books[0].id : null;
+    save(); showHome();
   });
 });
 function download(name, text, mime){
