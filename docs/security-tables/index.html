@@ -981,8 +981,10 @@ function buildPhoto(){
   if(grouped){
     function drawCellV(lines,cx,cy,cw,boxH){
       ctx.fillStyle='#1d2a4a'; ctx.font='700 30px Padauk, sans-serif'; ctx.textAlign='center';
-      var base=cy+(boxH-lines.length*40)/2+34;
-      lines.forEach(function(ln,li){ ctx.fillText(ln, cx+cw/2, base+li*40); });
+      ctx.textBaseline='middle';
+      var midY=cy+boxH/2-(lines.length-1)*20;
+      lines.forEach(function(ln,li){ ctx.fillText(ln, cx+cw/2, midY+li*40); });
+      ctx.textBaseline='alphabetic';
     }
     function vline(x,yy,hh){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); }
     function hseg(x1,x2,yy){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,yy); ctx.lineTo(x2,yy); ctx.stroke(); }
