@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>လုံခြုံရေး မှတ်တမ်းစာအုပ်</title>
+<meta name="theme-color" content="#166534">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#ddd5bd;color:#1d2a4a;-webkit-text-size-adjust:100%}
+button{font-family:inherit}
+.screen{display:none;flex-direction:column;height:100dvh}
+.screen.on{display:flex}
+.strip{background:#f7f3e8;border-bottom:1px solid #c9bfa5;padding:4px 6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;z-index:5}
+.strip button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:5px 8px;font-size:13.5px;line-height:1.3;white-space:nowrap;color:#1d2a4a;cursor:pointer}
+.strip button:active{background:#efe8d2}
+.strip .ttl{font-weight:800;font-size:16px;padding:4px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
+#dateBtn{font-weight:700;min-width:98px}
+.zoomctl{margin-left:auto;display:flex;gap:5px;align-items:center}
+#zoomSlider{width:110px;height:28px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+#zoomSlider::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#b9ac8c}
+#zoomSlider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35);margin-top:-9px}
+#zoomSlider::-moz-range-track{height:4px;border-radius:2px;background:#b9ac8c}
+#zoomSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+#zoomPct{min-width:42px;text-align:center;font-weight:700;font-size:13.5px;padding:6px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
+/* home */
+#homeBody{flex:1;overflow:auto;padding:12px 10px 20px;background:#d8cfb4}
+.bookCard{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 5px rgba(0,0,0,.12);cursor:pointer}
+.bookCard .bi{font-size:26px}
+.bookCard .bn{font-size:18px;font-weight:700;flex:1;overflow-wrap:anywhere}
+.bookCard .bm{font-size:12.5px;color:#5a6a8a}
+.bookCard .menuBtn{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:8px 11px;font-size:16px;cursor:pointer}
+.bigAdd{width:100%;background:#166534;color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;margin-top:4px}
+.homeFoot{margin-top:14px;display:flex;gap:8px}
+.homeFoot button{flex:1;background:#fffef9;border:1.5px solid #b9ac8c;border-radius:10px;padding:12px 6px;font-size:15px;cursor:pointer;color:#1d2a4a}
+.emptyNote{text-align:center;color:#5a6a8a;font-size:15px;padding:22px 8px;line-height:1.7}
+/* table page */
+#pageArea{flex:1;overflow:auto;position:relative;background:#d8cfb4;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+#sizer{position:relative;margin:0 auto}
+#scaler{position:absolute;top:0;left:0;transform-origin:0 0}
+.paper{background:#fffef9;min-height:780px;padding:14px 8px 20px;box-shadow:0 2px 12px rgba(0,0,0,.28);display:flex;flex-direction:column}
+.meta{text-align:center;font-size:16px;font-weight:700;line-height:1.55;margin:0 4px 2px;color:#1d2a4a}
+.metaSub{text-align:center;font-size:13.5px;margin:0 4px 8px;color:#43536e}
+table{border-collapse:collapse;width:100%;table-layout:fixed;background:#fffef9}
+th,td{border:1px solid #6e7a90;padding:4px 6px;font-size:16px;vertical-align:middle;min-height:46px}
+thead th{background:#f3ecd9;text-align:center;font-weight:700;padding:8px 4px}
+thead tr:last-child th{border-bottom:3px double #1d2a4a}
+tfoot td{background:#f3ecd9;font-weight:700;text-align:right}
+td input.cell,td textarea.cell{width:100%;border:none;background:transparent;font:inherit;color:inherit;outline:none;padding:5px 2px;display:block}
+td textarea.cell{resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.35}
+td input.cell{text-align:right}
+td input.cell.txt{text-align:left}
+td.ser{text-align:center;color:#43536e}
+td.tcell{text-align:center;cursor:pointer}
+td.tcell .tl{white-space:nowrap;color:#1d2a4a}
+td.tcell .tl.empty{color:#9aa7bd}
+td.ccell{text-align:center;cursor:pointer;font-size:20px;color:#166534}
+td.chcell{cursor:pointer;overflow-wrap:anywhere}
+td .rowBtns{display:flex;gap:2px;justify-content:center}
+td .rowBtns button{background:none;border:none;font-size:15px;cursor:pointer;padding:4px 3px;line-height:1;color:#43536e}
+td .rowBtns .del{color:#c0392b}
+tr.hl td{background:rgba(230,176,66,.35)}
+.ruled{flex:1;min-height:100px;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 43px,#c3cede 43px,#c3cede 44px)}
+.addrow{margin-top:12px;align-self:flex-start;background:none;border:1.5px dashed #166534;color:#166534;border-radius:10px;padding:10px 16px;font-size:16px;cursor:pointer}
+#bottomBar{background:#f7f3e8;border-top:1px solid #c9bfa5;padding:8px 10px calc(48px + env(safe-area-inset-bottom));display:flex;gap:8px}
+#bottomBar button{flex:1;border-radius:12px;padding:15px 6px;font-size:17px;font-weight:700;cursor:pointer}
+#photoBtn{background:#166534;color:#fff;border:none}
+#sigBtn2{background:#fffef9;border:2px solid #166534;color:#166534}
+/* suggestion strip */
+#sugStrip{display:none;background:#f7f3e8;border-top:1px solid #c9bfa5;padding:6px 8px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none}
+#sugStrip::-webkit-scrollbar{display:none}
+#sugStrip.open{display:block}
+#sugStrip.kb{position:fixed;left:0;right:0;z-index:65;box-shadow:0 -3px 14px rgba(0,0,0,.25)}
+.sugChip{display:inline-block;vertical-align:middle;margin-right:8px;background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;touch-action:pan-x}
+.sugBtn{display:inline-block;vertical-align:middle;margin-right:8px;border-radius:999px;padding:7px 13px;font-size:15px;cursor:pointer;white-space:nowrap;border:1.5px solid #166534;background:#166534;color:#fff;font-weight:700;touch-action:manipulation}
+.sugBtn.ghost{background:#fffef9;border-color:#b9ac8c;color:#1d2a4a;font-weight:400}
+/* undo */
+#undoBar{position:fixed;left:12px;right:12px;bottom:calc(118px + env(safe-area-inset-bottom));background:#1d2a4a;color:#fff;border-radius:12px;padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:60;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+#undoBar.show{display:flex}
+#undoBar button{background:#fff;color:#1d2a4a;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:15px;cursor:pointer}
+/* sheets */
+.sheetWrap{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:80;align-items:flex-end;justify-content:center}
+.sheetWrap.open{display:flex}
+.sheetBox{background:#fffef9;width:100%;max-height:94dvh;overflow:auto;border-radius:16px 16px 0 0;padding:14px 14px calc(48px + env(safe-area-inset-bottom))}
+.sheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sheetHead b{font-size:16px}
+.xBtn{background:#eee7d2;border:none;border-radius:8px;width:38px;height:38px;font-size:17px;cursor:pointer}
+.hint{text-align:center;color:#5a6a8a;margin:10px 0;font-size:14px}
+#sheetImg{width:100%;height:auto;display:block;border:1px solid #d8d2bd;background:#fff}
+.primaryBtn{width:100%;background:#166534;color:#fff;border:none;border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;margin-top:8px}
+.ghostBtn{width:100%;margin-top:10px;background:#fffef9;border:2px solid #166534;color:#166534;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer}
+.dangerBtn{width:100%;margin-top:10px;background:#fffef9;border:2px solid #b91c1c;color:#b91c1c;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer}
+.fieldLabel{font-size:13px;color:#5a6a8a;margin:12px 0 6px}
+.textIn{width:100%;box-sizing:border-box;padding:11px 12px;font-size:17px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fffef9;color:#1d2a4a}
+.tplItem{display:flex;gap:10px;align-items:flex-start;border:1.5px solid #b9ac8c;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;background:#fffef9}
+.tplItem.sel{border-color:#166534;background:#eef7ee}
+.tplItem .tn{font-weight:700;font-size:16px}
+.tplItem .td{font-size:13px;color:#5a6a8a;line-height:1.5}
+.optChips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.optChip{background:#fffef9;border:1.5px solid #166534;color:#14532d;border-radius:999px;padding:10px 16px;font-size:16px;cursor:pointer}
+.colRow{border:1.5px solid #d8d2bd;border-radius:12px;padding:10px;margin-bottom:10px;background:#fff}
+.colRow .r1{display:flex;gap:6px;align-items:center}
+.colRow .r1 input{flex:1;min-width:0;padding:9px;font-size:16px;border:1.5px solid #b9ac8c;border-radius:8px}
+.colRow .r1 select{padding:9px 4px;font-size:15px;border:1.5px solid #b9ac8c;border-radius:8px;background:#fff}
+.colRow .r2{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.colRow .r2 button{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:8px;padding:8px 10px;font-size:14px;cursor:pointer}
+.colRow .r2 .delC{color:#b91c1c;border-color:#d8a7a7}
+.colRow .r2 input[type=range]{flex:1;min-width:90px}
+.colRow textarea{width:100%;box-sizing:border-box;margin-top:8px;padding:9px;font-size:15px;border:1.5px solid #b9ac8c;border-radius:8px;min-height:56px}
+.tpRow{display:flex;gap:8px;align-items:center;justify-content:center;margin:14px 0}
+.tpRow select{font-size:20px;padding:10px;border:1.5px solid #b9ac8c;border-radius:10px;background:#fff}
+.srItem{border-bottom:1px solid #e3dcc4;padding:10px 4px;cursor:pointer}
+.srItem .sd{font-size:12.5px;color:#5a6a8a}
+.srItem .sv{font-size:15px;overflow-wrap:anywhere}
+/* signature */
+.sigLabel{font-size:13px;color:#5a6a8a;margin:8px 0 6px}
+#sigPrevWrap{display:none;margin-bottom:6px}
+#sigPrev{display:block;max-width:100%;max-height:120px;border:1px solid #d8d2bd;border-radius:8px;background-color:#fffef9;background-image:repeating-conic-gradient(#e9e3cf 0% 25%,#fffef9 0% 50%);background-size:16px 16px}
+#sigPad{display:block;width:100%;height:220px;border:1.5px solid #b9ac8c;border-radius:10px;background-color:#fffef9;background-image:linear-gradient(to bottom,rgba(0,0,0,0) 168px,#ddd5ba 168px,#ddd5ba 169px,rgba(0,0,0,0) 169px);touch-action:none}
+.sigBtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sigBtns button{flex:1;min-width:70px;border-radius:10px;padding:13px 6px;font-size:16px;cursor:pointer;background:#fffef9;border:1.5px solid #b9ac8c;color:#1d2a4a}
+#sigSave{background:#166534;border-color:#166534;color:#fff;font-weight:700}
+#sigDelete{color:#b91c1c;border-color:#d8a7a7}
+#datePick{position:fixed;left:8px;bottom:8px;width:28px;height:28px;opacity:.01;border:none;z-index:70;pointer-events:none;padding:0}
+#bootFail{position:fixed;inset:0;background:#fffef9;display:none;z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-size:18px}
+#bootFail button{background:#166534;color:#fff;border:none;border-radius:12px;padding:14px 22px;font-size:17px;cursor:pointer}
+</style>
+</head>
+<body>
+<!-- HOME -->
+<div class="screen on" id="homeScreen">
+  <div class="strip"><span class="ttl">📗 လုံခြုံရေး မှတ်တမ်းစာအုပ်</span></div>
+  <div id="homeBody">
+    <div id="bookList"></div>
+    <button class="bigAdd" id="newBookBtn">+ စာအုပ်အသစ် ဖန်တီးမယ်</button>
+    <div class="homeFoot">
+      <button id="backupBtn">💾 Backup / Restore</button>
+      <button id="homeSigBtn">✍️ လက်မှတ်</button>
+    </div>
+    <div class="emptyNote">စာအုပ်တစ်အုပ်ချင်းစီမှာ ကော်လံတွေ ကိုယ်ကြိုက် ဆောက်လို့ရတယ်။<br>Data အားလုံး ဖုန်းထဲမှာပဲ သိမ်းတယ် — internet မလိုဘူး။</div>
+  </div>
+</div>
+<!-- BOOK -->
+<div class="screen" id="bookScreen">
+  <div class="strip">
+    <button id="homeBtn">‹ စာအုပ်များ</button>
+    <span class="ttl" id="bookTitle">–</span>
+  </div>
+  <div class="strip">
+    <button id="prevDay">‹ ရှေ့</button>
+    <button id="dateBtn">–</button>
+    <button id="todayBtn">ဒီနေ့</button>
+    <button id="nextDay">နောက် ›</button>
+    <div class="zoomctl">
+      <input type="range" id="zoomSlider" min="40" max="200" step="1" value="100" aria-label="Zoom">
+      <span id="zoomPct">100%</span>
+    </div>
+  </div>
+  <div class="strip">
+    <button id="colsBtn">⚙ ဇယားပြင် (ကော်လံ)</button>
+    <button id="searchBtn">🔍 ရှာမယ်</button>
+    <button id="csvBtn">📄 CSV</button>
+    <button id="renameBtn">✏ အမည်ပြောင်း</button>
+    <button id="delBookBtn">🗑 စာအုပ်ဖျက်</button>
+  </div>
+  <div id="pageArea">
+    <div id="sizer"><div id="scaler">
+      <div class="paper" id="paper">
+        <div class="meta" id="meta"></div>
+        <div class="metaSub" id="metaSub"></div>
+        <table id="tbl"><colgroup id="colgroup"></colgroup><thead id="thead"></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table>
+        <div class="ruled"></div>
+        <button class="addrow" id="addRow">+ အတန်းသစ် ထည့်မယ်</button>
+      </div>
+    </div></div>
+  </div>
+  <div id="sugStrip"></div>
+  <div id="bottomBar">
+    <button id="photoBtn">📷 Photo ထုတ်မယ်</button>
+    <button id="sigBtn2">✍️ လက်မှတ်</button>
+  </div>
+</div>
+<div id="undoBar"><span>ဖျက်လိုက်ပါပြီ</span><button id="undoBtn">ပြန်ယူမယ်</button></div>
+<!-- PHOTO SHEET -->
+<div class="sheetWrap" id="sheet"><div class="sheetBox">
+  <div class="sheetHead"><b id="sheetName">photo.png</b><button class="xBtn" data-close="sheet">✕</button></div>
+  <img id="sheetImg" alt="photo">
+  <div class="hint">ပုံကို ဖိထားပြီး Save လုပ်လို့လည်း ရတယ်</div>
+  <button class="primaryBtn" id="shareBtn">📤 Share — Viber နဲ့ ပို့မယ်</button>
+  <button class="ghostBtn" id="dlBtn">⬇ Download — သိမ်းမယ်</button>
+</div></div>
+<!-- SIGNATURE SHEET -->
+<div class="sheetWrap" id="sigSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>လက်မှတ်</b><button class="xBtn" data-close="sigSheet">✕</button></div>
+  <div id="sigPrevWrap"><div class="sigLabel">သိမ်းထားတဲ့ လက်မှတ်</div><img id="sigPrev" alt="signature"></div>
+  <div class="sigLabel">လက်မှတ် ရေးဆွဲရန်</div>
+  <canvas id="sigPad"></canvas>
+  <div class="sigLabel">လက်မှတ်အောက်မှာ ပေါ်မယ့် နာမည်</div>
+  <input id="sigName" type="text" placeholder="U Soe Yar Zar" autocomplete="off">
+  <div class="sigBtns">
+    <button id="sigClear">ရှင်းမယ်</button>
+    <button id="sigDelete">🗑 ဖျက်မယ်</button>
+    <button id="sigSave">သိမ်းမယ်</button>
+    <button id="sigCloseBtn">ပိတ်မယ်</button>
+  </div>
+</div></div>
+<!-- NEW BOOK SHEET -->
+<div class="sheetWrap" id="newBookSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>စာအုပ်အသစ်</b><button class="xBtn" data-close="newBookSheet">✕</button></div>
+  <div class="fieldLabel">စာအုပ် နာမည်</div>
+  <input class="textIn" id="nbName" type="text" placeholder="ဥပမာ — ဖြစ်ရပ်မှတ်တမ်း" autocomplete="off">
+  <div class="fieldLabel">ပုံစံ ရွေးပါ (နောက်မှ ကော်လံတွေ ပြန်ပြင်လို့ရတယ်)</div>
+  <div id="tplList"></div>
+  <button class="primaryBtn" id="nbCreate">ဖန်တီးမယ်</button>
+</div></div>
+<!-- COLUMNS SHEET -->
+<div class="sheetWrap" id="colsSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>ဇယားပြင် — ကော်လံများ</b><button class="xBtn" data-close="colsSheet">✕</button></div>
+  <div id="colList"></div>
+  <button class="ghostBtn" id="addColBtn">+ ကော်လံ ထည့်မယ်</button>
+  <button class="primaryBtn" id="colsSave">သိမ်းမယ်</button>
+  <div class="hint">ကော်လံ ဖျက်ရင် အဲဒီကော်လံထဲက စာရင်းတွေ ပျက်မယ်</div>
+</div></div>
+<!-- TIME PICKER SHEET -->
+<div class="sheetWrap" id="timeSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>အချိန် ရွေးပါ</b><button class="xBtn" data-close="timeSheet">✕</button></div>
+  <div class="tpRow"><select id="tpH"></select><span style="font-size:20px">:</span><select id="tpM"></select><select id="tpAP"><option value="AM">AM</option><option value="PM">PM</option></select></div>
+  <button class="primaryBtn" id="tpSave">သိမ်းမယ်</button>
+  <button class="ghostBtn" id="tpNow">🕐 အခုအချိန် ထည့်မယ်</button>
+  <button class="dangerBtn" id="tpClear">ရှင်းမယ်</button>
+</div></div>
+<!-- CHOICE SHEET -->
+<div class="sheetWrap" id="choiceSheet"><div class="sheetBox">
+  <div class="sheetHead"><b id="choiceTitle">ရွေးပါ</b><button class="xBtn" data-close="choiceSheet">✕</button></div>
+  <div class="optChips" id="choiceChips"></div>
+  <div class="fieldLabel">ကိုယ်တိုင် ရေးထည့်ချင်ရင်</div>
+  <input class="textIn" id="choiceIn" type="text" autocomplete="off">
+  <button class="primaryBtn" id="choiceSave">သိမ်းမယ်</button>
+  <button class="dangerBtn" id="choiceClear">ရှင်းမယ်</button>
+</div></div>
+<!-- SEARCH SHEET -->
+<div class="sheetWrap" id="searchSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>ရှာမယ်</b><button class="xBtn" data-close="searchSheet">✕</button></div>
+  <input class="textIn" id="searchIn" type="text" placeholder="စာသား ရိုက်ရှာပါ" autocomplete="off">
+  <div id="searchResults"></div>
+</div></div>
+<!-- BACKUP SHEET -->
+<div class="sheetWrap" id="backupSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>Backup / Restore</b><button class="xBtn" data-close="backupSheet">✕</button></div>
+  <div class="hint" style="text-align:left">Backup ဆိုတာ စာအုပ်အားလုံးရဲ့ data ကို file တစ်ခုအဖြစ် ထုတ်တာပါ။ Viber နဲ့ ကိုယ့်ဆီကို ပို့ထားရင် ဖုန်းပြောင်းတဲ့အခါ အဲဒီ file နဲ့ ပြန်တင်လို့ရတယ်။</div>
+  <button class="primaryBtn" id="expBtn">⬇ Backup file ထုတ်မယ်</button>
+  <button class="ghostBtn" id="impBtn">⬆ Backup file ကနေ ပြန်တင်မယ်</button>
+  <input type="file" id="impFile" accept=".json,application/json" style="display:none">
+  <div class="hint">ပြန်တင်ရင် အခု data အစား backup ထဲက data နဲ့ အစားထိုးမယ် (အရင် data ကို အရင် တစ်စောင် သိမ်းထားပေးမယ်)</div>
+</div></div>
+<!-- CONFIRM SHEET -->
+<div class="sheetWrap" id="confirmSheet"><div class="sheetBox">
+  <div class="sheetHead"><b id="cfTitle">သေချာပါသလား</b><button class="xBtn" data-close="confirmSheet">✕</button></div>
+  <div class="hint" id="cfMsg" style="text-align:left"></div>
+  <button class="dangerBtn" id="cfYes">ဖျက်မယ်</button>
+  <button class="ghostBtn" id="cfNo">မဖျက်တော့ဘူး</button>
+</div></div>
+<input type="date" id="datePick">
+<div id="bootFail"><div>စာအုပ် ဖွင့်မရပါ</div><button onclick="location.reload()">🔄 ပြန်ဖွင့်မယ်</button></div>
+<script>setTimeout(function(){ if(!window.__boot){ document.getElementById('bootFail').style.display='flex'; } },4000);</script>
+<script>
+(function(){
+'use strict';
+
+/* ===== helpers (same conventions as the gate logbooks) ===== */
+var MYD='၀၁၂၃၄၅၆၇၈၉';
+var WD=['တနင်္ဂနွေ','တနင်္လာ','အင်္ဂါ','ဗုဒ္ဓဟူး','ကြာသပတေး','သောကြာ','စနေ'];
+function $(id){ return document.getElementById(id); }
+function toMy(s){ return String(s).replace(/[0-9]/g,function(d){ return MYD[+d]; }); }
+function pad(n){ return (n<10?'0':'')+n; }
+function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function parseD(s){ var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function toStr(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function addDays(s,n){ var d=parseD(s); d.setDate(d.getDate()+n); return toStr(d); }
+function fmtDMY(s){ var p=s.split('-'); return toMy(p[2]+'/'+p[1]+'/'+p[0]); }
+function wdName(s){ return WD[parseD(s).getDay()]; }
+function fmtTime(t){ if(!t) return ''; var p=t.split(':'); var h=+p[0]; var ap=h>=12?'PM':'AM'; var h12=h%12; if(h12===0)h12=12; return h12+':'+p[1]+' '+ap; }
+function nowT(){ var d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtNum(v){ var n=parseFloat(v); if(isNaN(n)) return ''; var s=String(Math.round(n*100)/100); var parts=s.split('.'); parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,','); return parts.join('.'); }
+
+/* ===== storage ===== */
+var store={ get:function(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } },
+            set:function(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} } };
+function loadJSON(k,def){ try{ var v=store.get(k); return v? JSON.parse(v): def; }catch(e){ return def; } }
+var DBK='sectables_v1', ZOOMK='sectables_zoom_v1';
+var SIGK='lunkhrunre_signature_v1', SIGNK='lunkhrunre_signame_v1';
+var db=loadJSON(DBK,null);
+if(!db || !db.books){ db={books:[],active:null}; }
+function save(){ store.set(DBK, JSON.stringify(db)); }
+function book(){ for(var i=0;i<db.books.length;i++) if(db.books[i].id===db.active) return db.books[i]; return null; }
+function rowsOf(b,day){ return (b.days && b.days[day]) || []; }
+function ensureDay(b,day){ if(!b.days) b.days={}; if(!b.days[day]) b.days[day]=[]; return b.days[day]; }
+
+/* ===== templates ===== */
+function C(name,type,width,options){ return {id:uid()+Math.floor(Math.random()*999), name:name, type:type, width:width||150, options:options||[]}; }
+var TEMPLATES=[
+ {key:'incident', icon:'🚨', name:'ဖြစ်ရပ်မှတ်တမ်း', desc:'အချိန် · ဖြစ်ရပ် · လုပ်ဆောင်ချက် · မှတ်ချက်', cols:function(){ return [C('အချိန်','time',92), C('ဖြစ်ရပ်','text',210), C('လုပ်ဆောင်ချက်','text',200), C('မှတ်ချက်','text',160)]; }},
+ {key:'patrol', icon:'🔦', name:'လှည့်လည်စစ်ဆေး မှတ်တမ်း', desc:'အချိန် · နေရာ · အခြေအနေ · မှတ်ချက်', cols:function(){ return [C('အချိန်','time',92), C('နေရာ','text',170), C('အခြေအနေ','choice',130,['ပုံမှန်','ထူးခြား','သတိပြုရန်']), C('မှတ်ချက်','text',180)]; }},
+ {key:'items', icon:'📦', name:'ပစ္စည်း အဝင်/အထွက်', desc:'အချိန် · ပစ္စည်း · ပေးသူ · ယူသူ · ပြန်အပ်ချိန်', cols:function(){ return [C('အချိန်','time',92), C('ပစ္စည်း','text',170), C('ပေးသူ','text',140), C('ယူသူ','text',140), C('ပြန်အပ်ချိန်','time',104), C('မှတ်ချက်','text',150)]; }},
+ {key:'keys', icon:'🔑', name:'သော့ မှတ်တမ်း', desc:'အချိန် · သော့ · ယူသူ · ပြန်အပ်', cols:function(){ return [C('အချိန်','time',92), C('သော့ အမည်/နံပါတ်','text',170), C('ယူသူ','text',140), C('ပြန်အပ်','time',104), C('မှတ်ချက်','text',150)]; }},
+ {key:'duty', icon:'🕐', name:'တာဝန်ချိန် စာရင်း', desc:'အမည် · ချိန် စ · ချိန် ဆုံး · မှတ်ချက်', cols:function(){ return [C('အမည်','text',170), C('ချိန် စ','time',96), C('ချိန် ဆုံး','time',96), C('မှတ်ချက်','text',180)]; }},
+ {key:'money', icon:'💰', name:'ငွေစာရင်း', desc:'အကြောင်းအရာ · ဝင် · ထွက် · မှတ်ချက် (စုစုပေါင်း auto)', cols:function(){ return [C('အကြောင်းအရာ','text',220), C('ဝင်','money',120), C('ထွက်','money',120), C('မှတ်ချက်','text',160)]; }},
+ {key:'blank', icon:'▦', name:'အလွတ် ဇယား', desc:'အချိန် + မှတ်ချက် ကနေ စပြီး ကိုယ်ကြိုက် ထပ်ထည့်', cols:function(){ return [C('အချိန်','time',92), C('မှတ်ချက်','text',260)]; }}
+];
+var TYPE_NAMES={text:'စာသား', num:'ဂဏန်း', money:'ငွေ', time:'အချိန်', date:'ရက်စွဲ', check:'✓ အမှတ်', choice:'ရွေးစရာ'};
+
+/* ===== state ===== */
+var curDay=todayStr();
+var zoom=parseFloat(store.get(ZOOMK)||'1'); if(!(zoom>=0.4&&zoom<=2)) zoom=1;
+var undoState=null, undoTimer=null;
+var editCtx=null; /* {rowId, colId} for pickers */
+var hlRowId=null;
+
+/* ===== sheets ===== */
+function openSheet(id){ $(id).classList.add('open'); }
+function closeSheet(id){ $(id).classList.remove('open'); }
+document.addEventListener('click',function(e){ var c=e.target.getAttribute && e.target.getAttribute('data-close'); if(c) closeSheet(c); });
+var cfCb=null;
+function askConfirm(title,msg,yesLabel,cb){ $('cfTitle').textContent=title; $('cfMsg').textContent=msg; $('cfYes').textContent=yesLabel; cfCb=cb; openSheet('confirmSheet'); }
+$('cfYes').addEventListener('click',function(){ closeSheet('confirmSheet'); if(cfCb){ var f=cfCb; cfCb=null; f(); } });
+$('cfNo').addEventListener('click',function(){ cfCb=null; closeSheet('confirmSheet'); });
+
+/* ===== home ===== */
+function renderHome(){
+  var list=$('bookList'); list.innerHTML='';
+  if(!db.books.length){
+    list.innerHTML='<div class="emptyNote">စာအုပ် မရှိသေးဘူး။<br>အောက်က ခလုတ်နဲ့ ပထမဆုံး စာအုပ် ဖန်တီးလိုက်ပါ 👇</div>';
+    return;
+  }
+  db.books.forEach(function(b){
+    var days=b.days? Object.keys(b.days).length:0;
+    var total=0; if(b.days) for(var k in b.days) total+=b.days[k].length;
+    var card=document.createElement('div'); card.className='bookCard';
+    card.innerHTML='<div class="bi">📗</div><div class="bn">'+esc(b.name)+'<div class="bm">ကော်လံ '+toMy(b.columns.length)+' ခု · မှတ်တမ်း '+toMy(total)+' ခု · ရက် '+toMy(days)+' ရက်</div></div><button class="menuBtn">ဖွင့်မယ် ›</button>';
+    card.addEventListener('click',function(){ openBook(b.id); });
+    list.appendChild(card);
+  });
+}
+function showHome(){ $('bookScreen').classList.remove('on'); $('homeScreen').classList.add('on'); renderHome(); hideSug(); }
+function openBook(id){ db.active=id; save(); curDay=todayStr(); $('homeScreen').classList.remove('on'); $('bookScreen').classList.add('on'); renderBook(); requestAnimationFrame(function(){ fitZoom(false); }); }
+$('homeBtn').addEventListener('click',showHome);
+
+/* ===== new book ===== */
+var nbTpl='incident';
+function renderTpls(){
+  var w=$('tplList'); w.innerHTML='';
+  TEMPLATES.forEach(function(t){
+    var d=document.createElement('div'); d.className='tplItem'+(nbTpl===t.key?' sel':'');
+    d.innerHTML='<div style="font-size:22px">'+t.icon+'</div><div><div class="tn">'+esc(t.name)+'</div><div class="td">'+esc(t.desc)+'</div></div>';
+    d.addEventListener('click',function(){ nbTpl=t.key; renderTpls(); var cur=$('nbName').value.trim(); var isTplName=TEMPLATES.some(function(x){ return x.name===cur; }); if(!cur || isTplName) $('nbName').value=t.name; });
+    w.appendChild(d);
+  });
+}
+$('newBookBtn').addEventListener('click',function(){ nbTpl='incident'; $('nbName').value='ဖြစ်ရပ်မှတ်တမ်း'; renderTpls(); openSheet('newBookSheet'); });
+$('nbCreate').addEventListener('click',function(){
+  var name=$('nbName').value.trim(); if(!name){ $('nbName').focus(); return; }
+  var t=null; TEMPLATES.forEach(function(x){ if(x.key===nbTpl) t=x; });
+  var b={id:uid(), name:name, columns:t.cols(), days:{}};
+  db.books.push(b); db.active=b.id; save(); closeSheet('newBookSheet'); openBook(b.id);
+});
+
+/* ===== book render ===== */
+function paperWidth(b){ var w=38+52; b.columns.forEach(function(c){ w+= (+c.width||120); }); return Math.max(w,340); }
+function cellDisplay(col,val){
+  if(col.type==='time') return fmtTime(val);
+  if(col.type==='date' && val){ var p=val.split('-'); return (p.length===3)? toMy(p[2]+'/'+p[1]+'/'+p[0]) : val; }
+  return val||'';
+}
+function renderBook(){
+  var b=book(); if(!b){ showHome(); return; }
+  $('bookTitle').textContent=b.name;
+  $('dateBtn').textContent=fmtDMY(curDay);
+  $('meta').textContent=b.name;
+  $('metaSub').textContent='Date : '+fmtDMY(curDay)+' ('+wdName(curDay)+')';
+  var cg=$('colgroup'); cg.innerHTML='<col style="width:38px">'+b.columns.map(function(c){ return '<col style="width:'+(+c.width||120)+'px">'; }).join('')+'<col style="width:52px">';
+  $('thead').innerHTML='<tr><th>စဉ်</th>'+b.columns.map(function(c){ return '<th>'+esc(c.name)+'</th>'; }).join('')+'<th></th></tr>';
+  var tb=$('tbody'); tb.innerHTML='';
+  var list=rowsOf(b,curDay);
+  list.forEach(function(r,i){ tb.appendChild(rowEl(b,r,i)); });
+  /* totals */
+  var tf=$('tfoot'); var hasTot=b.columns.some(function(c){ return c.type==='num'||c.type==='money'; });
+  if(hasTot){
+    var cells=b.columns.map(function(c){
+      if(c.type==='num'||c.type==='money'){
+        var s=0; list.forEach(function(r){ var v=parseFloat(r.cells[c.id]); if(!isNaN(v)) s+=v; });
+        return '<td>'+esc(toMy(fmtNum(s)))+'</td>';
+      }
+      return '<td></td>';
+    });
+    tf.innerHTML='<tr><td></td>'+cells.join('')+'<td></td></tr>';
+  } else tf.innerHTML='';
+  $('paper').style.width=paperWidth(b)+'px';
+  growAll(); applyZoom();
+  if(hlRowId){ var tr=tb.querySelector('tr[data-id="'+hlRowId+'"]'); if(tr){ tr.classList.add('hl'); tr.scrollIntoView({block:'center'}); } hlRowId=null; }
+}
+function rowEl(b,r,i){
+  var tr=document.createElement('tr'); tr.setAttribute('data-id',r.id);
+  var h='<td class="ser">'+toMy(i+1)+'</td>';
+  b.columns.forEach(function(c){
+    var v=r.cells[c.id];
+    if(c.type==='text'){ h+='<td><textarea class="cell" data-col="'+c.id+'" rows="1" autocomplete="off">'+esc(v||'')+'</textarea></td>'; }
+    else if(c.type==='num'||c.type==='money'){ h+='<td><input class="cell" data-col="'+c.id+'" type="text" inputmode="decimal" value="'+esc(v||'')+'" autocomplete="off"></td>'; }
+    else if(c.type==='time'){ h+='<td class="tcell" data-act="time" data-col="'+c.id+'"><span class="tl'+(v?'':' empty')+'">'+(v? esc(fmtTime(v)) : '—')+'</span></td>'; }
+    else if(c.type==='date'){ h+='<td class="tcell" data-act="date" data-col="'+c.id+'"><span class="tl'+(v?'':' empty')+'">'+(v? esc(cellDisplay(c,v)) : '—')+'</span></td>'; }
+    else if(c.type==='check'){ h+='<td class="ccell" data-act="check" data-col="'+c.id+'">'+(v==='1'?'✓':'')+'</td>'; }
+    else if(c.type==='choice'){ h+='<td class="chcell" data-act="choice" data-col="'+c.id+'">'+(v? esc(v) : '<span style="color:#9aa7bd">ရွေးပါ</span>')+'</td>'; }
+    else { h+='<td></td>'; }
+  });
+  h+='<td><div class="rowBtns"><button data-act="copy" title="ကူးမယ်">⧉</button><button data-act="del" class="del" title="ဖျက်မယ်">✕</button></div></td>';
+  tr.innerHTML=h;
+  return tr;
+}
+function growTa(ta){ if(!ta) return; ta.style.height='auto'; ta.style.height=(ta.scrollHeight+2)+'px'; }
+function growAll(){ var tas=$('tbody').querySelectorAll('textarea.cell'); for(var i=0;i<tas.length;i++) growTa(tas[i]); }
+function findRow(b,id){ var l=rowsOf(b,curDay); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i]; return null; }
+function findCol(b,id){ for(var i=0;i<b.columns.length;i++) if(b.columns[i].id===id) return b.columns[i]; return null; }
+
+/* cell editing (delegated) */
+var tbody=$('tbody');
+tbody.addEventListener('input',function(e){
+  var el=e.target; if(!el.getAttribute) return;
+  var colId=el.getAttribute('data-col'); if(!colId) return;
+  var tr=el.closest('tr'); if(!tr) return;
+  var b=book(); var r=findRow(b,tr.getAttribute('data-id')); if(!r) return;
+  r.cells[colId]=el.value; save();
+  if(el.tagName==='TEXTAREA') growTa(el);
+  var col=findCol(b,colId);
+  if(col && (col.type==='num'||col.type==='money')) renderTotalsOnly();
+});
+function renderTotalsOnly(){
+  var b=book(); if(!b) return;
+  var hasTot=b.columns.some(function(c){ return c.type==='num'||c.type==='money'; });
+  if(!hasTot) return;
+  var list=rowsOf(b,curDay);
+  var cells=b.columns.map(function(c){
+    if(c.type==='num'||c.type==='money'){
+      var s=0; list.forEach(function(r){ var v=parseFloat(r.cells[c.id]); if(!isNaN(v)) s+=v; });
+      return '<td>'+esc(toMy(fmtNum(s)))+'</td>';
+    }
+    return '<td></td>';
+  });
+  $('tfoot').innerHTML='<tr><td></td>'+cells.join('')+'<td></td></tr>';
+}
+tbody.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]'); if(!t) return;
+  var tr=e.target.closest('tr'); if(!tr) return;
+  var b=book(); var rowId=tr.getAttribute('data-id'); var r=findRow(b,rowId); if(!r) return;
+  var act=t.getAttribute('data-act'); var colId=t.getAttribute('data-col');
+  if(act==='del'){ deleteRow(b,rowId); }
+  else if(act==='copy'){
+    var list=ensureDay(b,curDay); var idx=-1;
+    list.forEach(function(x,i){ if(x.id===rowId) idx=i; });
+    var nr={id:uid(), cells:JSON.parse(JSON.stringify(r.cells))};
+    list.splice(idx+1,0,nr); save(); renderBook();
+  }
+  else if(act==='time'){
+    var v=r.cells[colId];
+    if(!v){ r.cells[colId]=nowT(); save(); renderBook(); }
+    else { editCtx={rowId:rowId,colId:colId}; openTimePicker(v); }
+  }
+  else if(act==='date'){ editCtx={rowId:rowId,colId:colId}; dateMode='cell'; var dp=$('datePick'); dp.value=r.cells[colId]||curDay; if(dp.showPicker){ try{ dp.showPicker(); }catch(err){ dp.click(); } } else dp.click(); }
+  else if(act==='check'){ r.cells[colId]=(r.cells[colId]==='1')?'':'1'; save(); renderBook(); }
+  else if(act==='choice'){ editCtx={rowId:rowId,colId:colId}; openChoice(b,findCol(b,colId),r.cells[colId]||''); }
+});
+var dateMode='cell';
+$('datePick').addEventListener('change',function(){
+  var v=$('datePick').value; if(!v) return;
+  if(dateMode==='jump'){ curDay=v; renderBook(); return; }
+  if(!editCtx) return; var b=book(); var r=findRow(b,editCtx.rowId); if(!r) return;
+  r.cells[editCtx.colId]=v; save(); editCtx=null; renderBook();
+});
+$('addRow').addEventListener('click',function(){
+  var b=book(); var list=ensureDay(b,curDay);
+  list.push({id:uid(), cells:{}}); save(); renderBook();
+  var trs=tbody.querySelectorAll('tr'); var last=trs[trs.length-1];
+  if(last){ last.scrollIntoView({block:'center'}); var inp=last.querySelector('textarea.cell,input.cell'); if(inp) inp.focus(); }
+});
+function deleteRow(b,rowId){
+  var list=ensureDay(b,curDay); var idx=-1, removed=null;
+  list.forEach(function(x,i){ if(x.id===rowId){ idx=i; removed=x; } });
+  if(idx<0) return;
+  list.splice(idx,1); save(); renderBook();
+  undoState={bookId:b.id, day:curDay, idx:idx, row:removed};
+  $('undoBar').classList.add('show');
+  if(undoTimer) clearTimeout(undoTimer);
+  undoTimer=setTimeout(function(){ $('undoBar').classList.remove('show'); undoState=null; },6000);
+}
+$('undoBtn').addEventListener('click',function(){
+  if(!undoState) return;
+  var b=null; db.books.forEach(function(x){ if(x.id===undoState.bookId) b=x; });
+  if(b){ var list=ensureDay(b,undoState.day); list.splice(Math.min(undoState.idx,list.length),0,undoState.row); save(); if(book()===b && curDay===undoState.day) renderBook(); }
+  $('undoBar').classList.remove('show'); undoState=null;
+});
+
+/* day nav */
+function turn(d){ curDay=addDays(curDay,d); hideSug(); renderBook(); }
+$('prevDay').addEventListener('click',function(){ turn(-1); });
+$('nextDay').addEventListener('click',function(){ turn(1); });
+$('todayBtn').addEventListener('click',function(){ curDay=todayStr(); renderBook(); });
+$('dateBtn').addEventListener('click',function(){
+  var dp=$('datePick'); editCtx=null; dateMode='jump'; dp.value=curDay;
+  if(dp.showPicker){ try{ dp.showPicker(); }catch(err){ dp.click(); } } else dp.click();
+});
+
+/* ===== suggestion strip (past values of the focused text column) ===== */
+var sugTarget=null;
+function sugValues(b,colId,exclude){
+  var seen={}, out=[];
+  var days=Object.keys(b.days||{}).sort().reverse();
+  for(var d=0; d<days.length && out.length<30; d++){
+    var l=b.days[days[d]];
+    for(var i=l.length-1;i>=0 && out.length<30;i--){
+      var v=(l[i].cells[colId]||'').trim();
+      if(v && v!==exclude && !seen[v]){ seen[v]=1; out.push(v); }
+    }
+  }
+  return out;
+}
+function hideSug(){ sugTarget=null; var s=$('sugStrip'); s.classList.remove('open'); s.classList.remove('kb'); s.innerHTML=''; }
+function showSug(ta){
+  var b=book(); if(!b) return;
+  var colId=ta.getAttribute('data-col'); var col=findCol(b,colId);
+  if(!col || col.type!=='text'){ hideSug(); return; }
+  var vals=sugValues(b,colId,ta.value.trim());
+  var s=$('sugStrip');
+  if(!vals.length){ hideSug(); return; }
+  sugTarget={ta:ta, colId:colId};
+  s.innerHTML='';
+  vals.forEach(function(v){
+    var c=document.createElement('span'); c.className='sugChip'; c.textContent=v;
+    c.addEventListener('pointerdown',function(e){ e.preventDefault(); ta.value=v; ta.dispatchEvent(new Event('input',{bubbles:true})); growTa(ta); hideSug(); ta.blur(); });
+    s.appendChild(c);
+  });
+  var x=document.createElement('span'); x.className='sugBtn ghost'; x.textContent='✕ ပိတ်';
+  x.addEventListener('pointerdown',function(e){ e.preventDefault(); hideSug(); });
+  s.appendChild(x);
+  s.classList.add('open'); kbPlace();
+}
+tbody.addEventListener('focusin',function(e){ if(e.target.tagName==='TEXTAREA') showSug(e.target); });
+tbody.addEventListener('focusout',function(){ setTimeout(function(){ if(!document.activeElement || document.activeElement.tagName!=='TEXTAREA') hideSug(); },150); });
+function kbPlace(){
+  var s=$('sugStrip'); if(!s.classList.contains('open')) return;
+  var vv=window.visualViewport;
+  if(vv && vv.height < window.innerHeight-60){ s.classList.add('kb'); s.style.bottom=(window.innerHeight-(vv.offsetTop+vv.height))+'px'; }
+  else { s.classList.remove('kb'); s.style.bottom=''; }
+}
+if(window.visualViewport){ window.visualViewport.addEventListener('resize',kbPlace); window.visualViewport.addEventListener('scroll',kbPlace); }
+
+/* ===== zoom ===== */
+function applyZoom(){
+  var sc=$('scaler'); sc.style.transform='scale('+zoom+')';
+  var pw=$('paper').offsetWidth, ph=$('paper').offsetHeight;
+  var sz=$('sizer'); sz.style.width=(pw*zoom)+'px'; sz.style.height=(ph*zoom)+'px';
+  $('zoomSlider').value=Math.round(zoom*100); $('zoomPct').textContent=Math.round(zoom*100)+'%';
+  store.set(ZOOMK,String(zoom));
+}
+function fitZoom(saveIt){
+  var b=book(); if(!b) return;
+  var avail=$('pageArea').clientWidth-4; var pw=paperWidth(b);
+  zoom=Math.max(0.4, Math.min(2, avail/pw)); applyZoom();
+}
+$('zoomSlider').addEventListener('input',function(){ zoom=this.value/100; applyZoom(); });
+$('zoomPct').addEventListener('click',function(){ fitZoom(true); });
+var pinch=null;
+$('pageArea').addEventListener('pointerdown',function(e){
+  if(!pinch) pinch={pts:{}};
+  pinch.pts[e.pointerId]={x:e.clientX,y:e.clientY};
+  if(Object.keys(pinch.pts).length===2){ var p=Object.values(pinch.pts); pinch.d0=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y); pinch.z0=zoom; }
+});
+$('pageArea').addEventListener('pointermove',function(e){
+  if(!pinch || !pinch.pts[e.pointerId]) return;
+  pinch.pts[e.pointerId]={x:e.clientX,y:e.clientY};
+  if(Object.keys(pinch.pts).length===2 && pinch.d0){
+    var p=Object.values(pinch.pts); var d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+    zoom=Math.max(0.4, Math.min(2, pinch.z0*d/pinch.d0)); applyZoom();
+  }
+});
+function pinchEnd(e){ if(pinch && pinch.pts) delete pinch.pts[e.pointerId]; if(pinch && Object.keys(pinch.pts).length<2) pinch.d0=0; }
+$('pageArea').addEventListener('pointerup',pinchEnd);
+$('pageArea').addEventListener('pointercancel',pinchEnd);
+
+/* ===== time picker ===== */
+(function(){
+  var h=$('tpH'), m=$('tpM'), i;
+  for(i=1;i<=12;i++){ var o=document.createElement('option'); o.value=i; o.textContent=pad(i); h.appendChild(o); }
+  for(i=0;i<60;i++){ var o2=document.createElement('option'); o2.value=i; o2.textContent=pad(i); m.appendChild(o2); }
+})();
+function openTimePicker(v){
+  var p=v.split(':'); var hh=+p[0], mm=+p[1];
+  $('tpAP').value= hh>=12?'PM':'AM';
+  var h12=hh%12; if(h12===0)h12=12;
+  $('tpH').value=h12; $('tpM').value=mm;
+  openSheet('timeSheet');
+}
+function tpRead(){
+  var h12=+$('tpH').value, mm=+$('tpM').value, ap=$('tpAP').value;
+  var hh=h12%12; if(ap==='PM') hh+=12;
+  return pad(hh)+':'+pad(mm);
+}
+$('tpSave').addEventListener('click',function(){
+  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=tpRead(); save(); } editCtx=null; }
+  closeSheet('timeSheet'); renderBook();
+});
+$('tpNow').addEventListener('click',function(){
+  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=nowT(); save(); } editCtx=null; }
+  closeSheet('timeSheet'); renderBook();
+});
+$('tpClear').addEventListener('click',function(){
+  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=''; save(); } editCtx=null; }
+  closeSheet('timeSheet'); renderBook();
+});
+
+/* ===== choice sheet ===== */
+function openChoice(b,col,cur){
+  $('choiceTitle').textContent=col.name+' — ရွေးပါ';
+  $('choiceIn').value=cur||'';
+  var w=$('choiceChips'); w.innerHTML='';
+  (col.options||[]).forEach(function(o){
+    var c=document.createElement('button'); c.className='optChip'; c.textContent=o;
+    c.addEventListener('click',function(){ setChoice(o); });
+    w.appendChild(c);
+  });
+  openSheet('choiceSheet');
+}
+function setChoice(v){
+  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=v; save(); } editCtx=null; }
+  closeSheet('choiceSheet'); renderBook();
+}
+$('choiceSave').addEventListener('click',function(){ setChoice($('choiceIn').value.trim()); });
+$('choiceClear').addEventListener('click',function(){ setChoice(''); });
+
+/* ===== columns editor ===== */
+var colDraft=null;
+function renderColDraft(){
+  var w=$('colList'); w.innerHTML='';
+  colDraft.forEach(function(c,idx){
+    var d=document.createElement('div'); d.className='colRow';
+    var typeOpts=Object.keys(TYPE_NAMES).map(function(k){ return '<option value="'+k+'"'+(c.type===k?' selected':'')+'>'+TYPE_NAMES[k]+'</option>'; }).join('');
+    d.innerHTML='<div class="r1"><input type="text" value="'+esc(c.name)+'" data-f="name"><select data-f="type">'+typeOpts+'</select></div>'+
+      '<div class="r2"><span style="font-size:13px;color:#5a6a8a">အကျယ်</span><input type="range" min="70" max="320" step="2" value="'+(+c.width||120)+'" data-f="width"><span data-f="wv" style="font-size:13px">'+toMy(+c.width||120)+'</span>'+
+      '<button data-f="up">↑</button><button data-f="down">↓</button><button data-f="del" class="delC">✕ ဖျက်</button></div>'+
+      (c.type==='choice'? '<textarea data-f="options" placeholder="ရွေးစရာတွေ — တစ်ကြောင်း တစ်ခု">'+esc((c.options||[]).join('\n'))+'</textarea>' : '');
+    d.querySelector('[data-f="name"]').addEventListener('input',function(){ c.name=this.value; });
+    d.querySelector('[data-f="type"]').addEventListener('change',function(){ c.type=this.value; renderColDraft(); });
+    var rg=d.querySelector('[data-f="width"]');
+    rg.addEventListener('input',function(){ c.width=+this.value; d.querySelector('[data-f="wv"]').textContent=toMy(c.width); });
+    d.querySelector('[data-f="up"]').addEventListener('click',function(){ if(idx>0){ var t=colDraft[idx-1]; colDraft[idx-1]=colDraft[idx]; colDraft[idx]=t; renderColDraft(); } });
+    d.querySelector('[data-f="down"]').addEventListener('click',function(){ if(idx<colDraft.length-1){ var t=colDraft[idx+1]; colDraft[idx+1]=colDraft[idx]; colDraft[idx]=t; renderColDraft(); } });
+    d.querySelector('[data-f="del"]').addEventListener('click',function(){ colDraft.splice(idx,1); renderColDraft(); });
+    var ot=d.querySelector('[data-f="options"]');
+    if(ot) ot.addEventListener('input',function(){ c.options=this.value.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s; }); });
+    w.appendChild(d);
+  });
+}
+$('colsBtn').addEventListener('click',function(){
+  var b=book(); if(!b) return;
+  colDraft=JSON.parse(JSON.stringify(b.columns));
+  renderColDraft(); openSheet('colsSheet');
+});
+$('addColBtn').addEventListener('click',function(){ colDraft.push(C('ကော်လံအသစ်','text',150)); renderColDraft(); });
+$('colsSave').addEventListener('click',function(){
+  var b=book(); if(!b) return;
+  if(!colDraft.length){ return; }
+  colDraft.forEach(function(c){ if(!c.name.trim()) c.name='ကော်လံ'; });
+  b.columns=colDraft; colDraft=null; save(); closeSheet('colsSheet'); renderBook(); fitZoom(false);
+});
+
+/* ===== book menu: rename / delete / csv ===== */
+$('renameBtn').addEventListener('click',function(){
+  var b=book(); if(!b) return;
+  var n=prompt('စာအုပ် နာမည်အသစ်', b.name);
+  if(n && n.trim()){ b.name=n.trim(); save(); renderBook(); }
+});
+$('delBookBtn').addEventListener('click',function(){
+  var b=book(); if(!b) return;
+  askConfirm('စာအုပ် ဖျက်မှာ သေချာပါသလား','"'+b.name+'" စာအုပ်နဲ့ အထဲက မှတ်တမ်းအားလုံး ပျက်မယ်။ ပြန်ယူလို့ မရဘူး။','ဖျက်မယ်',function(){
+    db.books=db.books.filter(function(x){ return x.id!==b.id; });
+    db.active=db.books.length? db.books[0].id : null; save(); showHome();
+  });
+});
+function download(name, text, mime){
+  var a=document.createElement('a');
+  a.href='data:'+(mime||'text/plain')+';charset=utf-8,'+encodeURIComponent(text);
+  a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+$('csvBtn').addEventListener('click',function(){
+  var b=book(); if(!b) return;
+  var lines=[['ရက်စွဲ'].concat(b.columns.map(function(c){ return c.name; })).join(',')];
+  var days=Object.keys(b.days||{}).sort();
+  days.forEach(function(d){
+    b.days[d].forEach(function(r){
+      var cells=b.columns.map(function(c){
+        var v=cellDisplay(c, r.cells[c.id]||'');
+        return '"'+String(v).replace(/"/g,'""')+'"';
+      });
+      lines.push([d].concat(cells).join(','));
+    });
+  });
+  download(b.name+'.csv', '﻿'+lines.join('\r\n'), 'text/csv');
+});
+
+/* ===== search ===== */
+$('searchBtn').addEventListener('click',function(){ $('searchIn').value=''; $('searchResults').innerHTML=''; openSheet('searchSheet'); setTimeout(function(){ $('searchIn').focus(); },250); });
+$('searchIn').addEventListener('input',function(){
+  var q=this.value.trim(); var w=$('searchResults'); w.innerHTML='';
+  if(!q) return;
+  var b=book(); if(!b) return;
+  var days=Object.keys(b.days||{}).sort().reverse(); var count=0;
+  days.forEach(function(d){
+    b.days[d].forEach(function(r){
+      if(count>=40) return;
+      var hit=b.columns.some(function(c){ return (r.cells[c.id]||'').indexOf(q)>=0; });
+      if(!hit) return;
+      count++;
+      var summary=b.columns.map(function(c){ return r.cells[c.id]? cellDisplay(c,r.cells[c.id]) : ''; }).filter(function(s){ return s; }).join(' · ');
+      var it=document.createElement('div'); it.className='srItem';
+      it.innerHTML='<div class="sd">'+fmtDMY(d)+' ('+wdName(d)+')</div><div class="sv">'+esc(summary)+'</div>';
+      it.addEventListener('click',function(){ curDay=d; hlRowId=r.id; closeSheet('searchSheet'); renderBook(); });
+      w.appendChild(it);
+    });
+  });
+  if(!count) w.innerHTML='<div class="hint">မတွေ့ဘူး</div>';
+});
+
+/* ===== backup / restore ===== */
+$('backupBtn').addEventListener('click',function(){ openSheet('backupSheet'); });
+$('expBtn').addEventListener('click',function(){
+  download('security-books-backup-'+todayStr()+'.json', JSON.stringify(db), 'application/json');
+});
+$('impBtn').addEventListener('click',function(){ $('impFile').click(); });
+$('impFile').addEventListener('change',function(){
+  var f=this.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var data=JSON.parse(rd.result);
+      if(!data || !data.books) throw new Error('bad');
+      askConfirm('Backup ပြန်တင်မှာ သေချာပါသလား','အခု data အစား backup file ထဲက data နဲ့ အစားထိုးမယ်။','ပြန်တင်မယ်',function(){
+        store.set(DBK+'_prev', JSON.stringify(db));
+        db=data; save(); closeSheet('backupSheet'); showHome();
+      });
+    }catch(e){ alert('Backup file မဟုတ်ဘူး / ဖတ်မရဘူး'); }
+    $('impFile').value='';
+  };
+  rd.readAsText(f);
+});
+
+/* ===== photo export (same final rules as the gate logbooks) ===== */
+function graphemes(text){
+  if(window.Intl && Intl.Segmenter){ try{ var seg=new Intl.Segmenter('my',{granularity:'grapheme'}); return Array.from(seg.segment(text),function(s){ return s.segment; }); }catch(e){} }
+  return Array.from(text);
+}
+function wrapLines(ctx,text,maxW){
+  var words=String(text||'').split(/\s+/), lines=[], cur='';
+  function fits(s){ return ctx.measureText(s).width<=maxW; }
+  function hardSplit(word){
+    var gs=graphemes(word), part='';
+    for(var i=0;i<gs.length;i++){ if(fits(part+gs[i])) part+=gs[i]; else { lines.push(part); part=gs[i]; } }
+    return part;
+  }
+  words.forEach(function(wd){
+    if(!wd) return;
+    var test=cur? cur+' '+wd : wd;
+    if(fits(test)){ cur=test; return; }
+    if(cur) lines.push(cur);
+    cur=fits(wd)? wd : hardSplit(wd);
+  });
+  if(cur) lines.push(cur);
+  return lines.length? lines : [''];
+}
+var photoFile=null;
+function buildPhoto(){
+  var b=book(); var list=rowsOf(b,curDay);
+  var scale=Math.min(1, 1240/(paperWidth(b)+32));
+  var colsW=[56].concat(b.columns.map(function(c){ return Math.max(90, Math.round((+c.width||120)*scale*1.55)); })).concat([]);
+  var W=colsW.reduce(function(a,x){ return a+x; },0)+32;
+  var PADX=16;
+  var cv=document.createElement('canvas');
+  var mctx=cv.getContext('2d');
+  mctx.font='400 30px Padauk, sans-serif';
+  var rowData=list.map(function(r){
+    return b.columns.map(function(c){
+      var v=cellDisplay(c, r.cells[c.id]||'');
+      var lines=wrapLines(mctx, v, colsW[b.columns.indexOf(c)+1]-2*PADX);
+      return lines;
+    });
+  });
+  var headLines=b.columns.map(function(c,i){ return wrapLines(mctx, c.name, colsW[i+1]-2*PADX); });
+  function rowH(cellsLines){ var mx=1; cellsLines.forEach(function(l){ mx=Math.max(mx,l.length); }); return Math.max(66, mx*40+26); }
+  var headH=rowH(headLines);
+  var bodyH=rowData.reduce(function(a,rl){ return a+rowH(rl); },0);
+  var hasTot=b.columns.some(function(c){ return c.type==='num'||c.type==='money'; });
+  var totH=hasTot? 60:0;
+  var sigH=170;
+  var H=150+headH+bodyH+totH+sigH+30;
+  cv.width=W; cv.height=H;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#fffef9'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#1d2a4a'; ctx.textAlign='center';
+  ctx.font='700 40px Padauk, sans-serif';
+  ctx.fillText(b.name, W/2, 56);
+  ctx.font='700 44px Padauk, sans-serif';
+  ctx.fillText('Date : '+fmtDMY(curDay)+' ('+wdName(curDay)+')', W/2, 118);
+  var x0=16, y=150;
+  function hline(yy){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+ (W-32),yy); ctx.stroke(); }
+  function vlines(yy,hh){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; var x=x0; for(var i=0;i<colsW.length;i++){ ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); x+=colsW[i]; } ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); }
+  function drawCell(lines,cx,cy,cw,align,bold){
+    ctx.fillStyle='#1d2a4a'; ctx.font=(bold?'700':'400')+' 30px Padauk, sans-serif';
+    ctx.textAlign=align;
+    var tx= align==='center'? cx+cw/2 : (align==='right'? cx+cw-PADX : cx+PADX);
+    lines.forEach(function(ln,li){ ctx.fillText(ln, tx, cy+40+li*40); });
+  }
+  /* header */
+  ctx.fillStyle='#f3ecd9'; ctx.fillRect(x0,y,W-32,headH);
+  hline(y); vlines(y,headH);
+  drawCell(['စဉ်'], x0, y, colsW[0], 'center', true);
+  b.columns.forEach(function(c,i){ drawCell(headLines[i], x0+colsW.slice(0,i+1).reduce(function(a,v){return a+v;},0), y, colsW[i+1], 'center', true); });
+  y+=headH; hline(y);
+  /* rows */
+  rowData.forEach(function(rl,ri){
+    var rh=rowH(rl); vlines(y,rh);
+    drawCell([toMy(ri+1)], x0, y, colsW[0], 'center', false);
+    rl.forEach(function(lines,ci){
+      var col=b.columns[ci];
+      var align=(col.type==='num'||col.type==='money')? 'right' : (col.type==='time'||col.type==='date'||col.type==='check'? 'center':'left');
+      var cx=x0+colsW.slice(0,ci+1).reduce(function(a,v){return a+v;},0);
+      drawCell(lines, cx, y, colsW[ci+1], align, false);
+    });
+    y+=rh; hline(y);
+  });
+  if(!list.length){ var rh2=66; vlines(y,rh2); y+=rh2; hline(y); }
+  /* totals */
+  if(hasTot){
+    ctx.fillStyle='#f3ecd9'; ctx.fillRect(x0,y,W-32,totH);
+    vlines(y,totH);
+    b.columns.forEach(function(c,i){
+      if(c.type==='num'||c.type==='money'){
+        var s=0; list.forEach(function(r){ var v=parseFloat(r.cells[c.id]); if(!isNaN(v)) s+=v; });
+        var cx=x0+colsW.slice(0,i+1).reduce(function(a,v){return a+v;},0);
+        drawCell([toMy(fmtNum(s))], cx, y, colsW[i+1], 'right', true);
+      }
+    });
+    y+=totH; hline(y);
+  }
+  /* signature bottom-right */
+  var sig=store.get(SIGK);
+  if(sig){
+    var img=new Image();
+    img.onload=function(){
+      var sw=Math.min(300, img.width), sh=sw*img.height/img.width;
+      if(sh>110){ sw=sw*110/sh; sh=110; }
+      ctx.drawImage(img, W-32-sw, y+14, sw, sh);
+      var nm=(store.get(SIGNK)===null)? 'U Soe Yar Zar' : store.get(SIGNK);
+      if(nm){ ctx.fillStyle='#1d2a4a'; ctx.font='400 26px Padauk, sans-serif'; ctx.textAlign='center'; ctx.fillText(nm, W-32-sw/2, y+14+sh+32); }
+      finishPhoto(cv);
+    };
+    img.onerror=function(){ finishPhoto(cv); };
+    img.src=sig;
+  } else finishPhoto(cv);
+}
+function finishPhoto(cv){
+  var name=(book()? book().name : 'photo')+'-'+curDay+'.png';
+  $('sheetName').textContent=name;
+  cv.toBlob(function(blob){
+    photoFile=blob? new File([blob], name, {type:'image/png'}) : null;
+    $('sheetImg').src=cv.toDataURL('image/png');
+    $('dlBtn').onclick=function(){ var a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download=name; document.body.appendChild(a); a.click(); a.remove(); };
+    openSheet('sheet');
+  },'image/png');
+}
+$('photoBtn').addEventListener('click',buildPhoto);
+$('shareBtn').addEventListener('click',function(){
+  if(photoFile && navigator.canShare && navigator.canShare({files:[photoFile]})){
+    navigator.share({files:[photoFile]}).catch(function(){});
+  } else if(photoFile){
+    var url=URL.createObjectURL(photoFile);
+    var a=document.createElement('a'); a.href=url; a.download=photoFile.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); },4000);
+  }
+});
+
+/* ===== signature (shared with the gate logbooks — same keys) ===== */
+var sigPadEl=$('sigPad'), sigCtx=sigPadEl.getContext('2d'), sigDrew=false, sigLast=null;
+function sigNameVal(){ var v=store.get(SIGNK); return (v===null||v===undefined)? 'U Soe Yar Zar' : v; }
+function updateSigUI(){
+  var d=store.get(SIGK);
+  $('sigPrevWrap').style.display=d? 'block':'none';
+  if(d) $('sigPrev').src=d;
+  $('sigName').value=sigNameVal();
+}
+function sizePad(){
+  var r=sigPadEl.getBoundingClientRect(); if(r.width<10) return;
+  var old=store.get(SIGK);
+  var dpr=window.devicePixelRatio||1;
+  sigPadEl.width=Math.round(r.width*dpr); sigPadEl.height=Math.round(220*dpr);
+  sigCtx.setTransform(dpr,0,0,dpr,0,0);
+  sigCtx.lineWidth=2.6; sigCtx.lineCap='round'; sigCtx.lineJoin='round'; sigCtx.strokeStyle='#1d2a4a';
+  sigDrew=false;
+}
+function padPos(e){ var r=sigPadEl.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+sigPadEl.addEventListener('pointerdown',function(e){ e.preventDefault(); sigPadEl.setPointerCapture(e.pointerId); sigLast=padPos(e); sigDrew=true; sigCtx.beginPath(); sigCtx.moveTo(sigLast.x,sigLast.y); });
+sigPadEl.addEventListener('pointermove',function(e){ if(!sigLast) return; var p=padPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigLast=p; });
+function padEnd(){ sigLast=null; }
+sigPadEl.addEventListener('pointerup',padEnd);
+sigPadEl.addEventListener('pointercancel',padEnd);
+function openSig(){ openSheet('sigSheet'); updateSigUI(); requestAnimationFrame(sizePad); }
+$('sigBtn2').addEventListener('click',openSig);
+$('homeSigBtn').addEventListener('click',openSig);
+$('sigCloseBtn').addEventListener('click',function(){ closeSheet('sigSheet'); });
+$('sigClear').addEventListener('click',function(){ sigCtx.clearRect(0,0,sigPadEl.width,sigPadEl.height); sigDrew=false; });
+$('sigName').addEventListener('input',function(){ store.set(SIGNK, this.value); });
+$('sigSave').addEventListener('click',function(){
+  if(sigDrew){
+    /* trim to drawn area at CSS scale */
+    var dpr=window.devicePixelRatio||1;
+    var w=sigPadEl.width, h=sigPadEl.height;
+    var data=sigCtx.getImageData(0,0,w,h).data;
+    var minX=w,minY=h,maxX=-1,maxY=-1;
+    for(var yy=0;yy<h;yy++) for(var xx=0;xx<w;xx++){ if(data[(yy*w+xx)*4+3]>8){ if(xx<minX)minX=xx; if(xx>maxX)maxX=xx; if(yy<minY)minY=yy; if(yy>maxY)maxY=yy; } }
+    if(maxX>=0){
+      var padPx=8*dpr;
+      minX=Math.max(0,minX-padPx); minY=Math.max(0,minY-padPx); maxX=Math.min(w-1,maxX+padPx); maxY=Math.min(h-1,maxY+padPx);
+      var out=document.createElement('canvas'); out.width=maxX-minX+1; out.height=maxY-minY+1;
+      out.getContext('2d').drawImage(sigPadEl,minX,minY,out.width,out.height,0,0,out.width,out.height);
+      store.set(SIGK, out.toDataURL('image/png'));
+    }
+  }
+  store.set(SIGNK, $('sigName').value);
+  closeSheet('sigSheet'); updateSigUI();
+});
+$('sigDelete').addEventListener('click',function(){
+  askConfirm('လက်မှတ် ဖျက်မှာ သေချာပါသလား','သိမ်းထားတဲ့ လက်မှတ် ပျက်မယ်။ စာအုပ် ၂ အုပ်မှာပါ မပေါ်တော့ဘူး။','ဖျက်မယ်',function(){
+    try{ window.localStorage.removeItem(SIGK); }catch(e){}
+    updateSigUI(); sigCtx.clearRect(0,0,sigPadEl.width,sigPadEl.height); sigDrew=false;
+  });
+});
+
+/* ===== init ===== */
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
+renderHome();
+window.__boot=true;
+})();
+</script>
+</body>
+</html>
