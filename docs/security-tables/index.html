@@ -208,6 +208,7 @@ body.dark .nameItem{background:#202a3a}
 #sigSave{background:#166534;border-color:#166534;color:#fff;font-weight:700}
 #sigDelete{color:#b91c1c;border-color:#d8a7a7}
 #datePick{position:fixed;left:8px;bottom:8px;width:28px;height:28px;opacity:.01;border:none;z-index:70;pointer-events:none;padding:0}
+#timePick{position:fixed;left:44px;bottom:8px;width:28px;height:28px;opacity:.01;border:none;z-index:70;pointer-events:none;padding:0}
 #bootFail{position:fixed;inset:0;background:#fffef9;display:none;z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-size:18px}
 #bootFail button{background:#166534;color:#fff;border:none;border-radius:12px;padding:14px 22px;font-size:17px;cursor:pointer}
 </style>
@@ -312,14 +313,6 @@ body.dark .nameItem{background:#202a3a}
   <button class="primaryBtn" id="colsSave">သိမ်းမယ်</button>
   <div class="hint">ခေါင်းစဉ် အုပ်စု — ကပ်လျက် ကော်လံ ၂ ခုအထက်မှာ နာမည်တူတူ ထည့်ရင် အပေါ်မှာ အုပ်စု ခေါင်းစဉ် တစ်ခု ဖြစ်သွားမယ် (ဥပမာ — ဝင် နဲ့ ထွက် အပေါ်မှာ "အချိန်")<br>ကော်လံ ဖျက်ရင် အဲဒီကော်လံထဲက စာရင်းတွေ ပျက်မယ်</div>
 </div></div>
-<!-- TIME PICKER SHEET -->
-<div class="sheetWrap" id="timeSheet"><div class="sheetBox">
-  <div class="sheetHead"><b>အချိန် ရွေးပါ</b><button class="xBtn" data-close="timeSheet">✕</button></div>
-  <div class="tpRow"><select id="tpH"></select><span style="font-size:20px">:</span><select id="tpM"></select><select id="tpAP"><option value="AM">AM</option><option value="PM">PM</option></select></div>
-  <button class="primaryBtn" id="tpSave">သိမ်းမယ်</button>
-  <button class="ghostBtn" id="tpNow">🕐 အခုအချိန် ထည့်မယ်</button>
-  <button class="dangerBtn" id="tpClear">ရှင်းမယ်</button>
-</div></div>
 <!-- CHOICE SHEET -->
 <div class="sheetWrap" id="choiceSheet"><div class="sheetBox">
   <div class="sheetHead"><b id="choiceTitle">ရွေးပါ</b><button class="xBtn" data-close="choiceSheet">✕</button></div>
@@ -357,6 +350,7 @@ body.dark .nameItem{background:#202a3a}
   <button class="ghostBtn" id="cfNo">မဖျက်တော့ဘူး</button>
 </div></div>
 <input type="date" id="datePick">
+<input type="time" id="timePick">
 <div id="bootFail"><div>စာအုပ် ဖွင့်မရပါ</div><button onclick="location.reload()">🔄 ပြန်ဖွင့်မယ်</button></div>
 <script>setTimeout(function(){ if(!window.__boot){ document.getElementById('bootFail').style.display='flex'; } },4000);</script>
 <script>
@@ -532,7 +526,7 @@ function rowEl(b,r,i){
     else if(c.type==='choice'){ h+='<td class="chcell'+(isBlueCol(c)? ' blueInk':'')+'" data-act="choice" data-col="'+c.id+'">'+(v? esc(v) : '<span style="color:#9aa7bd">ရွေးပါ</span>')+'</td>'; }
     else { h+='<td></td>'; }
   });
-  h+='<td><div class="rowBtns"><button data-act="copy" title="ကူးမယ်">⧉</button><button data-act="del" class="del" title="ဖျက်မယ်">✕</button></div></td>';
+  h+='<td><div class="rowBtns"><button data-act="del" class="del" title="ဖျက်မယ်">🗑️</button></div></td>';
   tr.innerHTML=h;
   return tr;
 }
@@ -573,16 +567,10 @@ tbody.addEventListener('click',function(e){
   var b=book(); var rowId=tr.getAttribute('data-id'); var r=findRow(b,rowId); if(!r) return;
   var act=t.getAttribute('data-act'); var colId=t.getAttribute('data-col');
   if(act==='del'){ deleteRow(b,rowId); }
-  else if(act==='copy'){
-    var list=ensureDay(b,curDay); var idx=-1;
-    list.forEach(function(x,i){ if(x.id===rowId) idx=i; });
-    var nr={id:uid(), cells:JSON.parse(JSON.stringify(r.cells))};
-    list.splice(idx+1,0,nr); save(); renderBook();
-  }
   else if(act==='time'){
     var v=r.cells[colId];
     if(!v){ r.cells[colId]=nowT(); save(); renderBook(); }
-    else { editCtx={rowId:rowId,colId:colId}; openTimePicker(v); }
+    else { editCtx={rowId:rowId,colId:colId}; var tp=$('timePick'); tp.value=v; if(tp.showPicker){ try{ tp.showPicker(); }catch(err){ tp.click(); } } else tp.click(); }
   }
   else if(act==='date'){ editCtx={rowId:rowId,colId:colId}; dateMode='cell'; var dp=$('datePick'); dp.value=r.cells[colId]||curDay; if(dp.showPicker){ try{ dp.showPicker(); }catch(err){ dp.click(); } } else dp.click(); }
   else if(act==='check'){ r.cells[colId]=(r.cells[colId]==='1')?'':'1'; save(); renderBook(); }
@@ -816,35 +804,11 @@ if(!window.PointerEvent){
   $('pageArea').addEventListener('touchend',function(e){ if(e.touches.length<2) tGes=null; });
 }
 
-/* ===== time picker ===== */
-(function(){
-  var h=$('tpH'), m=$('tpM'), i;
-  for(i=1;i<=12;i++){ var o=document.createElement('option'); o.value=i; o.textContent=pad(i); h.appendChild(o); }
-  for(i=0;i<60;i++){ var o2=document.createElement('option'); o2.value=i; o2.textContent=pad(i); m.appendChild(o2); }
-})();
-function openTimePicker(v){
-  var p=v.split(':'); var hh=+p[0], mm=+p[1];
-  $('tpAP').value= hh>=12?'PM':'AM';
-  var h12=hh%12; if(h12===0)h12=12;
-  $('tpH').value=h12; $('tpM').value=mm;
-  openSheet('timeSheet');
-}
-function tpRead(){
-  var h12=+$('tpH').value, mm=+$('tpM').value, ap=$('tpAP').value;
-  var hh=h12%12; if(ap==='PM') hh+=12;
-  return pad(hh)+':'+pad(mm);
-}
-$('tpSave').addEventListener('click',function(){
-  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=tpRead(); save(); } editCtx=null; }
-  closeSheet('timeSheet'); renderBook();
-});
-$('tpNow').addEventListener('click',function(){
-  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=nowT(); save(); } editCtx=null; }
-  closeSheet('timeSheet'); renderBook();
-});
-$('tpClear').addEventListener('click',function(){
-  if(editCtx){ var b=book(); var r=findRow(b,editCtx.rowId); if(r){ r.cells[editCtx.colId]=''; save(); } editCtx=null; }
-  closeSheet('timeSheet'); renderBook();
+/* ===== time edit — native keyboard time dialog (fast typing, like the old books) ===== */
+$('timePick').addEventListener('change',function(){
+  if(!editCtx) return;
+  var b=book(); var r=findRow(b,editCtx.rowId); if(!r){ editCtx=null; return; }
+  r.cells[editCtx.colId]=$('timePick').value||''; save(); editCtx=null; renderBook();
 });
 
 /* ===== choice sheet ===== */
