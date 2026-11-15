@@ -472,9 +472,10 @@ function updateDayCount(b){
   var el=$('dayCount'); if(!el || !b) return;
   var col=nameColOf(b); var n=0;
   var list=rowsOf(b,curDay);
+  var seen={};
   list.forEach(function(r){
-    if(col){ if(((r.cells[col.id]||'')+'').trim()) n++; }
-    else { for(var k in r.cells){ if(((r.cells[k]||'')+'').trim()){ n++; break; } } }
+    if(col){ var v=((r.cells[col.id]||'')+'').trim(); if(v){ var k=normName(v); if(!seen[k]){ seen[k]=1; n++; } } }
+    else { for(var k2 in r.cells){ if(((r.cells[k2]||'')+'').trim()){ n++; break; } } }
   });
   var txt='စုစုပေါင်း — '+toMy(n)+' ဦး';
   if(curDay===todayStr()){
@@ -485,11 +486,15 @@ function updateDayCount(b){
       if(nn==='ဝင်') ic=c; else if(nn==='ထွက်') oc=c;
     });
     if(ic && oc){
-      var m=0;
+      var m=0, inSeen={};
       list.forEach(function(r){
         var hi=((r.cells[ic.id]||'')+'').trim()!=='';
         var ho=((r.cells[oc.id]||'')+'').trim()!=='';
-        if(hi && !ho) m++;
+        if(hi && !ho){
+          var nm=col? ((r.cells[col.id]||'')+'').trim() : '';
+          if(nm){ var kk=normName(nm); if(!inSeen[kk]){ inSeen[kk]=1; m++; } }
+          else m++;
+        }
       });
       txt+=' • ကျန်သူ '+toMy(m)+' ဦး';
     }
