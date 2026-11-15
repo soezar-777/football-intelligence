@@ -504,7 +504,7 @@ $('addRow').addEventListener('click',function(){
   var b=book(); var list=ensureDay(b,curDay);
   list.push({id:uid(), cells:{}}); save(); renderBook();
   var trs=tbody.querySelectorAll('tr'); var last=trs[trs.length-1];
-  if(last){ last.scrollIntoView({block:'center'}); var inp=last.querySelector('textarea.cell,input.cell'); if(inp) inp.focus(); }
+  if(last){ last.scrollIntoView({block:'center'}); }
 });
 function deleteRow(b,rowId){
   var list=ensureDay(b,curDay); var idx=-1, removed=null;
