@@ -994,6 +994,7 @@ function buildPhoto(){
     drawCellV(['စဉ်'], x0, y, colsW[0], headH);
     var segX=x0+colsW[0];
     segsP.forEach(function(s){
+      vline(segX, y, headH);
       vline(segX+s.w, y, headH);
       if(s.group){
         hseg(segX, segX+s.w, y+gH);
