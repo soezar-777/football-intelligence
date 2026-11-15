@@ -27,6 +27,13 @@ button{font-family:inherit}
 #zoomSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 #zoomPct{min-width:42px;text-align:center;font-weight:700;font-size:13.5px;padding:6px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
 .themeBtn{margin-left:auto;font-size:16px;padding:5px 12px}
+#blueBtn{color:#5a6a8a}
+#blueBtn.on{color:#1d4ed8;border-color:#1d4ed8;font-weight:700}
+td.blueInk{color:#1d4ed8;font-weight:700}
+td.blueInk textarea.cell{color:#1d4ed8;font-weight:700}
+body.dark #blueBtn.on{color:#8db4ff;border-color:#8db4ff}
+body.dark td.blueInk{color:#8db4ff}
+body.dark td.blueInk textarea.cell{color:#8db4ff}
 /* ===== night mode (app screens only — the photo export stays paper-white) ===== */
 body.dark{background:#0d1219;color:#e9edf5}
 body.dark .strip{background:#171e2a;border-bottom-color:#333f55}
@@ -220,6 +227,7 @@ tr.hl td{background:rgba(230,176,66,.35)}
   <div class="strip">
     <button id="homeBtn">‹ စာအုပ်များ</button>
     <span class="ttl" id="bookTitle">–</span>
+    <button id="blueBtn" aria-label="အကြောင်းအရာ အပြာရောင် ဖွင့်/ပိတ်">အပြာ</button>
     <button class="themeBtn" aria-label="နေ့/ည ပြောင်း">🌙</button>
   </div>
   <div class="strip">
@@ -507,12 +515,12 @@ function rowEl(b,r,i){
   var h='<td class="ser">'+toMy(i+1)+'</td>';
   b.columns.forEach(function(c){
     var v=r.cells[c.id];
-    if(c.type==='text'){ h+='<td><textarea class="cell" data-col="'+c.id+'" rows="1" autocomplete="off">'+esc(v||'')+'</textarea></td>'; }
+    if(c.type==='text'){ h+='<td'+(isBlueCol(c)? ' class="blueInk"':'')+'><textarea class="cell" data-col="'+c.id+'" rows="1" autocomplete="off">'+esc(v||'')+'</textarea></td>'; }
     else if(c.type==='num'||c.type==='money'){ h+='<td><input class="cell" data-col="'+c.id+'" type="text" inputmode="decimal" value="'+esc(v||'')+'" autocomplete="off"></td>'; }
     else if(c.type==='time'){ h+='<td class="tcell" data-act="time" data-col="'+c.id+'"><span class="tl'+(v?'':' empty')+'">'+(v? esc(fmtTime(v)) : '—')+'</span></td>'; }
     else if(c.type==='date'){ h+='<td class="tcell" data-act="date" data-col="'+c.id+'"><span class="tl'+(v?'':' empty')+'">'+(v? esc(cellDisplay(c,v)) : '—')+'</span></td>'; }
     else if(c.type==='check'){ h+='<td class="ccell" data-act="check" data-col="'+c.id+'">'+(v==='1'?'✓':'')+'</td>'; }
-    else if(c.type==='choice'){ h+='<td class="chcell" data-act="choice" data-col="'+c.id+'">'+(v? esc(v) : '<span style="color:#9aa7bd">ရွေးပါ</span>')+'</td>'; }
+    else if(c.type==='choice'){ h+='<td class="chcell'+(isBlueCol(c)? ' blueInk':'')+'" data-act="choice" data-col="'+c.id+'">'+(v? esc(v) : '<span style="color:#9aa7bd">ရွေးပါ</span>')+'</td>'; }
     else { h+='<td></td>'; }
   });
   h+='<td><div class="rowBtns"><button data-act="copy" title="ကူးမယ်">⧉</button><button data-act="del" class="del" title="ဖျက်မယ်">✕</button></div></td>';
@@ -682,6 +690,16 @@ document.querySelectorAll('.themeBtn').forEach(function(bn){
   });
 });
 applyTheme();
+
+/* ===== အကြောင်းအရာ blue ink toggle (default on) ===== */
+var BLUEK='sectables_blue_v1';
+function blueOn(){ return store.get(BLUEK)!=='off'; }
+function isBlueCol(c){ return blueOn() && (c.name||'').trim()==='အကြောင်းအရာ'; }
+function paintBlueBtn(){ $('blueBtn').classList.toggle('on', blueOn()); }
+$('blueBtn').addEventListener('click',function(){
+  store.set(BLUEK, blueOn()? 'off':'on'); paintBlueBtn(); renderBook();
+});
+paintBlueBtn();
 
 /* ===== zoom ===== */
 function applyZoom(){
@@ -1003,20 +1021,21 @@ function buildPhoto(){
   mctx.font='400 30px Padauk, sans-serif';
   /* one line if it fits at 30px, else shrink the font (down to 18px) to keep it
      on one line — names and times never split; only genuinely long text wraps */
-  function fitCell(v, maxW){
-    mctx.font='400 30px Padauk, sans-serif';
+  function fitCell(v, maxW, bold){
+    var wt=bold? '700':'400';
+    mctx.font=wt+' 30px Padauk, sans-serif';
     if(mctx.measureText(v).width<=maxW) return {lines:[v], size:30};
     for(var size=28; size>=18; size-=2){
-      mctx.font='400 '+size+'px Padauk, sans-serif';
+      mctx.font=wt+' '+size+'px Padauk, sans-serif';
       if(mctx.measureText(v).width<=maxW) return {lines:[v], size:size};
     }
-    mctx.font='400 30px Padauk, sans-serif';
+    mctx.font=wt+' 30px Padauk, sans-serif';
     return {lines:wrapLines(mctx, v, maxW), size:30};
   }
   var rowData=list.map(function(r){
     return b.columns.map(function(c,ci){
       var v=cellDisplay(c, r.cells[c.id]||'');
-      return fitCell(v, colsW[ci+1]-2*PADX);
+      return fitCell(v, colsW[ci+1]-2*PADX, isBlueCol(c));
     });
   });
   var headLines=b.columns.map(function(c,i){ return wrapLines(mctx, c.name, colsW[i+1]-2*PADX); });
@@ -1053,8 +1072,8 @@ function buildPhoto(){
   var x0=16, y=150;
   function hline(yy){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+ (W-32),yy); ctx.stroke(); }
   function vlines(yy,hh){ ctx.strokeStyle='#3f4a63'; ctx.lineWidth=2; var x=x0; for(var i=0;i<colsW.length;i++){ ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); x+=colsW[i]; } ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x,yy+hh); ctx.stroke(); }
-  function drawCell(lines,cx,cy,cw,align,bold,size){
-    ctx.fillStyle='#1d2a4a'; ctx.font=(bold?'700':'400')+' '+(size||30)+'px Padauk, sans-serif';
+  function drawCell(lines,cx,cy,cw,align,bold,size,color){
+    ctx.fillStyle=color||'#1d2a4a'; ctx.font=(bold?'700':'400')+' '+(size||30)+'px Padauk, sans-serif';
     ctx.textAlign=align;
     var tx= align==='center'? cx+cw/2 : (align==='right'? cx+cw-PADX : cx+PADX);
     lines.forEach(function(ln,li){ ctx.fillText(ln, tx, cy+40+li*40); });
@@ -1108,7 +1127,8 @@ function buildPhoto(){
       var col=b.columns[ci];
       var align=(col.type==='num'||col.type==='money')? 'right' : (col.type==='time'||col.type==='date'||col.type==='check'? 'center':'left');
       var cx=x0+colsW.slice(0,ci+1).reduce(function(a,v){return a+v;},0);
-      drawCell(cell.lines, cx, y, colsW[ci+1], align, false, cell.size);
+      var isB=isBlueCol(col);
+      drawCell(cell.lines, cx, y, colsW[ci+1], align, isB, cell.size, isB? '#1d4ed8':null);
     });
     y+=rh; hline(y);
   });
