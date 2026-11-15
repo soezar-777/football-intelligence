@@ -26,6 +26,71 @@ button{font-family:inherit}
 #zoomSlider::-moz-range-track{height:4px;border-radius:2px;background:#b9ac8c}
 #zoomSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#166534;border:2px solid #fffef9;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 #zoomPct{min-width:42px;text-align:center;font-weight:700;font-size:13.5px;padding:6px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.themeBtn{margin-left:auto;font-size:16px;padding:5px 12px}
+/* ===== night mode (app screens only — the photo export stays paper-white) ===== */
+body.dark{background:#0d1219;color:#e9edf5}
+body.dark .strip{background:#171e2a;border-bottom-color:#333f55}
+body.dark .strip button{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark .strip button:active{background:#2a3648}
+body.dark #homeBody{background:#0d1219}
+body.dark .bookCard{background:#1a2331;border-color:#3d4a63;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+body.dark .bookCard .bm{color:#93a1b8}
+body.dark .bookCard .menuBtn{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark #bookMenu{background:#202a3a;border-color:#3d4a63}
+body.dark #bookMenu button{color:#e9edf5}
+body.dark #bookMenu button:active{background:#2a3648}
+body.dark #bookMenu button.danger{color:#f28b82}
+body.dark .homeFoot button{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark .emptyNote{color:#93a1b8}
+body.dark #pageArea{background:#0d1219}
+body.dark .paper{background:#151d29;box-shadow:0 2px 12px rgba(0,0,0,.5)}
+body.dark .meta{color:#e9edf5}
+body.dark .metaSub{color:#a7b2c6}
+body.dark table{background:#151d29}
+body.dark th,body.dark td{border-color:#4d5c7d}
+body.dark thead th{background:#24314a}
+body.dark thead tr:last-child th{border-bottom:3px double #e9edf5}
+body.dark tfoot td{background:#24314a}
+body.dark td.ser{color:#a7b2c6}
+body.dark td.tcell .tl{color:#e9edf5}
+body.dark td.tcell .tl.empty{color:#66738c}
+body.dark td.ccell{color:#4ade80}
+body.dark td .rowBtns button{color:#a7b2c6}
+body.dark td .rowBtns .del{color:#f28b82}
+body.dark tr.hl td{background:rgba(230,176,66,.22)}
+body.dark .ruled{background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 43px,#2c3a52 43px,#2c3a52 44px)}
+body.dark .addrow{border-color:#4ade80;color:#86d99b}
+body.dark #bottomBar{background:#171e2a;border-top-color:#333f55}
+body.dark #sigBtn2{background:#202a3a;border-color:#4ade80;color:#86d99b}
+body.dark #sugStrip{background:#171e2a;border-top-color:#333f55}
+body.dark .sugChip{background:#1a2331;border-color:#4ade80;color:#86d99b}
+body.dark .sugBtn.ghost{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark .sheetBox{background:#1a2331;color:#e9edf5}
+body.dark .xBtn{background:#2a3648;color:#e9edf5}
+body.dark .hint{color:#93a1b8}
+body.dark #sheetImg{border-color:#333f55}
+body.dark .ghostBtn{background:#1a2331;border-color:#4ade80;color:#86d99b}
+body.dark .dangerBtn{background:#1a2331;border-color:#7a3b36;color:#f28b82}
+body.dark .fieldLabel{color:#93a1b8}
+body.dark .textIn{background:#141b26;border-color:#3d4a63;color:#e9edf5}
+body.dark .tplItem{background:#141b26;border-color:#3d4a63}
+body.dark .tplItem.sel{border-color:#4ade80;background:#14301c}
+body.dark .tplItem .td{color:#93a1b8}
+body.dark .optChip{background:#1a2331;border-color:#4ade80;color:#86d99b}
+body.dark .colRow{background:#141b26;border-color:#333f55}
+body.dark .colRow .r1 input,body.dark .colRow textarea{background:#0f1620;border-color:#3d4a63;color:#e9edf5}
+body.dark .colRow .r1 select,body.dark .tpRow select{background:#141b26;border-color:#3d4a63;color:#e9edf5}
+body.dark .colRow .r2 button{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark .colRow .r2 .delC{color:#f28b82;border-color:#7a3b36}
+body.dark .srItem{border-bottom-color:#2c3648}
+body.dark .srItem .sd{color:#93a1b8}
+body.dark .sigLabel{color:#93a1b8}
+body.dark .sigBtns button{background:#202a3a;border-color:#3d4a63;color:#e9edf5}
+body.dark .sigBtns #sigSave{background:#166534;border-color:#166534;color:#fff}
+body.dark .sigBtns #sigDelete{color:#f28b82;border-color:#7a3b36}
+body.dark #zoomSlider::-webkit-slider-runnable-track{background:#3d4a63}
+body.dark #zoomSlider::-moz-range-track{background:#3d4a63}
+body.dark #bootFail{background:#0d1219;color:#e9edf5}
 /* home */
 #homeBody{flex:1;overflow:auto;padding:12px 10px 20px;background:#d8cfb4}
 .bookCard{background:#fffef9;border:1.5px solid #b9ac8c;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 5px rgba(0,0,0,.12);cursor:pointer}
@@ -139,7 +204,7 @@ tr.hl td{background:rgba(230,176,66,.35)}
 <body>
 <!-- HOME -->
 <div class="screen on" id="homeScreen">
-  <div class="strip"><span class="ttl">📗 လုံခြုံရေး မှတ်တမ်းစာအုပ်</span></div>
+  <div class="strip"><span class="ttl">📗 လုံခြုံရေး မှတ်တမ်းစာအုပ်</span><button class="themeBtn" aria-label="နေ့/ည ပြောင်း">🌙</button></div>
   <div id="homeBody">
     <div id="bookList"></div>
     <button class="bigAdd" id="newBookBtn">+ စာအုပ်အသစ် ဖန်တီးမယ်</button>
@@ -155,6 +220,7 @@ tr.hl td{background:rgba(230,176,66,.35)}
   <div class="strip">
     <button id="homeBtn">‹ စာအုပ်များ</button>
     <span class="ttl" id="bookTitle">–</span>
+    <button class="themeBtn" aria-label="နေ့/ည ပြောင်း">🌙</button>
   </div>
   <div class="strip">
     <button id="prevDay">‹ ရှေ့</button>
@@ -599,6 +665,23 @@ function kbPlace(){
   else { s.classList.remove('kb'); s.style.bottom=''; }
 }
 if(window.visualViewport){ window.visualViewport.addEventListener('resize',kbPlace); window.visualViewport.addEventListener('scroll',kbPlace); }
+
+/* ===== day / night mode (manual toggle, remembered) ===== */
+var THEMEK='sectables_theme_v1';
+function applyTheme(){
+  var dark=store.get(THEMEK)==='dark';
+  document.body.classList.toggle('dark', dark);
+  document.querySelectorAll('.themeBtn').forEach(function(bn){ bn.textContent=dark? '☀️':'🌙'; });
+  var mc=document.querySelector('meta[name=theme-color]');
+  if(mc) mc.setAttribute('content', dark? '#0d1219' : '#166534');
+}
+document.querySelectorAll('.themeBtn').forEach(function(bn){
+  bn.addEventListener('click',function(){
+    store.set(THEMEK, document.body.classList.contains('dark')? 'light':'dark');
+    applyTheme();
+  });
+});
+applyTheme();
 
 /* ===== zoom ===== */
 function applyZoom(){
