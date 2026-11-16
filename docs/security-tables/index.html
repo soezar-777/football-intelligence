@@ -146,6 +146,20 @@ tr.hl td{background:rgba(230,176,66,.35)}
 tr.inside td{background:rgba(230,176,66,.20)}
 tr.inside td.ser{border-left:4px solid #d9a441}
 body.dark tr.inside td{background:rgba(230,176,66,.30)}
+/* manual row highlight colors (long-press a row) — after .inside so a chosen color wins */
+tr.pressing td{background:rgba(29,42,74,.10)}
+tr.hlc-yellow td{background:#fef08a}
+tr.hlc-green td{background:#bbf7d0}
+tr.hlc-red td{background:#fecaca}
+tr.hlc-blue td{background:#bfdbfe}
+body.dark tr.hlc-yellow td{background:rgba(234,179,8,.45)}
+body.dark tr.hlc-green td{background:rgba(34,197,94,.40)}
+body.dark tr.hlc-red td{background:rgba(239,68,68,.42)}
+body.dark tr.hlc-blue td{background:rgba(59,130,246,.42)}
+.colorGrid{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.colorBtn{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;border:1.5px solid #b9ac8c;border-radius:12px;background:#fffef9;font-size:17px;color:#1d2a4a;cursor:pointer;text-align:left}
+.colorBtn .sw{width:30px;height:30px;border-radius:8px;flex:none;border:1px solid rgba(0,0,0,.15)}
+body.dark .colorBtn{background:#202a3a;color:#e8ecf4;border-color:#43536e}
 .ruled{flex:1;min-height:100px;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 43px,#c3cede 43px,#c3cede 44px)}
 .addrow{margin-top:12px;align-self:flex-start;background:none;border:1.5px dashed #166534;color:#166534;border-radius:10px;padding:10px 16px;font-size:16px;cursor:pointer}
 #bottomBar{background:#f7f3e8;border-top:1px solid #c9bfa5;padding:8px 10px calc(48px + env(safe-area-inset-bottom));display:flex;gap:8px}
@@ -324,6 +338,18 @@ body.dark .nameItem{background:#202a3a}
   <input class="textIn" id="choiceIn" type="text" autocomplete="off">
   <button class="primaryBtn" id="choiceSave">သိမ်းမယ်</button>
   <button class="dangerBtn" id="choiceClear">ရှင်းမယ်</button>
+</div></div>
+<!-- COLOR SHEET -->
+<div class="sheetWrap" id="colorSheet"><div class="sheetBox">
+  <div class="sheetHead"><b>အတန်း အရောင် ရွေးပါ</b><button class="xBtn" data-close="colorSheet">✕</button></div>
+  <div class="colorGrid" id="colorGrid">
+    <button class="colorBtn" data-color="yellow"><span class="sw" style="background:#fef08a"></span>အဝါ</button>
+    <button class="colorBtn" data-color="green"><span class="sw" style="background:#bbf7d0"></span>အစိမ်း</button>
+    <button class="colorBtn" data-color="red"><span class="sw" style="background:#fecaca"></span>အနီ</button>
+    <button class="colorBtn" data-color="blue"><span class="sw" style="background:#bfdbfe"></span>အပြာ</button>
+    <button class="colorBtn" data-color=""><span class="sw" style="background:#fffef9"></span>အရောင် မရှိ (ဖျက်မယ်)</button>
+  </div>
+  <div class="hint">အရေးကြီးတဲ့ အတန်းကို အရောင်နဲ့ မှတ်ထားလို့ရတယ်</div>
 </div></div>
 <!-- SEARCH SHEET -->
 <div class="sheetWrap" id="searchSheet"><div class="sheetBox">
@@ -578,6 +604,7 @@ function rowEl(b,r,i){
       if(hi!==ho) tr.classList.add('inside');
     }
   }
+  if(r.color) tr.classList.add('hlc-'+r.color);
   return tr;
 }
 function growTa(ta){ if(!ta) return; ta.style.height='auto'; ta.style.height=(ta.scrollHeight+2)+'px'; }
@@ -873,6 +900,57 @@ function setChoice(v){
 }
 $('choiceSave').addEventListener('click',function(){ setChoice($('choiceIn').value.trim()); });
 $('choiceClear').addEventListener('click',function(){ setChoice(''); });
+
+/* ===== row highlight color — long-press a row, pick a color ===== */
+var colorCtx=null;
+function openColorSheet(rowId){ colorCtx=rowId; openSheet('colorSheet'); }
+$('colorGrid').addEventListener('click',function(e){
+  var btn=e.target.closest? e.target.closest('[data-color]') : null;
+  if(!btn||!colorCtx) return;
+  var b=book(); var r=findRow(b,colorCtx);
+  if(r){
+    var c=btn.getAttribute('data-color');
+    if(c) r.color=c; else delete r.color;
+    save();
+  }
+  colorCtx=null; closeSheet('colorSheet'); renderBook();
+});
+var lpTimer=null, lpInfo=null, lpSuppressUntil=0;
+function lpCancel(){
+  if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; }
+  if(lpInfo&&lpInfo.tr) lpInfo.tr.classList.remove('pressing');
+  lpInfo=null;
+}
+tbody.addEventListener('pointerdown',function(e){
+  if(e.isPrimary===false){ lpCancel(); return; }
+  if(e.button!==undefined&&e.button>0) return;
+  var tr=e.target.closest? e.target.closest('tr') : null;
+  if(!tr||!tr.getAttribute('data-id')) return;
+  if(e.target.closest('[data-act="del"]')) return;
+  lpCancel();
+  lpInfo={x:e.clientX,y:e.clientY,id:tr.getAttribute('data-id'),tr:tr};
+  tr.classList.add('pressing');
+  lpTimer=setTimeout(function(){
+    if(!lpInfo) return;
+    var id=lpInfo.id; lpCancel();
+    lpSuppressUntil=Date.now()+600;
+    var ae=document.activeElement;
+    if(ae&&(ae.tagName==='TEXTAREA'||ae.tagName==='INPUT')) ae.blur();
+    if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(err){} }
+    openColorSheet(id);
+  },550);
+});
+tbody.addEventListener('pointermove',function(e){
+  if(!lpInfo) return;
+  var dx=e.clientX-lpInfo.x, dy=e.clientY-lpInfo.y;
+  if(dx*dx+dy*dy>144) lpCancel();
+});
+tbody.addEventListener('pointerup',lpCancel);
+tbody.addEventListener('pointercancel',lpCancel);
+tbody.addEventListener('click',function(e){ if(Date.now()<lpSuppressUntil){ e.stopPropagation(); e.preventDefault(); } },true);
+tbody.addEventListener('contextmenu',function(e){
+  if(!(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) e.preventDefault();
+});
 
 /* ===== columns editor ===== */
 var colDraft=null;
@@ -1189,8 +1267,12 @@ function buildPhoto(){
   }
   y+=headH; hline(y);
   /* rows */
+  var PHOTO_HL={yellow:'#fef08a',green:'#bbf7d0',red:'#fecaca',blue:'#bfdbfe'};
   rowData.forEach(function(rl,ri){
-    var rh=rowH(rl); vlines(y,rh);
+    var rh=rowH(rl);
+    var rc=list[ri].color;
+    if(rc&&PHOTO_HL[rc]){ ctx.fillStyle=PHOTO_HL[rc]; ctx.fillRect(x0,y,W-32,rh); }
+    vlines(y,rh);
     drawCell([toMy(ri+1)], x0, y, colsW[0], 'center', false);
     rl.forEach(function(cell,ci){
       var col=b.columns[ci];
